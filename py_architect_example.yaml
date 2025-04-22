@@ -1,0 +1,45 @@
+language: python
+framework: litestar
+project_name: PyArchitect
+contexts:
+  - name: user_context
+    entities:
+      - User
+      - Customer
+    value_objects:
+      - UserId
+      - Password
+      - Email
+    repositories:
+      - UserRepository
+    interfaces:
+      - IUserRepository
+    services:
+      - AuthService
+      - CustomerService
+    use_cases:
+      - RegisterUser
+      - LoginUser
+    models:
+      - User
+      - Customer
+    events:
+      - UserRegisteredEvent
+      - UserBlockedEvent
+    events_bus:
+      - EventBus
+    controllers:
+      - AuthController
+      - CustomerController
+    schemas:
+      directory:
+        - user_schemas
+      name:
+        - UserSchema
+        - UserCreate
+    dto:
+      directory:
+        - user_dto
+      name:
+        - ReadUserDTO
+        - ReadUserCreateDTO

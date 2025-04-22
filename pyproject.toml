@@ -1,0 +1,33 @@
+[project]
+name = "PyArchitect"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "N", "UP", "YTT", "ANN", "S", "A", "D"]
+ignore = ["ANN102", "D100", "D101", "D104"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+strict = true
+disallow_untyped_decorators = false
+disallow_subclassing_any = false
+disallow_any_generics = false
