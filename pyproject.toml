@@ -12,7 +12,8 @@ indent-width = 4
 
 [tool.ruff.lint]
 select = ["E", "F", "B", "I", "N", "UP", "YTT", "ANN", "S", "A", "D"]
-ignore = ["ANN102", "D100", "D101", "D104"]
+ignore = ["ANN102", "D100", "D101", "D104", "D105"]
+
 
 [tool.ruff.format]
 quote-style = "double"
@@ -31,3 +32,4 @@ strict = true
 disallow_untyped_decorators = false
 disallow_subclassing_any = false
 disallow_any_generics = false
+ignore_missing_imports = true

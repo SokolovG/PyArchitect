@@ -1,0 +1,49 @@
+name: my-ddd-project
+
+settings:
+  structure:
+    flat_domain: false
+
+  naming:
+    entity_suffix: ""
+    repository_suffix: "Repository"
+    interface_prefix: "I"
+
+contexts:
+  - name: user_context
+    domain:
+      entities: [User, UserProfile]
+      value_objects: [Email, UserId]
+      aggregates: [UserAggregate]
+      repository_interfaces: [IUserRepository]
+      domain_services: [UserDomainService]
+      domain_events: [UserCreatedEvent, UserUpdatedEvent]
+      factories: [UserFactory]
+      specifications: [ActiveUserSpecification]
+      exceptions: [UserDomainException, InvalidEmailException]
+
+    application:
+      use_cases: [CreateUserUseCase, UpdateUserUseCase]
+      commands: [CreateUserCommand, UpdateUserCommand]
+      command_handlers: [CreateUserCommandHandler, UpdateUserCommandHandler]
+      queries: [GetUserQuery, ListUsersQuery]
+      query_handlers: [GetUserQueryHandler, ListUsersQueryHandler]
+      event_handlers: [UserCreatedEventHandler]
+      validators: [CreateUserValidator]
+      exceptions: [UserApplicationException]
+
+    infrastructure:
+      repositories: [UserRepository]
+      models: [User, UserProfile]
+      adapters: [EmailServiceAdapter]
+      unit_of_work: [UserUnitOfWork]
+      message_bus: [EventBus]
+      background_tasks: [EmailNotificationTask]
+
+    interface:
+      controllers: [UserController]
+      dto: [CreateUserDto, UserResponseDto]
+      presenters: [UserPresenter]
+      api_routes: [user_routes]
+      middleware: [AuthMiddleware]
+      api_error_handlers: [UserErrorHandler]
