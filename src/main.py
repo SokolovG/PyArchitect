@@ -1,4 +1,5 @@
 from pathlib import Path
+from pprint import pprint
 
 from src.parser import YamlParser
 
@@ -11,7 +12,7 @@ def main() -> None:
     try:
         parser = YamlParser(str(config_path))
         data = parser.load()
-        print(f"Successfully loaded configuration: {data}")
+        pprint(f"Successfully loaded configuration: {data}")
 
     except Exception as error:
         print(f"Error: {error}")

@@ -14,10 +14,8 @@ class BaseExceptionPayload(Generic[T]):
         self.value = value
 
 
-class PyArchitectError(BaseExceptionPayload[T], Exception, Generic[T]):
+class PyArchitectError(BaseExceptionPayload[T], Exception):
     """Base exception class for PyArchitect."""
-
-    pass
 
 
 class ConfigFileNotFoundError(PyArchitectError[str]):
