@@ -1,54 +1,47 @@
-from typing import TYPE_CHECKING, TypeVar
+import os
+from typing import TypeVar
 
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from src.parser import YamlParser
+from src.generator_helper import DomainGenerator, GeneratorHelper
+from src.parser import YamlParser
 
 T = TypeVar("T")
 
 
 class ProjectGenerator:
-    def __init__(self, parser: YamlParser) -> None:
+    def __init__(
+        self,
+        parser: YamlParser,
+        helper: GeneratorHelper,
+        domain_helper: DomainGenerator,
+    ) -> None:
         """F."""
         self.parser = parser
         self.config = parser.load()
+        self.helper = helper
+        self.domain_helper = domain_helper
 
-    def generate(self, output_path: str | None = None) -> None:
-        """Generate the project structure based on the configuration.
+    def generate(self) -> None:
+        """Generate the project structure based on the configuration."""
+        print("Starting project generation...")
+        project_root = os.getcwd()
+        src_path = os.path.join(project_root, "src")
+        os.mkdir(src_path)
 
-        Args:
-            output_path: Optional path where to generate the project.
-            If not provided, use current directory.
+        domain_path = os.path.join(src_path, "domain")
+        application_path = os.path.join(src_path, "application")
+        infrastructure_path = os.path.join(src_path, "infrastructure")
 
-        """
+        os.mkdir(domain_path)
+        os.mkdir(application_path)
+        os.mkdir(infrastructure_path)
 
-    def _create_file_from_template(
-        self, template_name: str, target_path: Path, context: dict
-    ) -> None:
-        """Create a file from a template.
+        self.helper._create_init_file(
+            (src_path, domain_path, application_path, infrastructure_path)
+        )
 
-        Args:
-            template_name: Name of the template to use
-            target_path: Path where to create the file
-            context: Context variables for the template
+        for context in self.config.contexts:
+            context_path = os.path.join(domain_path, context.name)
+            os.mkdir(context_path)
+            self.helper._create_init_file((context_path,))
 
-        """
-
-    def _create_bounded_context(self, context: str, base_path: Path) -> None:
-        """Create structure for a single bounded context."""
-
-    def _create_project_root(self, path: str) -> None:
-        """Create the root project directory."""
-
-    def _create_domain_layer(self, domain_config: T, context_path: Path) -> None:
-        """Create domain layer structure for a bounded context."""
-
-    def _create_application_layer(self, application_config: T, context_path: Path) -> None:
-        """Create application layer structure for a bounded context."""
-
-    def _create_infrastructure_layer(self, infrastructure_config: T, context_path: Path) -> None:
-        """Create infrastructure layer structure for a bounded context."""
-
-    def _create_interfaces_layer(self, interface_config: T, context_path: Path) -> None:
-        """Create interface layer structure for a bounded context."""
+            self.domain_helper.generate_entities(context_path, context.domain.entities)

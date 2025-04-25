@@ -66,6 +66,5 @@ class BoundedContext(BaseModel):
 
 
 class ConfigModel(BaseModel):
-    name: str
     settings: Settings
     contexts: list[BoundedContext]

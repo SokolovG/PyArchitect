@@ -1,6 +1,7 @@
 from pathlib import Path
-from pprint import pprint
 
+from src.generator import ProjectGenerator
+from src.generator_helper import DomainGenerator, GeneratorHelper
 from src.parser import YamlParser
 
 
@@ -11,8 +12,14 @@ def main() -> None:
 
     try:
         parser = YamlParser(str(config_path))
-        data = parser.load()
-        pprint(f"Successfully loaded configuration: {data}")
+        helper = GeneratorHelper()
+        domain_helper = DomainGenerator()
+        generator = ProjectGenerator(
+            parser=parser,
+            helper=helper,
+            domain_helper=domain_helper,
+        )
+        generator.generate()
 
     except Exception as error:
         print(f"Error: {error}")

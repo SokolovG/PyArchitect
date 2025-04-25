@@ -1,5 +1,3 @@
-name: my-ddd-project
-
 settings:
   structure:
     flat_domain: false
@@ -21,7 +19,6 @@ contexts:
       factories: [UserFactory]
       specifications: [ActiveUserSpecification]
       exceptions: [UserDomainException, InvalidEmailException]
-
     application:
       use_cases: [CreateUserUseCase, UpdateUserUseCase]
       commands: [CreateUserCommand, UpdateUserCommand]
@@ -31,7 +28,6 @@ contexts:
       event_handlers: [UserCreatedEventHandler]
       validators: [CreateUserValidator]
       exceptions: [UserApplicationException]
-
     infrastructure:
       repositories: [UserRepository]
       models: [User, UserProfile]
@@ -39,7 +35,6 @@ contexts:
       unit_of_work: [UserUnitOfWork]
       message_bus: [EventBus]
       background_tasks: [EmailNotificationTask]
-
     interface:
       controllers: [UserController]
       dto: [CreateUserDto, UserResponseDto]
