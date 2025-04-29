@@ -1,11 +1,19 @@
 settings:
   structure:
     flat_domain: false
+    use_contexts: true
 
   naming:
+    root_name: app
     entity_suffix: ""
     repository_suffix: "Repository"
     interface_prefix: "I"
+
+  layer_naming:
+    domain_layer: "domain"
+    application_layer: "application"
+    infrastructure_layer: "infrastructure"
+    interface_layer: "interface"
 
 contexts:
   - name: user_context

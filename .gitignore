@@ -2,7 +2,8 @@ venv/
 .idea
 .idea/
 .env
-
+Modelfile
+settings.json
 # Docker specific
 .docker/
 *.env

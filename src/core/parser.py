@@ -3,21 +3,32 @@ from pathlib import Path
 import pydantic
 import yaml
 
-from src.exceptions import ConfigFileNotFoundError, YamlParseError
+from src.core.exceptions import ConfigFileNotFoundError, YamlParseError
 from src.schemas import ConfigModel
 
 
 class YamlParser:
+    """Parser for YAML configuration files.
+
+    This class is responsible for loading and validating the YAML
+    configuration file according to the expected schema.
+
+    Attributes:
+        DEFAULT_CONFIG_FILENAME: Default filename for config file
+        file_path: Path to the configuration file
+
+    """
+
     DEFAULT_CONFIG_FILENAME = "ddd-config.yaml"
 
-    def __init__(self, file_path: str | None = None) -> None:
+    def __init__(self, file_path: Path | None = None) -> None:
         """Initialize YAML parser.
 
         Args:
             file_path: Optional specific config file path to use
 
         """
-        self.file_path = Path(file_path) if file_path else Path(self.DEFAULT_CONFIG_FILENAME)
+        self.file_path = file_path if file_path else Path(self.DEFAULT_CONFIG_FILENAME)
 
     def load(self) -> ConfigModel:
         """Load and parse the YAML configuration file.
@@ -35,7 +46,6 @@ class YamlParser:
             raise ConfigFileNotFoundError(str(self.file_path))
 
         with open(self.file_path, encoding="utf-8") as file:
-            """Validate the configuration against the expected schema."""
             try:
                 return self.validate(yaml.safe_load(file))
 
@@ -65,10 +75,3 @@ class YamlParser:
 
         except pydantic.ValidationError as error:
             raise error
-
-    def _ensure_list(self, value: str | list[str]) -> list[str]:
-        """Ensure the value is a list."""
-        if isinstance(value, str):
-            return [value]
-
-        return value if value is not None else []
