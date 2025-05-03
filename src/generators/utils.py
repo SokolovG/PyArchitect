@@ -72,8 +72,8 @@ class LayerPaths:
 
         """
         return cls(
-            layer_1=root_path / config.settings.layer_naming.domain_layer,
-            layer_2=root_path / config.settings.layer_naming.application_layer,
-            layer_3=root_path / config.settings.layer_naming.infrastructure_layer,
-            layer_4=root_path / config.settings.layer_naming.interface_layer,
+            layer_1=root_path / config.settings.domain_layer,
+            layer_2=root_path / config.settings.application_layer,
+            layer_3=root_path / config.settings.infrastructure_layer,
+            layer_4=root_path / config.settings.interface_layer,
         )

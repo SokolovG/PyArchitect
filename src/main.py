@@ -10,7 +10,7 @@ def main() -> None:
     configuration file and starts the generation process.
     """
     project_root = Path(__file__).parent.parent
-    config_path = project_root / "ddd-config.yaml"
+    config_path = project_root / "ddd-config-nested.yaml"
 
     try:
         generator = ProjectGenerator(config_path)

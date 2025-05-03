@@ -19,7 +19,7 @@ class YamlParser:
 
     """
 
-    DEFAULT_CONFIG_FILENAME = "ddd-config.yaml"
+    DEFAULT_CONFIG_FILENAME = "ddd-config-nested.yaml"
 
     def __init__(self, file_path: Path | None = None) -> None:
         """Initialize YAML parser.

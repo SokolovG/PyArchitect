@@ -1,29 +1,34 @@
+from enum import Enum
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
-class StructureSettings(BaseModel):
-    """Structure settings for the DDD architecture.
+class PresetType(str, Enum):
+    """Types of configuration presets."""
 
-    Attributes:
-        flat_domain: Whether to use flat domain structure instead of nested
-        use_contexts: Whether to use bounded contexts
+    SIMPLE = "simple"  # No contexts, simple layers
+    STANDARD = "standard"  # Contexts in flat layout
+    ADVANCED = "advanced"  # Custom layout
 
-    """
 
-    flat_domain: bool = False
+class ContextsLayout(str, Enum):
+    """Options for organizing contexts."""
+
+    FLAT = "flat"  # Contexts inside layers
+    NESTED = "nested"  # Layers inside contexts
+
+
+class Settings(BaseModel):
+    """Basic Project Settings."""
+
+    preset: PresetType = PresetType.STANDARD
+
     use_contexts: bool = True
+    contexts_layout: ContextsLayout = ContextsLayout.FLAT
+    group_components: bool = True
 
-
-class LayerNamingSettings(BaseModel):
-    """Settings for layer naming in the project.
-
-    Attributes:
-        domain_layer: Name for the domain layer directory
-        application_layer: Name for the application layer directory
-        infrastructure_layer: Name for the infrastructure layer directory
-        interface_layer: Name for the interface layer directory
-
-    """
+    root_name: str = "app"
 
     domain_layer: str = "domain"
     application_layer: str = "application"
@@ -31,161 +36,94 @@ class LayerNamingSettings(BaseModel):
     interface_layer: str = "interface"
 
 
-class NamingSettings(BaseModel):
-    """General naming settings for project components.
-
-    Attributes:
-        root_name: Name of the root directory for generated code
-        entity_suffix: Suffix for entity classes
-        repository_suffix: Suffix for repository classes
-        interface_prefix: Prefix for interface classes
-
-    """
-
-    root_name: str = "src"
-    entity_suffix: str = ""
-    repository_suffix: str = "Repository"
-    interface_prefix: str = "I"
+class DomainLayerConfig(BaseModel, extra="allow"):
+    use_cases: list[str] | None = Field(default_factory=lambda: [])
+    commands: list[str] | None = Field(default_factory=lambda: [])
+    entities: list[str] | None = Field(default_factory=lambda: [])
+    value_objects: list[str] | None = Field(default_factory=lambda: [])
+    aggregates: list[str] | None = Field(default_factory=lambda: [])
+    repository_interfaces: list[str] | None = Field(default_factory=lambda: [])
+    domain_services: list[str] | None = Field(default_factory=lambda: [])
+    domain_events: list[str] | None = Field(default_factory=lambda: [])
+    factories: list[str] | None = Field(default_factory=lambda: [])
+    specifications: list[str] | None = Field(default_factory=lambda: [])
+    exceptions: list[str] | None = Field(default_factory=lambda: [])
 
 
-class Settings(BaseModel):
-    """Combined settings for the project generation.
-
-    Attributes:
-        structure: Settings for project structure
-        naming: Settings for component naming
-        layer_naming: Settings for layer directories naming
-
-    """
-
-    structure: StructureSettings
-    naming: NamingSettings
-    layer_naming: LayerNamingSettings = Field(default_factory=LayerNamingSettings)
+class ApplicationLayerConfig(BaseModel, extra="allow"):
+    command_handlers: list[str] | None = Field(default_factory=lambda: [])
+    queries: list[str] | None = Field(default_factory=lambda: [])
+    query_handlers: list[str] | None = Field(default_factory=lambda: [])
+    event_handlers: list[str] | None = Field(default_factory=lambda: [])
+    validators: list[str] | None = Field(default_factory=lambda: [])
+    exceptions: list[str] | None = Field(default_factory=lambda: [])
 
 
-class DomainLayer(BaseModel):
-    """Configuration for the domain layer components.
-
-    Attributes:
-        entities: Entity classes to generate
-        value_objects: Value object classes to generate
-        aggregates: Aggregate root classes to generate
-        repository_interfaces: Repository interface classes to generate
-        domain_services: Domain service classes to generate
-        domain_events: Domain event classes to generate
-        factories: Factory classes to generate
-        specifications: Specification pattern classes to generate
-        exceptions: Domain exception classes to generate
-
-    """
-
-    entities: str | list[str] = Field(default=list())
-    value_objects: str | list[str] = Field(default=list())
-    aggregates: str | list[str] = Field(default=list())
-    repository_interfaces: str | list[str] = Field(default=list())
-    domain_services: str | list[str] = Field(default=list())
-    domain_events: str | list[str] = Field(default=list())
-    factories: str | list[str] = Field(default=list())
-    specifications: str | list[str] = Field(default=list())
-    exceptions: str | list[str] = Field(default=list())
+class InfrastructureLayerConfig(BaseModel, extra="allow"):
+    repositories: list[str] | None = Field(default_factory=lambda: [])
+    models: list[str] | None = Field(default_factory=lambda: [])
+    adapters: list[str] | None = Field(default_factory=lambda: [])
+    unit_of_work: list[str] | None = Field(default_factory=lambda: [])
+    message_bus: list[str] | None = Field(default_factory=lambda: [])
+    background_tasks: list[str] | None = Field(default_factory=lambda: [])
 
 
-class ApplicationLayer(BaseModel):
-    """Configuration for the application layer components.
-
-    Attributes:
-        use_cases: Use case classes to generate
-        commands: Command classes to generate
-        command_handlers: Command handler classes to generate
-        queries: Query classes to generate
-        query_handlers: Query handler classes to generate
-        event_handlers: Event handler classes to generate
-        validators: Validator classes to generate
-        exceptions: Application exception classes to generate
-
-    """
-
-    use_cases: str | list[str] = Field(default=list())
-    commands: str | list[str] = Field(default=list())
-    command_handlers: str | list[str] = Field(default=list())
-    queries: str | list[str] = Field(default=list())
-    query_handlers: str | list[str] = Field(default=list())
-    event_handlers: str | list[str] = Field(default=list())
-    validators: str | list[str] = Field(default=list())
-    exceptions: str | list[str] = Field(default=list())
+class InterfaceLayerConfig(BaseModel, extra="allow"):
+    controllers: list[str] | None = Field(default_factory=lambda: [])
+    dto: list[str] | None = Field(default_factory=lambda: [])
+    presenters: list[str] | None = Field(default_factory=lambda: [])
+    api_routes: list[str] | None = Field(default_factory=lambda: [])
+    middleware: list[str] | None = Field(default_factory=lambda: [])
+    api_error_handlers: list[str] | None = Field(default_factory=lambda: [])
 
 
-class InfrastructureLayer(BaseModel):
-    """Configuration for the infrastructure layer components.
-
-    Attributes:
-        repositories: Repository implementation classes to generate
-        models: ORM model classes to generate
-        adapters: Adapter pattern implementation classes to generate
-        unit_of_work: Unit of work implementation classes to generate
-        message_bus: Message bus implementation classes to generate
-        background_tasks: Background task classes to generate
-
-    """
-
-    repositories: str | list[str] = Field(default=list())
-    models: str | list[str] = Field(default=list())
-    adapters: str | list[str] = Field(default=list())
-    unit_of_work: str | list[str] = Field(default=list())
-    message_bus: str | list[str] = Field(default=list())
-    background_tasks: str | list[str] = Field(default=list())
-
-
-class InterfaceLayer(BaseModel):
-    """Configuration for the interface layer components.
-
-    Attributes:
-        controllers: Controller classes to generate
-        dto: Data Transfer Object classes to generate
-        presenters: Presenter classes to generate
-        api_routes: API route definitions to generate
-        middleware: Middleware classes to generate
-        api_error_handlers: Error handler classes to generate
-
-    """
-
-    controllers: str | list[str] = Field(default=list())
-    dto: str | list[str] = Field(default=list())
-    presenters: str | list[str] = Field(default=list())
-    api_routes: str | list[str] = Field(default=list())
-    middleware: str | list[str] = Field(default=list())
-    api_error_handlers: str | list[str] = Field(default=list())
-
-
-class BoundedContext(BaseModel):
-    """Configuration for a bounded context.
-
-    Attributes:
-        name: Name of the bounded context
-        domain: Domain layer configuration for this context
-        application: Application layer configuration for this context
-        infrastructure: Infrastructure layer configuration for this context
-        interface: Interface layer configuration for this context
-
-    """
-
+class ContextConfig(BaseModel, extra="allow"):
     name: str
-    domain: DomainLayer = Field(default_factory=DomainLayer)
-    application: ApplicationLayer = Field(default_factory=ApplicationLayer)
-    infrastructure: InfrastructureLayer = Field(default_factory=InfrastructureLayer)
-    interface: InterfaceLayer = Field(default_factory=InterfaceLayer)
+    domain: DomainLayerConfig | None = None
+    application: ApplicationLayerConfig | None = None
+    infrastructure: InfrastructureLayerConfig | None = None
+    interface: InterfaceLayerConfig | None = None
+
+
+class LayersConfig(BaseModel):
+    domain: DomainLayerConfig | None = None
+    application: ApplicationLayerConfig | None = None
+    infrastructure: InfrastructureLayerConfig | None = None
+    interface: InterfaceLayerConfig | None = None
 
 
 class ConfigModel(BaseModel):
-    """Main configuration model for the PyArchitect.
+    """The main configuration model.
 
-    Attributes:
-        settings: Project generation settings
-        contexts: List of bounded contexts to generate
-        layer_naming: Custom naming for architecture layers
-
+    Supports all three organization options:
+    1. Simple - no contexts (uses the layers field)
+    2. Flat - contexts inside layers (uses the layers field)
+    3. Nested - layers inside contexts (uses the contexts field)
     """
 
-    settings: Settings
-    contexts: list[BoundedContext]
-    layer_naming: LayerNamingSettings = Field(default_factory=LayerNamingSettings)
+    settings: Settings = Field(default_factory=Settings)
+
+    layers: LayersConfig | None = None
+
+    contexts: list[ContextConfig] | None
+
+    def model_post_init(self, __context: Any) -> None:  # noqa
+        """Apply preset defaults."""
+        if self.settings.preset == PresetType.SIMPLE:
+            self.settings.use_contexts = False
+
+        elif self.settings.preset == PresetType.STANDARD:
+            self.settings.use_contexts = True
+            self.settings.contexts_layout = ContextsLayout.FLAT
+
+        elif self.settings.preset == PresetType.ADVANCED:
+            pass
+
+    def get_structure_type(self) -> str:
+        """Determine the type of structure based on the settings."""
+        if not self.settings.use_contexts:
+            return "simple"
+        elif self.settings.contexts_layout == ContextsLayout.FLAT:
+            return "flat"
+        else:
+            return "nested"
