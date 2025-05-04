@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class PresetType(str, Enum):
@@ -28,7 +28,7 @@ class Settings(BaseModel):
     contexts_layout: ContextsLayout = ContextsLayout.FLAT
     group_components: bool = True
 
-    root_name: str = "app"
+    root_name: str = "src"
 
     domain_layer: str = "domain"
     application_layer: str = "application"
@@ -36,60 +36,65 @@ class Settings(BaseModel):
     interface_layer: str = "interface"
 
 
-class DomainLayerConfig(BaseModel, extra="allow"):
-    use_cases: list[str] | None = Field(default_factory=lambda: [])
-    commands: list[str] | None = Field(default_factory=lambda: [])
-    entities: list[str] | None = Field(default_factory=lambda: [])
-    value_objects: list[str] | None = Field(default_factory=lambda: [])
-    aggregates: list[str] | None = Field(default_factory=lambda: [])
-    repository_interfaces: list[str] | None = Field(default_factory=lambda: [])
-    domain_services: list[str] | None = Field(default_factory=lambda: [])
-    domain_events: list[str] | None = Field(default_factory=lambda: [])
-    factories: list[str] | None = Field(default_factory=lambda: [])
-    specifications: list[str] | None = Field(default_factory=lambda: [])
-    exceptions: list[str] | None = Field(default_factory=lambda: [])
+class ComponentConfig(BaseModel):
+    """Base class for component configurations with string-to-list conversion."""
+
+    @model_validator(mode="before")
+    def convert_strings_to_lists(self, values: dict) -> dict:
+        """F."""
+        if isinstance(values, dict):
+            for key, value in values.items():
+                if isinstance(value, str):
+                    values[key] = [value]
+        return values
 
 
-class ApplicationLayerConfig(BaseModel, extra="allow"):
-    command_handlers: list[str] | None = Field(default_factory=lambda: [])
-    queries: list[str] | None = Field(default_factory=lambda: [])
-    query_handlers: list[str] | None = Field(default_factory=lambda: [])
-    event_handlers: list[str] | None = Field(default_factory=lambda: [])
-    validators: list[str] | None = Field(default_factory=lambda: [])
-    exceptions: list[str] | None = Field(default_factory=lambda: [])
+class DomainLayerConfig(ComponentConfig, extra="allow"):
+    use_cases: list[str] = Field(default_factory=lambda: [])
+    commands: list[str] = Field(default_factory=lambda: [])
+    entities: list[str] = Field(default_factory=lambda: [])
+    value_objects: list[str] = Field(default_factory=lambda: [])
+    aggregates: list[str] = Field(default_factory=lambda: [])
+    repository_interfaces: list[str] = Field(default_factory=lambda: [])
+    domain_services: list[str] = Field(default_factory=lambda: [])
+    domain_events: list[str] = Field(default_factory=lambda: [])
+    factories: list[str] = Field(default_factory=lambda: [])
+    specifications: list[str] = Field(default_factory=lambda: [])
+    exceptions: list[str] = Field(default_factory=lambda: [])
 
 
-class InfrastructureLayerConfig(BaseModel, extra="allow"):
-    repositories: list[str] | None = Field(default_factory=lambda: [])
-    models: list[str] | None = Field(default_factory=lambda: [])
-    adapters: list[str] | None = Field(default_factory=lambda: [])
-    unit_of_work: list[str] | None = Field(default_factory=lambda: [])
-    message_bus: list[str] | None = Field(default_factory=lambda: [])
-    background_tasks: list[str] | None = Field(default_factory=lambda: [])
+class ApplicationLayerConfig(ComponentConfig, extra="allow"):
+    command_handlers: list[str] = Field(default_factory=lambda: [])
+    queries: list[str] = Field(default_factory=lambda: [])
+    query_handlers: list[str] = Field(default_factory=lambda: [])
+    event_handlers: list[str] = Field(default_factory=lambda: [])
+    validators: list[str] = Field(default_factory=lambda: [])
+    exceptions: list[str] = Field(default_factory=lambda: [])
 
 
-class InterfaceLayerConfig(BaseModel, extra="allow"):
-    controllers: list[str] | None = Field(default_factory=lambda: [])
-    dto: list[str] | None = Field(default_factory=lambda: [])
-    presenters: list[str] | None = Field(default_factory=lambda: [])
-    api_routes: list[str] | None = Field(default_factory=lambda: [])
-    middleware: list[str] | None = Field(default_factory=lambda: [])
-    api_error_handlers: list[str] | None = Field(default_factory=lambda: [])
+class InfrastructureLayerConfig(ComponentConfig, extra="allow"):
+    repositories: list[str] = Field(default_factory=lambda: [])
+    models: list[str] = Field(default_factory=lambda: [])
+    adapters: list[str] = Field(default_factory=lambda: [])
+    unit_of_work: list[str] = Field(default_factory=lambda: [])
+    message_bus: list[str] = Field(default_factory=lambda: [])
+    background_tasks: list[str] = Field(default_factory=lambda: [])
 
 
-class ContextConfig(BaseModel, extra="allow"):
-    name: str
-    domain: DomainLayerConfig | None = None
-    application: ApplicationLayerConfig | None = None
-    infrastructure: InfrastructureLayerConfig | None = None
-    interface: InterfaceLayerConfig | None = None
+class InterfaceLayerConfig(ComponentConfig, extra="allow"):
+    controllers: list[str] = Field(default_factory=lambda: [])
+    dto: list[str] = Field(default_factory=lambda: [])
+    presenters: list[str] = Field(default_factory=lambda: [])
+    api_routes: list[str] = Field(default_factory=lambda: [])
+    middleware: list[str] = Field(default_factory=lambda: [])
+    api_error_handlers: list[str] = Field(default_factory=lambda: [])
 
 
 class LayersConfig(BaseModel):
-    domain: DomainLayerConfig | None = None
-    application: ApplicationLayerConfig | None = None
-    infrastructure: InfrastructureLayerConfig | None = None
-    interface: InterfaceLayerConfig | None = None
+    domain: DomainLayerConfig = Field(default_factory=DomainLayerConfig)
+    application: ApplicationLayerConfig = Field(default_factory=ApplicationLayerConfig)
+    infrastructure: InfrastructureLayerConfig = Field(default_factory=InfrastructureLayerConfig)
+    interface: InterfaceLayerConfig = Field(default_factory=InterfaceLayerConfig)
 
 
 class ConfigModel(BaseModel):
@@ -105,10 +110,11 @@ class ConfigModel(BaseModel):
 
     layers: LayersConfig | None = None
 
-    contexts: list[ContextConfig] | None
-
     def model_post_init(self, __context: Any) -> None:  # noqa
         """Apply preset defaults."""
+        if self.layers is None:
+            self.layers = LayersConfig()
+
         if self.settings.preset == PresetType.SIMPLE:
             self.settings.use_contexts = False
 
@@ -118,12 +124,3 @@ class ConfigModel(BaseModel):
 
         elif self.settings.preset == PresetType.ADVANCED:
             pass
-
-    def get_structure_type(self) -> str:
-        """Determine the type of structure based on the settings."""
-        if not self.settings.use_contexts:
-            return "simple"
-        elif self.settings.contexts_layout == ContextsLayout.FLAT:
-            return "flat"
-        else:
-            return "nested"

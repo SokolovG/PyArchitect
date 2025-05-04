@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -60,7 +62,7 @@ class LayerPaths:
         return self.layer_4
 
     @classmethod
-    def from_config(cls, root_path: Path, config: ConfigModel) -> "LayerPaths":
+    def from_config(cls, root_path: Path, config: ConfigModel) -> LayerPaths:
         """Create a LayerPaths instance from configuration.
 
         Args:

@@ -1,29 +1,30 @@
 from pathlib import Path
-from typing import Any
 
 from src.generators.base import BaseGenerator
 from src.generators.layer_generators.base_layer_generator import AbstractLayerGenerator
-from src.schemas.config_schema import DomainLayerConfig
+from src.schemas.config_schema import DomainLayerConfig, PresetType
 
 
-class DomainGenerator(BaseGenerator, AbstractLayerGenerator):
+class DomainGenerator(BaseGenerator, AbstractLayerGenerator[DomainLayerConfig]):
     """Generator for the domain layer components.
 
     This class is responsible for generating all components of the domain layer
     based on the configuration.
     """
 
-    def generate_components(self, path: Path, config: dict[str, Any]) -> None:
+    def generate_components(
+        self, path: Path, config: DomainLayerConfig, preset: PresetType
+    ) -> None:
         """Generate all domain layer components.
 
         Args:
             path: Path where to generate components
             config: Configuration for domain components
+            preset: Selected preset in the settings
 
         """
-        domain_layer = DomainLayerConfig(**config)
-        flat = config.get("flat", False)
-        self._generate_components(path, domain_layer, flat)
+        flat = False
+        self._generate_components(path, config, flat)
 
     def _generate_components(
         self, domain_path: Path, domain_layer: DomainLayerConfig, flat: bool = False

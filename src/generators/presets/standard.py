@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from src.generators.base import PresetGenerator
+from src.generators.presets.base import PresetGenerator
 from src.generators.utils import LayerPaths
 from src.schemas import ConfigModel
+from src.schemas.config_schema import PresetType
 
 
 class StandardPresetGenerator(PresetGenerator):
@@ -12,24 +13,27 @@ class StandardPresetGenerator(PresetGenerator):
         """Generate standard project structure with contexts organized by layers."""
         layer_paths = LayerPaths.from_config(root_path, config)
 
-        self._generate_domain_layer(layer_paths.layer_1, config)
+        layer_paths = LayerPaths.from_config(root_path, config)
 
-    def _generate_domain_layer(self, domain_path: Path, config: ConfigModel) -> None:
-        """Generate domain layer with contexts."""
         if not config.layers:
             return
 
-        domain_layer = config.layers.domain
-        if not domain_layer:
-            return
+        if config.layers.domain:
+            self.domain_generator.generate_components(
+                layer_paths.layer_1, config.layers.domain, PresetType.STANDARD
+            )
 
-        contexts = config.contexts or []
+        if config.layers.application:
+            self.app_generator.generate_components(
+                layer_paths.layer_2, config.layers.application, PresetType.STANDARD
+            )
 
-        for context in contexts:
-            context_name = context.name
-            context_path = domain_path / context_name
-            self.domain_generator.create_directory(context_path)
-            self.domain_generator.create_init_file(context_path)
+        if config.layers.infrastructure:
+            self.infra_generator.generate_components(
+                layer_paths.layer_3, config.layers.infrastructure, PresetType.STANDARD
+            )
 
-            # Generate context components
-            self.domain_generator.generate_components(context_path, context.model_dump())
+        if config.layers.interface:
+            self.interface_generator.generate_components(
+                layer_paths.layer_4, config.layers.interface, PresetType.STANDARD
+            )

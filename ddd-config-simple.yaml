@@ -1,0 +1,13 @@
+settings:
+  preset: "simple"
+
+layers:
+  domain:
+    entities: User
+    value_objects: Email
+  application:
+    use_cases: CreateUser
+  infrastructure:
+    repositories: UserRepository
+  interface:
+    controllers: UserController

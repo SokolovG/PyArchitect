@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from src.generators.base import PresetGenerator
+from src.generators.presets.base import PresetGenerator
 from src.generators.utils import LayerPaths
 from src.schemas import ConfigModel
+from src.schemas.config_schema import PresetType
 
 
 class SimplePresetGenerator(PresetGenerator):
@@ -15,26 +16,22 @@ class SimplePresetGenerator(PresetGenerator):
         if not config.layers:
             return
 
-        # Generate domain layer
         if config.layers.domain:
             self.domain_generator.generate_components(
-                layer_paths.layer_1, config.layers.domain.dict()
+                layer_paths.layer_1, config.layers.domain, PresetType.SIMPLE
             )
 
-        # Generate application layer
         if config.layers.application:
             self.app_generator.generate_components(
-                layer_paths.layer_2, config.layers.application.dict()
+                layer_paths.layer_2, config.layers.application, PresetType.SIMPLE
             )
 
-        # Generate infrastructure layer
         if config.layers.infrastructure:
             self.infra_generator.generate_components(
-                layer_paths.layer_3, config.layers.infrastructure.dict()
+                layer_paths.layer_3, config.layers.infrastructure, PresetType.SIMPLE
             )
 
-        # Generate interface layer
         if config.layers.interface:
             self.interface_generator.generate_components(
-                layer_paths.layer_4, config.layers.interface.dict()
+                layer_paths.layer_4, config.layers.interface, PresetType.SIMPLE
             )

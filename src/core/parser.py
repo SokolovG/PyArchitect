@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pydantic
@@ -14,12 +15,15 @@ class YamlParser:
     configuration file according to the expected schema.
 
     Attributes:
-        DEFAULT_CONFIG_FILENAME: Default filename for config file
+        DEFAULT_CONFIG_PATH: Default filename for config file
         file_path: Path to the configuration file
 
     """
 
-    DEFAULT_CONFIG_FILENAME = "ddd-config-nested.yaml"
+    DEFAULT_CONFIG_PATH = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        "ddd-config-simple.yaml",
+    )
 
     def __init__(self, file_path: Path | None = None) -> None:
         """Initialize YAML parser.
@@ -28,7 +32,11 @@ class YamlParser:
             file_path: Optional specific config file path to use
 
         """
-        self.file_path = file_path if file_path else Path(self.DEFAULT_CONFIG_FILENAME)
+        if file_path:
+            self.file_path = file_path
+        else:
+            package_dir = Path(__file__).parent.parent.parent
+            self.file_path = package_dir / "ddd-config-simple.yaml"
 
     def load(self) -> ConfigModel:
         """Load and parse the YAML configuration file.
@@ -56,22 +64,13 @@ class YamlParser:
                 raise error
 
     def validate(self, config: dict) -> ConfigModel:
-        """Validate the configuration against the expected schema.
+        """Validate the configuration against the expected schema."""
+        if config is None:
+            config = {}
 
-        Args:
-            config: Raw data from yaml config
-
-        Returns:
-            ConfigModel: Validated configuration model
-
-        Raises:
-            ValidationError: If configuration doesn't match the expected schema
-
-        """
         try:
-            config_model = ConfigModel(**config)
-
+            config_model = ConfigModel.model_validate(config)
             return config_model
-
         except pydantic.ValidationError as error:
+            print(f"Ошибка валидации: {error}")
             raise error
