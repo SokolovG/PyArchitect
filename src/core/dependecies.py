@@ -9,6 +9,7 @@ from src.generators.layer_generators import (
     InterfaceGenerator,
 )
 from src.schemas import ConfigModel
+from src.templates.engine import TemplateEngine
 
 
 class MyProvider(Provider):
@@ -19,24 +20,29 @@ class MyProvider(Provider):
     """
 
     @provide(scope=Scope.APP)
-    def get_domain_gen(self) -> DomainGenerator:
+    def get_engine(self) -> TemplateEngine:
+        """F."""
+        return TemplateEngine()
+
+    @provide(scope=Scope.APP)
+    def get_domain_gen(self, template_engine: TemplateEngine) -> DomainGenerator:
         """Provide a DomainGenerator instance for the application scope."""
-        return DomainGenerator()
+        return DomainGenerator(template_engine)
 
     @provide(scope=Scope.APP)
-    def get_app_gen(self) -> ApplicationGenerator:
+    def get_app_gen(self, template_engine: TemplateEngine) -> ApplicationGenerator:
         """Provide an ApplicationGenerator instance for the application scope."""
-        return ApplicationGenerator()
+        return ApplicationGenerator(template_engine)
 
     @provide(scope=Scope.APP)
-    def get_infra_gen(self) -> InfrastructureGenerator:
+    def get_infra_gen(self, template_engine: TemplateEngine) -> InfrastructureGenerator:
         """Provide an InfrastructureGenerator instance for the application scope."""
-        return InfrastructureGenerator()
+        return InfrastructureGenerator(template_engine)
 
     @provide(scope=Scope.APP)
-    def get_interface_gen(self) -> InterfaceGenerator:
+    def get_interface_gen(self, template_engine: TemplateEngine) -> InterfaceGenerator:
         """Provide an InterfaceGenerator instance for the application scope."""
-        return InterfaceGenerator()
+        return InterfaceGenerator(template_engine)
 
     @provide(scope=Scope.APP)
     def get_parser(self) -> YamlParser:

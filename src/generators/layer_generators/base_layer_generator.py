@@ -15,5 +15,5 @@ ConfigT = TypeVar("ConfigT", bound=BaseModel)
 
 class AbstractLayerGenerator(Generic[ConfigT], ABC):
     @abstractmethod
-    def generate_components(self, path: Path, config: ConfigT, preset: PresetType) -> None:
-        """Генерирует все компоненты слоя."""
+    def generate_components(self, path: Path, config: dict, preset: PresetType) -> None:
+        """Generate all components of a layer."""

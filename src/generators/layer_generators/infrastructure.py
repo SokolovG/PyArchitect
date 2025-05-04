@@ -12,9 +12,7 @@ class InfrastructureGenerator(BaseGenerator, AbstractLayerGenerator[Infrastructu
     based on the configuration.
     """
 
-    def generate_components(
-        self, path: Path, config: InfrastructureLayerConfig, preset: PresetType
-    ) -> None:
+    def generate_components(self, path: Path, config: dict, preset: PresetType) -> None:
         """Generate all infrastructure layer components.
 
         Args:
@@ -25,9 +23,7 @@ class InfrastructureGenerator(BaseGenerator, AbstractLayerGenerator[Infrastructu
         """
         self._generate_components(path, config)
 
-    def _generate_components(
-        self, infra_path: Path, infra_layer: InfrastructureLayerConfig
-    ) -> None:
+    def _generate_components(self, infra_path: Path, infra_layer: dict) -> None:
         """Generate infrastructure components based on configuration.
 
         Args:

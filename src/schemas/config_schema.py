@@ -54,6 +54,7 @@ class ComponentConfig(BaseModel):
             values: Dictionary of field values
         Returns:
             Dictionary with string fields converted to lists
+
         """
         if isinstance(values, dict):
             for key, value in values.items():

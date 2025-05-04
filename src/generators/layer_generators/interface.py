@@ -12,9 +12,7 @@ class InterfaceGenerator(BaseGenerator, AbstractLayerGenerator[InterfaceLayerCon
     based on the configuration.
     """
 
-    def generate_components(
-        self, path: Path, config: InterfaceLayerConfig, preset: PresetType
-    ) -> None:
+    def generate_components(self, path: Path, config: dict, preset: PresetType) -> None:
         """Generate all interface layer components.
 
         Args:
@@ -25,9 +23,7 @@ class InterfaceGenerator(BaseGenerator, AbstractLayerGenerator[InterfaceLayerCon
         """
         self._generate_components(path, config)
 
-    def _generate_components(
-        self, interface_path: Path, interface_layer: InterfaceLayerConfig
-    ) -> None:
+    def _generate_components(self, interface_path: Path, interface_layer: dict) -> None:
         """Generate  interface components.
 
         Args:

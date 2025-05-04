@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from src.templates.engine import TemplateEngine
+
 
 class BaseGenerator:
     """Base class for all code generators.
@@ -7,6 +9,10 @@ class BaseGenerator:
     This class provides common utility methods used by all specific
     generator implementations.
     """
+
+    def __init__(self, template_engine: TemplateEngine) -> None:
+        """F."""
+        self.template_engine = template_engine
 
     def create_directory(self, path: Path) -> Path:
         """Create a directory if it doesn't exist.
@@ -36,16 +42,13 @@ class BaseGenerator:
             init_file.touch()
         return init_file
 
-    def ensure_list(self, value: str | list[str]) -> list[str]:
-        """Convert a value to a list if it's a string or return as is if it's already a list.
+    def write_file(self, path: Path, content: str) -> None:
+        """Write content to a file.
 
         Args:
-            value: String or list of strings
-
-        Returns:
-            List of strings
+        path: Path where to write the file
+        content: Content to write to the file
 
         """
-        if isinstance(value, str):
-            return [value]
-        return value if value is not None else []
+        with open(path, "w") as file:
+            file.write(content)

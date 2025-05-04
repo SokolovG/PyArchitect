@@ -12,9 +12,7 @@ class ApplicationGenerator(BaseGenerator, AbstractLayerGenerator[ApplicationLaye
     based on the configuration.
     """
 
-    def generate_components(
-        self, path: Path, config: ApplicationLayerConfig, preset: PresetType
-    ) -> None:
+    def generate_components(self, path: Path, config: dict, preset: PresetType) -> None:
         """Generate all application layer components.
 
         Args:
@@ -26,9 +24,7 @@ class ApplicationGenerator(BaseGenerator, AbstractLayerGenerator[ApplicationLaye
         flat = False
         self._generate_components(path, config, flat)
 
-    def _generate_components(
-        self, app_path: Path, app_layer: ApplicationLayerConfig, flat: bool = False
-    ) -> None:
+    def _generate_components(self, app_path: Path, app_layer: dict, flat: bool = False) -> None:
         """Generate application components based on configuration.
 
         Args:
