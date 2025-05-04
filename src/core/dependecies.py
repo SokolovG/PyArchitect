@@ -12,34 +12,40 @@ from src.schemas import ConfigModel
 
 
 class MyProvider(Provider):
+    """Dependency provider for project generators and configuration.
+
+    This provider registers all generators and configuration objects
+    for dependency injection using the Dishka library.
+    """
+
     @provide(scope=Scope.APP)
     def get_domain_gen(self) -> DomainGenerator:
-        """F."""
+        """Provide a DomainGenerator instance for the application scope."""
         return DomainGenerator()
 
     @provide(scope=Scope.APP)
     def get_app_gen(self) -> ApplicationGenerator:
-        """F."""
+        """Provide an ApplicationGenerator instance for the application scope."""
         return ApplicationGenerator()
 
     @provide(scope=Scope.APP)
     def get_infra_gen(self) -> InfrastructureGenerator:
-        """F."""
+        """Provide an InfrastructureGenerator instance for the application scope."""
         return InfrastructureGenerator()
 
     @provide(scope=Scope.APP)
     def get_interface_gen(self) -> InterfaceGenerator:
-        """F."""
+        """Provide an InterfaceGenerator instance for the application scope."""
         return InterfaceGenerator()
 
     @provide(scope=Scope.APP)
     def get_parser(self) -> YamlParser:
-        """F."""
+        """Provide a YamlParser instance for the application scope."""
         return YamlParser()
 
     @provide(scope=Scope.APP)
     def get_config(self, parser: YamlParser) -> ConfigModel:
-        """F."""
+        """Provide a validated ConfigModel loaded from YAML configuration."""
         return parser.load()
 
     @provide(scope=Scope.APP)
@@ -51,7 +57,7 @@ class MyProvider(Provider):
         infra_generator: InfrastructureGenerator,
         interface_generator: InterfaceGenerator,
     ) -> ProjectGenerator:
-        """F."""
+        """Provide a ProjectGenerator instance with all dependencies injected."""
         return ProjectGenerator(
             config,
             domain_generator,

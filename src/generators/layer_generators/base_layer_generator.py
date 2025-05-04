@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-if TYPE_CHECKING:
-    from pydantic import BaseModel
+from pydantic import BaseModel
 
+if TYPE_CHECKING:
     from src.schemas.config_schema import PresetType
 
 

@@ -1,3 +1,4 @@
+from logging import getLogger
 from pathlib import Path
 
 from src.generators.presets.base import PresetGenerator
@@ -5,12 +6,15 @@ from src.generators.utils import LayerPaths
 from src.schemas import ConfigModel
 from src.schemas.config_schema import PresetType
 
+logger = getLogger(__name__)
+
 
 class SimplePresetGenerator(PresetGenerator):
     """Generator for the simple preset without contexts."""
 
     def generate(self, root_path: Path, config: ConfigModel) -> None:
         """Generate simple project structure without contexts."""
+        logger.info("Starting generate domain")
         layer_paths = LayerPaths.from_config(root_path, config)
 
         if not config.layers:

@@ -1,10 +1,20 @@
 import asyncio
-from logging import getLogger
+import logging
+import sys
 
 from src.core import container
 from src.generators import ProjectGenerator
 
-logger = getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 async def main() -> None:

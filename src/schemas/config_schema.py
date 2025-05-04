@@ -28,7 +28,7 @@ class Settings(BaseModel):
     contexts_layout: ContextsLayout = ContextsLayout.FLAT
     group_components: bool = True
 
-    root_name: str = "src"
+    root_name: str = "app"
 
     domain_layer: str = "domain"
     application_layer: str = "application"
@@ -37,11 +37,24 @@ class Settings(BaseModel):
 
 
 class ComponentConfig(BaseModel):
-    """Base class for component configurations with string-to-list conversion."""
+    """Base class for component configurations with string-to-list conversion.
+
+    This class allows extra fields and ensures that any string field is
+    automatically converted to a list of strings for consistency.
+    """
+
+    model_config = {"extra": "allow"}
 
     @model_validator(mode="before")
-    def convert_strings_to_lists(self, values: dict) -> dict:
-        """F."""
+    @classmethod
+    def convert_strings_to_lists(cls, values: dict) -> dict:
+        """Convert string fields to lists for all component configs.
+
+        Args:
+            values: Dictionary of field values
+        Returns:
+            Dictionary with string fields converted to lists
+        """
         if isinstance(values, dict):
             for key, value in values.items():
                 if isinstance(value, str):
@@ -49,7 +62,9 @@ class ComponentConfig(BaseModel):
         return values
 
 
-class DomainLayerConfig(ComponentConfig, extra="allow"):
+class DomainLayerConfig(ComponentConfig):
+    """Configuration for the domain layer components."""
+
     use_cases: list[str] = Field(default_factory=lambda: [])
     commands: list[str] = Field(default_factory=lambda: [])
     entities: list[str] = Field(default_factory=lambda: [])
@@ -63,7 +78,9 @@ class DomainLayerConfig(ComponentConfig, extra="allow"):
     exceptions: list[str] = Field(default_factory=lambda: [])
 
 
-class ApplicationLayerConfig(ComponentConfig, extra="allow"):
+class ApplicationLayerConfig(ComponentConfig):
+    """Configuration for the application layer components."""
+
     command_handlers: list[str] = Field(default_factory=lambda: [])
     queries: list[str] = Field(default_factory=lambda: [])
     query_handlers: list[str] = Field(default_factory=lambda: [])
@@ -72,7 +89,9 @@ class ApplicationLayerConfig(ComponentConfig, extra="allow"):
     exceptions: list[str] = Field(default_factory=lambda: [])
 
 
-class InfrastructureLayerConfig(ComponentConfig, extra="allow"):
+class InfrastructureLayerConfig(ComponentConfig):
+    """Configuration for the infrastructure layer components."""
+
     repositories: list[str] = Field(default_factory=lambda: [])
     models: list[str] = Field(default_factory=lambda: [])
     adapters: list[str] = Field(default_factory=lambda: [])
@@ -81,7 +100,9 @@ class InfrastructureLayerConfig(ComponentConfig, extra="allow"):
     background_tasks: list[str] = Field(default_factory=lambda: [])
 
 
-class InterfaceLayerConfig(ComponentConfig, extra="allow"):
+class InterfaceLayerConfig(ComponentConfig):
+    """Configuration for the interface layer components."""
+
     controllers: list[str] = Field(default_factory=lambda: [])
     dto: list[str] = Field(default_factory=lambda: [])
     presenters: list[str] = Field(default_factory=lambda: [])
@@ -91,6 +112,8 @@ class InterfaceLayerConfig(ComponentConfig, extra="allow"):
 
 
 class LayersConfig(BaseModel):
+    """Aggregates all layer configurations for the project."""
+
     domain: DomainLayerConfig = Field(default_factory=DomainLayerConfig)
     application: ApplicationLayerConfig = Field(default_factory=ApplicationLayerConfig)
     infrastructure: InfrastructureLayerConfig = Field(default_factory=InfrastructureLayerConfig)

@@ -6,7 +6,7 @@ layers:
     entities: User
     value_objects: Email
   application:
-    use_cases: CreateUser
+    exceptions: UserNotFoundException
   infrastructure:
     repositories: UserRepository
   interface:

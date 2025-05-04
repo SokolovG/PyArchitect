@@ -44,4 +44,3 @@ class PresetGenerator:
             config: Project configuration
 
         """
-        raise NotImplementedError("Subclasses must implement generate method")
