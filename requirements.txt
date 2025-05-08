@@ -1,0 +1,17 @@
+cfgv==3.4.0
+click==8.1.8
+distlib==0.3.9
+filelock==3.18.0
+identify==2.6.10
+mypy==1.15.0
+mypy_extensions==1.1.0
+nodeenv==1.9.1
+platformdirs==4.3.7
+pre_commit==4.2.0
+PyYAML==6.0.2
+ruff==0.11.6
+types-PyYAML==6.0.12.20250402
+typing_extensions==4.13.2
+virtualenv==20.30.0
+
+pydantic~=2.11.3

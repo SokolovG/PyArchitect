@@ -2,7 +2,6 @@ venv/
 .idea
 .idea/
 .env
-
 # Docker specific
 .docker/
 *.env
