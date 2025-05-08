@@ -7,16 +7,15 @@ from src.templates.engine import TemplateEngine
 class LayerGenerator(BaseGenerator):
     """Базовый генератор для любого слоя."""
 
-    def __init__(self, template_engine: TemplateEngine, template_dir: str) -> None:
-        """Инициализация генератора слоя.
+    def __init__(self, template_engine: TemplateEngine, layer_name: str = "") -> None:
+        """Initialize layer generator.
 
         Args:
-            template_engine: Движок шаблонов
-            template_dir: Директория с шаблонами для данного слоя
-
+            template_engine: Template engine instance
+            layer_name: Optional layer name for template lookup
         """
         super().__init__(template_engine)
-        self.template_dir = template_dir
+        self.template_dir = template_engine.get_template_dir(layer_name)
 
     def generate_components(self, path: Path, layer_config: dict[str, list[str]]) -> None:
         """Генерация всех компонентов для слоя.

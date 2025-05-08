@@ -47,3 +47,18 @@ class TemplateEngine:
             return True
         except TemplateNotFound:
             return False
+
+    def get_template_dir(self, layer_name: str = "") -> str:
+        """Get path to template directory for specific layer.
+
+        Args:
+            layer_name: Optional layer name (domain, application, etc.)
+
+        Returns:
+            Path to template directory as string
+
+        """
+        base_dir = Path(__file__).parent
+        if layer_name:
+            return str(base_dir / layer_name)
+        return str(base_dir)

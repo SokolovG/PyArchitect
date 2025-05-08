@@ -2,11 +2,9 @@ from logging import getLogger
 from pathlib import Path
 
 from src.generators.base import BaseGenerator
-from src.generators.layer_generator import LayerGenerator
 from src.generators.presets.base import PresetGenerator
 from src.generators.utils import LayerPaths
 from src.schemas import ConfigModel
-from src.schemas.config_schema import PresetType
 
 logger = getLogger(__name__)
 
@@ -30,5 +28,5 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
             self.create_directory(layer_path)
             self.create_init_file(layer_path)
 
-            generator = LayerGenerator(self.template_engine)
-            generator.generate_components(layer_path, layer_config, PresetType.SIMPLE)  # type: ignore
+            generator = self._create_layer_generator(layer_name)
+            generator.generate_components(layer_path, layer_config)
