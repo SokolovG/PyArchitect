@@ -15,7 +15,7 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
 
     def generate(self, root_path: Path, config: ConfigModel) -> None:
         """Generate simple project structure without contexts."""
-        logger.info("Starting generate domain")
+        logger.info("Starting generate structure")
         layer_paths = LayerPaths.from_config(root_path, config)
 
         layer_generators = {
@@ -25,20 +25,19 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
             "interface": self.interface_generator,
         }
 
-        if config.layers:
-            for layer_name, layer_config in config.layers.model_dump().items():
-                if not layer_config:
-                    continue
+        for layer_name, layer_config in config.layers.model_dump().items():
+            if not layer_config:
+                continue
 
-                layer_path = getattr(layer_paths, layer_name, None)
-                if not layer_path:
-                    layer_path = root_path / config.settings.root_name / layer_name
+            layer_path = getattr(layer_paths, layer_name, None)
+            if not layer_path:
+                layer_path = root_path / config.settings.root_name / layer_name
 
-                self.create_directory(layer_path)
-                self.create_init_file(layer_path)
+            self.create_directory(layer_path)
+            self.create_init_file(layer_path)
 
-                generator = layer_generators.get(layer_name)
-                if generator:
-                    generator.generate_components(layer_path, layer_config, PresetType.SIMPLE)  # type: ignore
-                else:
-                    logger.warning(f"No generator found for layer: {layer_name}")
+            generator = layer_generators.get(layer_name)
+            if generator:
+                generator.generate_components(layer_path, layer_config, PresetType.SIMPLE)  # type: ignore
+            else:
+                logger.warning(f"No generator found for layer: {layer_name}")

@@ -21,13 +21,29 @@ class InfrastructureGenerator(BaseGenerator, AbstractLayerGenerator[Infrastructu
             preset: Selected preset in the settings
 
         """
-        self._generate_components(path, config)
+        flat_config = preset.value
+        if flat_config == preset.SIMPLE:
+            flat = True
+        else:
+            flat = False
+        self._generate_components(path, config, flat)
 
-    def _generate_components(self, infra_path: Path, infra_layer: dict) -> None:
+    def _generate_components(self, infra_path: Path, infra_layer: dict, flat: bool = False) -> None:
         """Generate infrastructure components based on configuration.
 
         Args:
             infra_path: Path where to generate components
             infra_layer: Configuration for infrastructure components
+            flat: Whether to use flat structure instead of nested
 
         """
+        for component_type, components in infra_layer.items():
+            if not components or not isinstance(components, list):
+                continue
+
+            component_dir = infra_path
+
+            if not flat:
+                component_dir = infra_path / component_type
+                self.create_directory(component_dir)
+                self.create_init_file(component_dir)

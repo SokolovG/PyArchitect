@@ -115,10 +115,12 @@ class InterfaceLayerConfig(ComponentConfig):
 class LayersConfig(BaseModel):
     """Aggregates all layer configurations for the project."""
 
-    domain: DomainLayerConfig = Field(default_factory=DomainLayerConfig)
-    application: ApplicationLayerConfig = Field(default_factory=ApplicationLayerConfig)
-    infrastructure: InfrastructureLayerConfig = Field(default_factory=InfrastructureLayerConfig)
-    interface: InterfaceLayerConfig = Field(default_factory=InterfaceLayerConfig)
+    domain: DomainLayerConfig | None = Field(default_factory=DomainLayerConfig)
+    application: ApplicationLayerConfig | None = Field(default_factory=ApplicationLayerConfig)
+    infrastructure: InfrastructureLayerConfig | None = Field(
+        default_factory=InfrastructureLayerConfig
+    )
+    interface: InterfaceLayerConfig | None = Field(default_factory=InterfaceLayerConfig)
 
 
 class ConfigModel(BaseModel):
@@ -131,8 +133,7 @@ class ConfigModel(BaseModel):
     """
 
     settings: Settings = Field(default_factory=Settings)
-
-    layers: LayersConfig | None = None
+    layers: LayersConfig
 
     def model_post_init(self, __context: Any) -> None:  # noqa
         """Apply preset defaults."""

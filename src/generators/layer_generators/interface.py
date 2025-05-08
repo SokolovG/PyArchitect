@@ -21,13 +21,31 @@ class InterfaceGenerator(BaseGenerator, AbstractLayerGenerator[InterfaceLayerCon
             preset: Selected preset in the settings
 
         """
-        self._generate_components(path, config)
+        flat_config = preset.value
+        if flat_config == preset.SIMPLE:
+            flat = True
+        else:
+            flat = False
+        self._generate_components(path, config, flat)
 
-    def _generate_components(self, interface_path: Path, interface_layer: dict) -> None:
+    def _generate_components(
+        self, interface_path: Path, interface_layer: dict, flat: bool = False
+    ) -> None:
         """Generate  interface components.
 
         Args:
             interface_path: Path where to generate components
             interface_layer: Configuration for interface components
+            flat: Whether to use flat structure instead of nested
 
         """
+        for component_type, components in interface_layer.items():
+            if not components or not isinstance(components, list):
+                continue
+
+            component_dir = interface_path
+
+            if not flat:
+                component_dir = interface_path / component_type
+                self.create_directory(component_dir)
+                self.create_init_file(component_dir)

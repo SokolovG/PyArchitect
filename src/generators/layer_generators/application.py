@@ -21,7 +21,11 @@ class ApplicationGenerator(BaseGenerator, AbstractLayerGenerator[ApplicationLaye
             preset: Selected preset in the settings
 
         """
-        flat = False
+        flat_config = preset.value
+        if flat_config == preset.SIMPLE:
+            flat = True
+        else:
+            flat = False
         self._generate_components(path, config, flat)
 
     def _generate_components(self, app_path: Path, app_layer: dict, flat: bool = False) -> None:
@@ -33,3 +37,13 @@ class ApplicationGenerator(BaseGenerator, AbstractLayerGenerator[ApplicationLaye
             flat: Whether to use flat structure instead of nested
 
         """
+        for component_type, components in app_layer.items():
+            if not components or not isinstance(components, list):
+                continue
+
+            component_dir = app_path
+
+            if not flat:
+                component_dir = app_path / component_type
+                self.create_directory(component_dir)
+                self.create_init_file(component_dir)

@@ -1,5 +1,4 @@
 from pathlib import Path
-from pprint import pprint
 
 from src.core import single_form_words
 from src.generators.base import BaseGenerator
@@ -23,7 +22,11 @@ class DomainGenerator(BaseGenerator, AbstractLayerGenerator[DomainLayerConfig]):
             preset: Selected preset in the settings
 
         """
-        flat = preset == PresetType.SIMPLE
+        flat_config = preset.value
+        if flat_config == preset.SIMPLE:
+            flat = True
+        else:
+            flat = False
         self._generate_components(path, config, flat)
 
     def _generate_components(
@@ -37,9 +40,7 @@ class DomainGenerator(BaseGenerator, AbstractLayerGenerator[DomainLayerConfig]):
             flat: Whether to use flat structure instead of nested
 
         """
-        pprint(domain_layer.items())
         for component_type, components in domain_layer.items():
-            print(component_type, components)
             if not components or not isinstance(components, list):
                 continue
 
@@ -50,8 +51,8 @@ class DomainGenerator(BaseGenerator, AbstractLayerGenerator[DomainLayerConfig]):
                 self.create_directory(component_dir)
                 self.create_init_file(component_dir)
 
-            for component_name in components:
-                self._generate_component(component_dir, component_type, component_name, flat)
+            # for component_name in components:
+            #     self._generate_component(component_dir, czomponent_type, component_name, flat)
 
     def _generate_component(
         self, path: Path, component_type: str, component_name: str, flat: bool
