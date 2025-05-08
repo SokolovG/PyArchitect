@@ -36,91 +36,24 @@ class Settings(BaseModel):
     interface_layer: str = "interface"
 
 
-class ComponentConfig(BaseModel):
-    """Base class for component configurations with string-to-list conversion.
-
-    This class allows extra fields and ensures that any string field is
-    automatically converted to a list of strings for consistency.
-    """
+class LayerConfig(BaseModel):
+    """Гибкая конфигурация для любого слоя."""
 
     model_config = {"extra": "allow"}
 
     @model_validator(mode="before")
     @classmethod
     def convert_strings_to_lists(cls, values: dict) -> dict:
-        """Convert string fields to lists for all component configs.
-
-        Args:
-            values: Dictionary of field values
-        Returns:
-            Dictionary with string fields converted to lists
-
-        """
+        """Конвертация строковых значений в списки."""
         if isinstance(values, dict):
             for key, value in values.items():
                 if isinstance(value, str):
                     values[key] = [value]
         return values
 
-
-class DomainLayerConfig(ComponentConfig):
-    """Configuration for the domain layer components."""
-
-    use_cases: list[str] = Field(default_factory=lambda: [])
-    commands: list[str] = Field(default_factory=lambda: [])
-    entities: list[str] = Field(default_factory=lambda: [])
-    value_objects: list[str] = Field(default_factory=lambda: [])
-    aggregates: list[str] = Field(default_factory=lambda: [])
-    repository_interfaces: list[str] = Field(default_factory=lambda: [])
-    domain_services: list[str] = Field(default_factory=lambda: [])
-    domain_events: list[str] = Field(default_factory=lambda: [])
-    factories: list[str] = Field(default_factory=lambda: [])
-    specifications: list[str] = Field(default_factory=lambda: [])
-    exceptions: list[str] = Field(default_factory=lambda: [])
-
-
-class ApplicationLayerConfig(ComponentConfig):
-    """Configuration for the application layer components."""
-
-    command_handlers: list[str] = Field(default_factory=lambda: [])
-    queries: list[str] = Field(default_factory=lambda: [])
-    query_handlers: list[str] = Field(default_factory=lambda: [])
-    event_handlers: list[str] = Field(default_factory=lambda: [])
-    validators: list[str] = Field(default_factory=lambda: [])
-    exceptions: list[str] = Field(default_factory=lambda: [])
-
-
-class InfrastructureLayerConfig(ComponentConfig):
-    """Configuration for the infrastructure layer components."""
-
-    repositories: list[str] = Field(default_factory=lambda: [])
-    models: list[str] = Field(default_factory=lambda: [])
-    adapters: list[str] = Field(default_factory=lambda: [])
-    unit_of_work: list[str] = Field(default_factory=lambda: [])
-    message_bus: list[str] = Field(default_factory=lambda: [])
-    background_tasks: list[str] = Field(default_factory=lambda: [])
-
-
-class InterfaceLayerConfig(ComponentConfig):
-    """Configuration for the interface layer components."""
-
-    controllers: list[str] = Field(default_factory=lambda: [])
-    dto: list[str] = Field(default_factory=lambda: [])
-    presenters: list[str] = Field(default_factory=lambda: [])
-    api_routes: list[str] = Field(default_factory=lambda: [])
-    middleware: list[str] = Field(default_factory=lambda: [])
-    api_error_handlers: list[str] = Field(default_factory=lambda: [])
-
-
-class LayersConfig(BaseModel):
-    """Aggregates all layer configurations for the project."""
-
-    domain: DomainLayerConfig | None = Field(default_factory=DomainLayerConfig)
-    application: ApplicationLayerConfig | None = Field(default_factory=ApplicationLayerConfig)
-    infrastructure: InfrastructureLayerConfig | None = Field(
-        default_factory=InfrastructureLayerConfig
-    )
-    interface: InterfaceLayerConfig | None = Field(default_factory=InterfaceLayerConfig)
+    def get_components(self) -> dict[str, list[str]]:
+        """Получить все компоненты как словарь."""
+        return self.model_dump()
 
 
 class ConfigModel(BaseModel):
@@ -133,12 +66,12 @@ class ConfigModel(BaseModel):
     """
 
     settings: Settings = Field(default_factory=Settings)
-    layers: LayersConfig
+    layers: LayerConfig
 
     def model_post_init(self, __context: Any) -> None:  # noqa
         """Apply preset defaults."""
         if self.layers is None:
-            self.layers = LayersConfig()
+            self.layers = LayerConfig()
 
         if self.settings.preset == PresetType.SIMPLE:
             self.settings.use_contexts = False

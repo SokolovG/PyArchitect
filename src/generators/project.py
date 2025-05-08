@@ -2,12 +2,6 @@ from logging import getLogger
 from pathlib import Path
 
 from src.generators.base import BaseGenerator
-from src.generators.layer_generators import (
-    ApplicationGenerator,
-    DomainGenerator,
-    InfrastructureGenerator,
-    InterfaceGenerator,
-)
 from src.generators.presets import (
     AdvancedPresetGenerator,
     SimplePresetGenerator,
@@ -15,6 +9,7 @@ from src.generators.presets import (
 )
 from src.generators.presets.base import PresetGenerator
 from src.schemas import ConfigModel
+from src.templates.engine import TemplateEngine
 
 
 class ProjectGenerator(BaseGenerator):
@@ -30,32 +25,16 @@ class ProjectGenerator(BaseGenerator):
         "advanced": AdvancedPresetGenerator,
     }
 
-    def __init__(
-        self,
-        config: ConfigModel,
-        domain_generator: DomainGenerator,
-        app_generator: ApplicationGenerator,
-        infra_generator: InfrastructureGenerator,
-        interface_generator: InterfaceGenerator,
-    ) -> None:
+    def __init__(self, config: ConfigModel, engine: TemplateEngine) -> None:
         """Initialize the project generator."""
+        super().__init__(engine)
         self.config = config
-        self.domain_generator = domain_generator
-        self.app_generator = app_generator
-        self.infra_generator = infra_generator
-        self.interface_generator = interface_generator
         self.logger = getLogger(__name__)
 
         preset_type = self.config.settings.preset
         preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
 
-        self.preset_generator = preset_generator_class(
-            self.domain_generator,
-            self.app_generator,
-            self.infra_generator,
-            self.interface_generator,
-            self.config,
-        )
+        self.preset_generator = preset_generator_class(self.config)
 
     def generate(self) -> None:
         """Generate the project structure based on the preset."""

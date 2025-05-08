@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoescape
 
 
 class TemplateEngine:
@@ -31,3 +31,19 @@ class TemplateEngine:
         """
         template = self.env.get_template(template_path)
         return template.render(**context)
+
+    def template_exists(self, template_path: str) -> bool:
+        """Проверка существования шаблона.
+
+        Args:
+            template_path: Путь к шаблону
+
+        Returns:
+            True, если шаблон существует
+
+        """
+        try:
+            self.env.get_template(template_path)
+            return True
+        except TemplateNotFound:
+            return False
