@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from src.generators.layer_generator import LayerGenerator
 from src.templates.engine import TemplateEngine
 
 
@@ -53,15 +52,3 @@ class BaseGenerator:
         """
         with open(path, "w") as file:
             file.write(content)
-
-    def _create_layer_generator(self, layer_name: str) -> LayerGenerator:
-        """Create layer generator for specific layer.
-
-        Args:
-            layer_name: Layer name (domain, application, etc.)
-
-        Returns:
-            Configured LayerGenerator instance
-
-        """
-        return LayerGenerator(self.template_engine, layer_name)

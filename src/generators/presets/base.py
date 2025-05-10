@@ -1,9 +1,10 @@
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 from src.schemas import ConfigModel
 
 
-class PresetGenerator:
+class PresetGenerator(ABC):
     """Base class for preset-specific generators."""
 
     def __init__(
@@ -18,6 +19,7 @@ class PresetGenerator:
         """
         self.config = config
 
+    @abstractmethod
     def generate(self, root_path: Path, config: ConfigModel) -> None:
         """Generate project structure according to preset.
 

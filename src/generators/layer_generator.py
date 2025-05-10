@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from src.core import camel_to_snake, single_form_words
 from src.generators.base import BaseGenerator
 from src.templates.engine import TemplateEngine
 
@@ -13,6 +14,7 @@ class LayerGenerator(BaseGenerator):
         Args:
             template_engine: Template engine instance
             layer_name: Optional layer name for template lookup
+
         """
         super().__init__(template_engine)
         self.template_dir = template_engine.get_template_dir(layer_name)
@@ -25,22 +27,20 @@ class LayerGenerator(BaseGenerator):
             layer_config: Конфигурация слоя в виде словаря
 
         """
-        # Создаем корневую директорию, если не существует
-        self.create_directory(path)
-        self.create_init_file(path)
-
-        # Перебираем все типы компонентов
         for component_type, components in layer_config.items():
+            print(f"First loop - {component_type} {components}")
             if not components:
                 continue
 
-            # Создаем директорию для типа компонента
             component_dir = path / component_type
             self.create_directory(component_dir)
             self.create_init_file(component_dir)
 
-            # Генерируем каждый компонент
+            if isinstance(components, str):
+                components = [components]
+
             for component_name in components:
+                print(f"Second loop - {component_dir} {component_type} {component_name}")
                 self._generate_component(component_dir, component_type, component_name)
 
     def _generate_component(self, path: Path, component_type: str, component_name: str) -> None:
@@ -52,21 +52,14 @@ class LayerGenerator(BaseGenerator):
             component_name: Имя компонента (User, Product и т.д.)
 
         """
-        # Определяем имя файла
-        singular_type = component_type.rstrip("s")  # Простое преобразование во ед. число
-        file_name = f"{component_name.lower()}_{singular_type}.py"
+        singular_type = single_form_words.get(component_type, component_type.rstrip("s"))
+        component_name = camel_to_snake(component_name)
+        file_name = f"{component_name}_{singular_type}.py"
         file_path = path / file_name
 
-        # Ищем шаблон
-        template_path = f"{self.template_dir}/{component_type}.py.jinja"
-        if self.template_engine.template_exists(template_path):
-            # Если есть шаблон - используем его
-            content = self.template_engine.render(
-                template_path, {"name": component_name, "type": component_type}
-            )
-        else:
-            # Если шаблона нет - создаем пустой класс
-            content = f'class {component_name}:\n    """A {singular_type} component."""\n    pass\n'
+        template_path = "base_template.py.jinja"
+        content = self.template_engine.render(
+            template_path, {"name": component_name, "type": component_type}
+        )
 
-        # Записываем файл
         self.write_file(file_path, content)

@@ -35,6 +35,7 @@ class ProjectGenerator(BaseGenerator):
         preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
 
         self.preset_generator = preset_generator_class(self.config)
+        self.preset_generator.template_engine = engine
 
     def generate(self) -> None:
         """Generate the project structure based on the preset."""
