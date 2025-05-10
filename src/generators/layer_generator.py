@@ -6,7 +6,11 @@ from src.templates.engine import TemplateEngine
 
 
 class LayerGenerator(BaseGenerator):
-    """Базовый генератор для любого слоя."""
+    """Base generator for any architectural layer.
+
+    This class handles the generation of components within a specific
+    architectural layer (domain, application, etc.).
+    """
 
     def __init__(self, template_engine: TemplateEngine, layer_name: str = "") -> None:
         """Initialize layer generator.
@@ -44,12 +48,12 @@ class LayerGenerator(BaseGenerator):
                 self._generate_component(component_dir, component_type, component_name)
 
     def _generate_component(self, path: Path, component_type: str, component_name: str) -> None:
-        """Генерация отдельного компонента.
+        """Generate of a single component.
 
         Args:
-            path: Путь, куда генерировать
-            component_type: Тип компонента (entities, value_objects и т.д.)
-            component_name: Имя компонента (User, Product и т.д.)
+            path: The path where to generate
+            component_type: Component type (entities, value_objects, etc.)
+            component_name: Component name (User, Product, etc.)
 
         """
         singular_type = single_form_words.get(component_type, component_type.rstrip("s"))

@@ -64,7 +64,15 @@ class YamlParser:
                 raise error
 
     def validate(self, config: dict) -> ConfigModel:
-        """Validate the configuration against the expected schema."""
+        """Validate the configuration against the expected schema.
+
+        Args:
+            config: raw config
+
+        Returns:
+            Validated config model
+
+        """
         if config is None:
             config = {}
 

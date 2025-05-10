@@ -37,14 +37,26 @@ class Settings(BaseModel):
 
 
 class LayerConfig(BaseModel):
-    """Гибкая конфигурация для любого слоя."""
+    """Flexible configuration for any layer.
+
+    This class allows for configuring components of any architectural layer
+    with support for dynamic component types and lists.
+    """
 
     model_config = {"extra": "allow"}
 
     @model_validator(mode="before")
     @classmethod
     def convert_strings_to_lists(cls, values: dict) -> dict:
-        """Конвертация строковых значений в списки."""
+        """Convert string values to lists.
+
+        Args:
+            values: Dictionary with configuration values
+
+        Returns:
+            Dictionary with string values converted to single-item lists
+
+        """
         if isinstance(values, dict):
             for key, value in values.items():
                 if isinstance(value, str):
@@ -52,7 +64,12 @@ class LayerConfig(BaseModel):
         return values
 
     def get_components(self) -> dict[str, list[str]]:
-        """Получить все компоненты как словарь."""
+        """Get all components as a dictionary.
+
+        Returns:
+            Dictionary mapping component types to lists of component names
+
+        """
         return self.model_dump()
 
 
@@ -69,7 +86,15 @@ class ConfigModel(BaseModel):
     layers: LayerConfig
 
     def model_post_init(self, __context: Any) -> None:  # noqa
-        """Apply preset defaults."""
+        """Apply preset defaults after model initialization.
+
+        This method sets appropriate configuration defaults based on the
+        selected preset type, ensuring consistency in the configuration.
+
+        Args:
+            __context: Context data from Pydantic (not used)
+
+        """
         if self.layers is None:
             self.layers = LayerConfig()
 

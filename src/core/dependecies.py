@@ -30,7 +30,7 @@ class MyProvider(Provider):
 
     @provide(scope=Scope.APP)
     def get_template_engine(self) -> TemplateEngine:
-        """F."""
+        """Provide a template engine instance for the application scope."""
         return TemplateEngine()
 
     @provide(scope=Scope.APP)

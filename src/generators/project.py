@@ -26,7 +26,13 @@ class ProjectGenerator(BaseGenerator):
     }
 
     def __init__(self, config: ConfigModel, engine: TemplateEngine) -> None:
-        """Initialize the project generator."""
+        """Initialize the project generator.
+
+        Args:
+            config: Model config
+            engine: TemplateEngine
+
+        """
         super().__init__(engine)
         self.config = config
         self.logger = getLogger(__name__)
@@ -35,7 +41,7 @@ class ProjectGenerator(BaseGenerator):
         preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
 
         self.preset_generator = preset_generator_class(self.config)
-        self.preset_generator.template_engine = engine
+        self.preset_generator.template_engine = engine  # type: ignore
 
     def generate(self) -> None:
         """Generate the project structure based on the preset."""

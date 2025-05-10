@@ -11,7 +11,12 @@ class BaseGenerator:
     """
 
     def __init__(self, template_engine: TemplateEngine) -> None:
-        """F."""
+        """Initialize the base generator with a template engine.
+
+        Args:
+            template_engine: Engine instance for rendering templates
+
+        """
         self.template_engine = template_engine
 
     def create_directory(self, path: Path) -> Path:

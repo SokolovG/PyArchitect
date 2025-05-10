@@ -33,13 +33,13 @@ class TemplateEngine:
         return template.render(**context)
 
     def template_exists(self, template_path: str) -> bool:
-        """Проверка существования шаблона.
+        """Check if a template exists.
 
         Args:
-            template_path: Путь к шаблону
+            template_path: Path to the template
 
         Returns:
-            True, если шаблон существует
+            True if the template exists, False otherwise
 
         """
         try:
