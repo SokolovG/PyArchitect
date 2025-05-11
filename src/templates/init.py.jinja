@@ -1,0 +1,9 @@
+{% for component in components %}
+from {{ base_module }}.{{ component_type }}.{{ component|camel_to_snake }}_{{ singular_type }} import {{ component }}
+{% endfor %}
+
+__all__ = [
+{% for component in components %}
+    "{{ component }}",
+{% endfor %}
+]

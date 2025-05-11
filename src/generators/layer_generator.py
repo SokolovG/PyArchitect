@@ -1,6 +1,8 @@
 from logging import getLogger
 from pathlib import Path
 
+from icecream import ic
+
 from src.core import single_form_words
 from src.generators.base import BaseGenerator
 from src.generators.utils import camel_to_snake
@@ -19,20 +21,26 @@ class LayerGenerator(BaseGenerator):
     def __init__(
         self,
         template_engine: TemplateEngine,
+        root_name: str,
         layer_name: str = "",
         group_components: bool = True,
+        generate_all_exports: bool = False,
     ) -> None:
         """Initialize layer generator.
 
         Args:
             template_engine: Template engine instance
+            root_name: Root name
             layer_name: Optional layer name for template lookup
             group_components: single/group strategy
+            generate_all_exports: create __all__ list in __init__.py
 
         """
         super().__init__(template_engine)
         self.template_dir = template_engine.get_template_dir(layer_name)
         self.group_components = group_components
+        self.generate_all_exports = generate_all_exports
+        self.root_name = root_name
 
     def generate_components(self, path: Path, layer_config: dict[str, list[str] | str]) -> None:
         """Generate all components for a layer.
@@ -48,12 +56,26 @@ class LayerGenerator(BaseGenerator):
 
             component_dir = path / component_type
             self.create_directory(component_dir)
-            self.create_init_file(component_dir)
+            init_path = self.create_init_file(component_dir)
 
             if isinstance(components, str):
                 components = [comp.strip() for comp in components.split(",")]
 
-            self.group_components = False
+            if self.generate_all_exports:
+                singular_type = single_form_words.get(component_type, component_type.rstrip("s"))
+                template_path = "init.py.jinja"
+                content = self.template_engine.render(
+                    template_path,
+                    {
+                        "components": components,
+                        "component_type": component_type,
+                        "singular_type": singular_type,
+                        "module_path": self.root_name,
+                    },
+                )
+                ic(init_path)
+                self.write_file(init_path, content)
+
             if self.group_components:
                 self._generate_grouped_components(component_dir, component_type, components)
             else:

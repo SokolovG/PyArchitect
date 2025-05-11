@@ -36,12 +36,24 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
             self.create_directory(layer_path)
             self.create_init_file(layer_path)
 
-            generator = self._create_layer_generator(layer_name)
+            root_name = config.settings.root_name
+            generator = self._create_layer_generator(
+                layer_name=layer_name,
+                root_name=root_name,
+                group_components=config.settings.group_components,
+                generate_all_exports=config.settings.generate_all_exports,
+            )
             generator.generate_components(layer_path, layer_config)
 
         logger.info("Simple preset generation completed successfully")
 
-    def _create_layer_generator(self, layer_name: str) -> LayerGenerator:
+    def _create_layer_generator(
+        self,
+        layer_name: str,
+        root_name: str,
+        group_components: bool,
+        generate_all_exports: bool,
+    ) -> LayerGenerator:
         """Create layer generator for specific layer.
 
         Args:
@@ -52,5 +64,9 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
 
         """
         return LayerGenerator(
-            self.template_engine, layer_name, self.config.settings.group_components
+            template_engine=self.template_engine,
+            root_name=root_name,
+            layer_name=layer_name,
+            group_components=group_components,
+            generate_all_exports=generate_all_exports,
         )

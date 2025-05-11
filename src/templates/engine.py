@@ -3,6 +3,8 @@ from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoescape
 
+from src.generators.utils import camel_to_snake
+
 
 class TemplateEngine:
     """Class for managing Jinja2 template rendering."""
@@ -73,3 +75,4 @@ class TemplateEngine:
     def _register_filters(self) -> None:
         """Register custom Jinja2 filters."""
         self.env.filters["article"] = self._get_article
+        self.env.filters["camel_to_snake"] = camel_to_snake

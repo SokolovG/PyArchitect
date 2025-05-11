@@ -27,6 +27,7 @@ class Settings(BaseModel):
     use_contexts: bool = True
     contexts_layout: ContextsLayout = ContextsLayout.FLAT
     group_components: bool = True
+    generate_all_exports: bool = False
 
     root_name: str = "app"
 

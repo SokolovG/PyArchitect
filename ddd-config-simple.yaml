@@ -1,5 +1,6 @@
 settings:
   preset: "simple"
+  generate_all_exports: True
 
 layers:
   domain:
