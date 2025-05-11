@@ -1,8 +1,8 @@
 class {{ name }}:
     """{{ name }} {{ type }}.
 
-    This class represents a {{ name.lower() }} in the system.
+    This class represents {{ name|article }} {{ name }} in the system.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize a new {{ name }} instance."""

@@ -17,6 +17,7 @@ class TemplateEngine:
             lstrip_blocks=True,
             autoescape=select_autoescape(),
         )
+        self._register_filters()
 
     def render(self, template_path: str, context: dict[str, Any]) -> str:
         """Render template with provided context.
@@ -49,7 +50,7 @@ class TemplateEngine:
             return False
 
     def get_template_dir(self, layer_name: str = "") -> str:
-        """Get path to template directory for specific layer.
+        """Get a path to template directory for specific layer.
 
         Args:
             layer_name: Optional layer name (domain, application, etc.)
@@ -62,3 +63,13 @@ class TemplateEngine:
         if layer_name:
             return str(base_dir / layer_name)
         return str(base_dir)
+
+    @staticmethod
+    def _get_article(word: str) -> str:
+        """Return 'a' or 'an' based on the word."""
+        vowels = "aeiouAEIOU"
+        return "an" if word and word[0] in vowels else "a"
+
+    def _register_filters(self) -> None:
+        """Register custom Jinja2 filters."""
+        self.env.filters["article"] = self._get_article

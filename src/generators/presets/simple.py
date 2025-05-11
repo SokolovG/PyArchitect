@@ -51,4 +51,6 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
             Configured LayerGenerator instance
 
         """
-        return LayerGenerator(self.template_engine, layer_name)
+        return LayerGenerator(
+            self.template_engine, layer_name, self.config.settings.group_components
+        )

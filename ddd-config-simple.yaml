@@ -3,11 +3,11 @@ settings:
 
 layers:
   domain:
-    entities: User
-    value_objects: Email
+    entities: User, Admin
+    value_objects: Email, Password
   application:
-    exceptions: UserNotFoundException
+    exceptions: UserNotFoundException, UserBlockedException
   infrastructure:
-    repositories: UserRepository
+    repositories: UserRepository, AdminRepository
   interface:
-    controllers: UserController
+    controllers: UserController, AdminController
