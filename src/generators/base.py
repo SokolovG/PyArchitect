@@ -32,19 +32,28 @@ class BaseGenerator:
         path.mkdir(exist_ok=True, parents=True)
         return path
 
-    def create_init_file(self, path: Path) -> Path:
+    def create_init_file(self, path: Path) -> None:
         """Create an empty __init__.py file in the specified directory.
 
         Args:
             path: Directory where to create the file
 
-        Returns:
-            Path to the created file
-
         """
         init_file = path / "__init__.py"
         if not init_file.exists():
             init_file.touch()
+
+    def get_init_path(self, path: Path) -> Path:
+        """Return a path to init file.
+
+        Args:
+            path: Directory where to create the file
+
+        Returns:
+            Path to the init file
+
+        """
+        init_file = path / "__init__.py"
         return init_file
 
     def write_file(self, path: Path, content: str) -> None:

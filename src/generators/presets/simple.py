@@ -28,7 +28,6 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
         layers_data = config.layers.model_dump()
         for layer_name, layer_config in layers_data.items():
             if not layer_config:
-                logger.debug(f"Skipping empty layer: {layer_name}")
                 continue
 
             layer_path = root_path / layer_name
@@ -41,7 +40,7 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
                 layer_name=layer_name,
                 root_name=root_name,
                 group_components=config.settings.group_components,
-                generate_all_exports=config.settings.generate_all_exports,
+                init_imports=config.settings.init_imports,
             )
             generator.generate_components(layer_path, layer_config)
 
@@ -52,7 +51,7 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
         layer_name: str,
         root_name: str,
         group_components: bool,
-        generate_all_exports: bool,
+        init_imports: bool,
     ) -> LayerGenerator:
         """Create layer generator for specific layer.
 
@@ -68,5 +67,5 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
             root_name=root_name,
             layer_name=layer_name,
             group_components=group_components,
-            generate_all_exports=generate_all_exports,
+            init_imports=init_imports,
         )

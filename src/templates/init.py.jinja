@@ -1,5 +1,5 @@
-{% for component in components %}
-from {{ base_module }}.{{ component_type }}.{{ component|camel_to_snake }}_{{ singular_type }} import {{ component }}
+{% for import_line in imports %}
+{{ import_line }}
 {% endfor %}
 
 __all__ = [
