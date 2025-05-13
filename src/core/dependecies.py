@@ -14,13 +14,8 @@ class MyProvider(Provider):
     """
 
     @provide(scope=Scope.APP)
-    def get_engine(self) -> TemplateEngine:
-        """F."""
-        return TemplateEngine()
-
-    @provide(scope=Scope.APP)
     def get_parser(self) -> YamlParser:
-        """Provide a YamlParser instance for the application scope."""
+        """Provide a YamlParser instance for the app scope."""
         return YamlParser()
 
     @provide(scope=Scope.APP)
@@ -30,7 +25,7 @@ class MyProvider(Provider):
 
     @provide(scope=Scope.APP)
     def get_template_engine(self) -> TemplateEngine:
-        """Provide a template engine instance for the application scope."""
+        """Provide a template engine instance for the app scope."""
         return TemplateEngine()
 
     @provide(scope=Scope.APP)

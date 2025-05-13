@@ -57,6 +57,9 @@ class SimplePresetGenerator(PresetGenerator, BaseGenerator):
 
         Args:
             layer_name: Layer name (domain, application, etc.)
+            root_name: f
+            group_components: f
+            init_imports: f
 
         Returns:
             Configured LayerGenerator instance

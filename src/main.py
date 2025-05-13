@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    """Entry point for the application.
+    """Entry point for the app.
 
     This function initializes the project generator with the
     configuration file and starts the generation process.

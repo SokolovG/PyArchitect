@@ -49,7 +49,6 @@ class ProjectGenerator(BaseGenerator):
         project_root = Path.cwd()
         root_name = self.config.settings.root_name
         root_path = project_root / root_name
-        self.logger.info(f"path {root_path}")
         self.create_directory(root_path)
         self.create_init_file(root_path)
 
