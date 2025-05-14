@@ -1,15 +1,15 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.generators.base import BaseGenerator
+from src.generators.base import GeneratorUtilsMixin
 from src.generators.layer_generator import LayerGenerator
-from src.generators.presets.base import PresetGenerator
+from src.generators.presets.base import AbstractPresetGenerator
 from src.schemas import ConfigModel
 
 logger = getLogger(__name__)
 
 
-class SimplePresetGenerator(PresetGenerator, BaseGenerator):
+class SimplePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
     """Generator for the simple preset without contexts.
 
     This generator creates a flat structure with all layers directly

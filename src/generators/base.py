@@ -3,7 +3,7 @@ from pathlib import Path
 from src.templates.engine import TemplateEngine
 
 
-class BaseGenerator:
+class GeneratorUtilsMixin:
     """Base class for all code generators.
 
     This class provides common utility methods used by all specific

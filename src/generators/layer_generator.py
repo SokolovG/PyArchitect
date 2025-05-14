@@ -2,14 +2,14 @@ from logging import getLogger
 from pathlib import Path
 
 from src.core import single_form_words
-from src.generators.base import BaseGenerator
+from src.generators.base import GeneratorUtilsMixin
 from src.generators.utils import camel_to_snake
 from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
 
 
-class LayerGenerator(BaseGenerator):
+class LayerGenerator(GeneratorUtilsMixin):
     """Base generator for any architectural layer.
 
     This class handles the generation of components within a specific
@@ -35,7 +35,8 @@ class LayerGenerator(BaseGenerator):
 
         """
         super().__init__(template_engine)
-        self.template_dir = template_engine.get_template_dir(layer_name)
+        self.layer_name = layer_name
+        self.template_dir = template_engine.get_template_dir(self.layer_name)
         self.group_components = group_components
         self.init_imports = init_imports
         self.root_name = root_name
@@ -172,7 +173,8 @@ class LayerGenerator(BaseGenerator):
             module_name = generated_modules[component]
             if self.group_components:
                 imports.append(
-                    f"from {self.root_name}.{component_type}.{module_name} import {component}"
+                    f"from {self.root_name}.{self.layer_name}."
+                    f"{component_type}.{module_name} import {component}"
                 )
             else:
                 imports.append(

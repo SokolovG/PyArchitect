@@ -4,7 +4,7 @@ from pathlib import Path
 from src.schemas import ConfigModel
 
 
-class PresetGenerator(ABC):
+class AbstractPresetGenerator(ABC):
     """Base class for preset-specific generators."""
 
     def __init__(

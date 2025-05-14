@@ -1,6 +1,6 @@
 settings:
   preset: "simple"
-  generate_all_exports: True
+  init_imports: True
 
 layers:
   domain:

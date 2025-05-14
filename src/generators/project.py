@@ -1,25 +1,25 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.generators.base import BaseGenerator
+from src.generators.base import GeneratorUtilsMixin
 from src.generators.presets import (
     AdvancedPresetGenerator,
     SimplePresetGenerator,
     StandardPresetGenerator,
 )
-from src.generators.presets.base import PresetGenerator
+from src.generators.presets.base import AbstractPresetGenerator
 from src.schemas import ConfigModel
 from src.templates.engine import TemplateEngine
 
 
-class ProjectGenerator(BaseGenerator):
+class ProjectGenerator(GeneratorUtilsMixin):
     """Main project generator.
 
     This class coordinates the generation of all project components
     and layers based on the configuration file.
     """
 
-    PRESET_GENERATORS: dict[str, type[PresetGenerator]] = {
+    PRESET_GENERATORS: dict[str, type[AbstractPresetGenerator]] = {
         "simple": SimplePresetGenerator,
         "standard": StandardPresetGenerator,
         "advanced": AdvancedPresetGenerator,
