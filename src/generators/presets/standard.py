@@ -42,7 +42,7 @@ class StandardPresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
                 group_components=config.settings.group_components,
                 init_imports=config.settings.init_imports,
             )
-            generator.generate_components(layer_path, layer_config)
+            generator.generate_components(layer_path, layer_config)  # noqa
 
         logger.info("Standard preset generation completed successfully")
 

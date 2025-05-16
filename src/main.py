@@ -6,7 +6,7 @@ from src.core import container
 from src.generators import ProjectGenerator
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
@@ -23,7 +23,7 @@ async def main() -> None:
     This function initializes the project generator with the
     configuration file and starts the generation process.
     """
-    logger.info("Start generate...")
+    logger.debug("Start generate...")
     generator = await container.get(ProjectGenerator)
     generator.generate()
 

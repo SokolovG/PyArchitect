@@ -11,6 +11,8 @@ from src.generators.presets.base import AbstractPresetGenerator
 from src.schemas import ConfigModel
 from src.templates.engine import TemplateEngine
 
+logger = getLogger(__name__)
+
 
 class ProjectGenerator(GeneratorUtilsMixin):
     """Main project generator.
@@ -35,17 +37,19 @@ class ProjectGenerator(GeneratorUtilsMixin):
         """
         super().__init__(engine)
         self.config = config
-        self.logger = getLogger(__name__)
 
         preset_type = self.config.settings.preset
-        preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
+        preset_generator_class = self.PRESET_GENERATORS.get(
+            preset_type, StandardPresetGenerator
+        )
+        logger.debug(f"Set preset - {preset_generator_class}")
 
-        self.preset_generator = preset_generator_class(self.config)
+        self.preset_generator = preset_generator_class(self.config, engine)  # type: ignore
         self.preset_generator.template_engine = engine  # type: ignore
 
     def generate(self) -> None:
         """Generate the project structure based on the preset."""
-        self.logger.info("Project generator staring...")
+        logger.debug("Project generator staring...")
         project_root = Path.cwd()
         root_name = self.config.settings.root_name
         root_path = project_root / root_name

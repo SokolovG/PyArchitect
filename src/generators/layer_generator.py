@@ -10,10 +10,10 @@ logger = getLogger(__name__)
 
 
 class LayerGenerator(GeneratorUtilsMixin):
-    """Base generator for any architectural layer.
+    """Generator for components within a specific architectural layer.
 
-    This class handles the generation of components within a specific
-    architectural layer (domain, application, etc.).
+    This class is responsible for generating Python files for specific components
+    (entities, repositories, etc.) within existing directories.
     """
 
     def __init__(
@@ -28,10 +28,10 @@ class LayerGenerator(GeneratorUtilsMixin):
 
         Args:
             template_engine: Template engine instance
-            root_name: Root name
-            layer_name: Optional layer name for template lookup
-            group_components: single/group strategy
-            init_imports: create __all__ list in __init__.py
+            root_name: Root package name for imports
+            layer_name: Layer name for namespace/imports
+            group_components: Whether to group components in single files
+            init_imports: Whether to generate imports in __init__.py
 
         """
         super().__init__(template_engine)
@@ -41,60 +41,16 @@ class LayerGenerator(GeneratorUtilsMixin):
         self.init_imports = init_imports
         self.root_name = root_name
 
-    def generate_components(self, path: Path, layer_config: dict[str, list[str] | str]) -> None:
-        """Generate all components for a layer.
+    def generate_component(self, path: Path, component_type: str, component_name: str) -> str:
+        """Generate a single component file.
 
         Args:
-            path: Path to generate
-            layer_config: Configure a layer as a dictionary
-
-        """
-        for component_type, components in layer_config.items():
-            if not components:
-                continue
-
-            component_dir = path / component_type
-            self.create_directory(component_dir)
-            self.create_init_file(component_dir)
-
-            init_path = self.get_init_path(component_dir)
-
-            if isinstance(components, str):
-                components = [comp.strip() for comp in components.split(",")]
-
-            generated_modules = {}
-
-            if self.group_components:
-                self._generate_grouped_components(component_dir, component_type, components)
-                for component in components:
-                    generated_modules[component] = component_type
-
-            else:
-                for component_name in components:
-                    module_name = self._generate_component(
-                        component_dir, component_type, component_name
-                    )
-                    generated_modules[component_name] = module_name
-
-            self.init_imports = True
-            if self.init_imports:
-                self._generate_init_imports(
-                    init_path=init_path,
-                    component_type=component_type,
-                    components=components,
-                    generated_modules=generated_modules,
-                )
-
-    def _generate_component(self, path: Path, component_type: str, component_name: str) -> str:
-        """Generate of a single component.
-
-        Args:
-            path: The path where to generate
-            component_type: Component type (entities, value_objects, etc.)
-            component_name: Component name (User, Product, etc.)
+            path: Path where to create the file
+            component_type: Type of component (entity, repository, etc.)
+            component_name: Name of the component
 
         Returns:
-            str: The filename (without .py) that was generated
+            Name of the generated module (without .py)
 
         """
         singular_type = single_form_words.get(component_type, component_type.rstrip("s"))
@@ -121,6 +77,45 @@ class LayerGenerator(GeneratorUtilsMixin):
 
         self.write_file(file_path, content)
         return module_name
+
+    def generate_components(
+        self, component_dir: Path, component_type: str, components: list[str] | str
+    ) -> dict[str, str]:
+        """Generate all components of a specific type.
+
+        Args:
+            component_dir: Directory where to create components
+            component_type: Type of components (entities, repositories, etc.)
+            components: List of component names
+
+        Returns:
+            Dictionary mapping component names to their module names
+
+        """
+        if isinstance(components, str):
+            components = [comp.strip() for comp in components.split(",")]
+
+        generated_modules = {}
+
+        if self.group_components:
+            self._generate_grouped_components(component_dir, component_type, components)
+            for component in components:
+                generated_modules[component] = component_type
+        else:
+            for component_name in components:
+                module_name = self.generate_component(component_dir, component_type, component_name)
+                generated_modules[component_name] = module_name
+
+        if self.init_imports:
+            init_path = self.get_init_path(component_dir)
+            self._generate_init_imports(
+                init_path=init_path,
+                component_type=component_type,
+                components=components,
+                generated_modules=generated_modules,
+            )
+
+        return generated_modules
 
     def _generate_grouped_components(
         self, path: Path, component_type: str, components: list[str]
