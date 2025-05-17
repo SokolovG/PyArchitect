@@ -39,7 +39,10 @@ class StandardPresetGenerator(BasePresetGenerator):
                     self.create_init_file(context_path)
 
                     for component_type, components in context.items():
-                        component_dir = self.create_component_dir(context_path, component_type)
+                        component_dir = self.create_component_dir(
+                            context_path, f"{context_name}_{component_type}"
+                        )
+                        logger.critical(component_dir)
 
                         layer_generator = self._get_layer_generator(
                             layer_name=f"{layer_name}.{context_name}",

@@ -1,9 +1,8 @@
+import re
 from pathlib import Path
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoescape
-
-from src.generators.utils import camel_to_snake
 
 
 class TemplateEngine:
@@ -75,4 +74,23 @@ class TemplateEngine:
     def _register_filters(self) -> None:
         """Register custom Jinja2 filters."""
         self.env.filters["article"] = self._get_article
-        self.env.filters["camel_to_snake"] = camel_to_snake
+        self.env.filters["camel_to_snake"] = self.camel_to_snake
+
+    def camel_to_snake(self, component_name: str) -> str:
+        """Convert camelCase or PascalCase string to snake_case.
+
+        Args:
+            component_name: String in camelCase or PascalCase format
+
+        Returns:
+            String converted to snake_case format
+
+        """
+        clean_names = []
+        list_names = component_name.split(",")
+        for name in list_names:
+            name = name.strip()
+            name = re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+            clean_names.append(name)
+
+        return ", ".join(clean_names)

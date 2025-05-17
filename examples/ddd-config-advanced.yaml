@@ -7,15 +7,15 @@ settings:
 contexts:
   - name: user_context
     domain:
-      entities: [User]
-      value_objects: [Email]
+      entities: User
+      value_objects: Email
     application:
-      use_cases: [CreateUser]
+      use_cases: CreateUser
     infrastructure:
-      repositories: [UserRepository]
+      repositories: UserRepository
 
   - name: payment_context
     domain:
-      entities: [Payment]
+      entities: Payment
     application:
-      use_cases: [ProcessPayment]
+      use_cases: ProcessPayment

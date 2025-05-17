@@ -2,7 +2,7 @@ from logging import getLogger
 from pathlib import Path
 
 from src.core import single_form_words
-from src.generators.utils import GeneratorUtilsMixin, camel_to_snake
+from src.generators.utils import GeneratorUtilsMixin
 from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
@@ -53,7 +53,7 @@ class LayerGenerator(GeneratorUtilsMixin):
 
         """
         singular_type = single_form_words.get(component_type, component_type.rstrip("s"))
-        snake_name = camel_to_snake(component_name)
+        snake_name = self.template_engine.camel_to_snake(component_name)
 
         suffix = singular_type.lower()
         if snake_name.lower().endswith(f"_{suffix}"):
@@ -131,8 +131,6 @@ class LayerGenerator(GeneratorUtilsMixin):
         file_path = path / file_name
 
         template_path = "multi_component_template.py.jinja"
-        if not self.template_engine.template_exists(template_path):
-            template_path = "base_template.py.jinja"
 
         content = self.template_engine.render(
             template_path,

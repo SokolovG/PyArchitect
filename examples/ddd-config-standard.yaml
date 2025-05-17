@@ -1,20 +1,26 @@
 settings:
   preset: "standard"
+  init_imports: True
 
 layers:
   domain:
     contexts:
       - name: user
-        entities: [User, Profile]
-        value_objects: [Email, Password]
-        repositories: [UserRepository]
+        entities: User, Profile
+        value_objects: Email, Password
+        repositories: UserRepository
       - name: catalog
-        entities: [Product, Category]
-        repositories: [ProductRepository]
+        entities: Product, Category
+        repositories: ProductRepository
 
   application:
     contexts:
       - name: user
-        use_cases: [RegisterUser, LoginUser]
+        use_cases: RegisterUser, LoginUser
       - name: catalog
-        use_cases: [ListProducts, SearchProducts]
+        use_cases: ListProducts, SearchProducts
+
+  interface:
+    contexts:
+      - name: user
+        dto: UserDTO, AdminDTO

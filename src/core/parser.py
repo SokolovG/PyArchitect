@@ -22,7 +22,7 @@ class YamlParser:
 
     DEFAULT_CONFIG_PATH = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-        "ddd-config-simple.yaml",
+        "ddd-config-standard.yaml",
     )
 
     def __init__(self, file_path: Path | None = None) -> None:
@@ -35,8 +35,8 @@ class YamlParser:
         if file_path:
             self.file_path = file_path
         else:
-            package_dir = Path(__file__).parent.parent.parent
-            self.file_path = package_dir / "ddd-config-simple.yaml"
+            package_dir = Path(__file__).parent.parent.parent / "examples"
+            self.file_path = package_dir / "ddd-config-standard.yaml"
 
     def load(self) -> ConfigModel:
         """Load and parse the YAML configuration file.
