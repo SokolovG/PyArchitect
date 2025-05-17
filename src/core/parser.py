@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pydantic
@@ -19,11 +18,6 @@ class YamlParser:
         file_path: Path to the configuration file
 
     """
-
-    DEFAULT_CONFIG_PATH = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-        "ddd-config-standard.yaml",
-    )
 
     def __init__(self, file_path: Path | None = None) -> None:
         """Initialize YAML parser.

@@ -2,7 +2,11 @@ from logging import getLogger
 from pathlib import Path
 
 from src.core import single_form_words
-from src.generators.utils import GeneratorUtilsMixin
+from src.generators.utils import (
+    GeneratorUtilsMixin,
+    ImportPathGenerator,
+    StandardImportPathGenerator,
+)
 from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
@@ -22,6 +26,8 @@ class LayerGenerator(GeneratorUtilsMixin):
         layer_name: str = "",
         group_components: bool = True,
         init_imports: bool = False,
+        context_name: str | None = None,
+        import_path_generator: ImportPathGenerator | None = None,
     ) -> None:
         """Initialize layer generator.
 
@@ -31,6 +37,8 @@ class LayerGenerator(GeneratorUtilsMixin):
             layer_name: Layer name for namespace/imports
             group_components: Whether to group components in single files
             init_imports: Whether to generate imports in __init__.py
+            context_name: Name of context
+            import_path_generator: What kind imports
 
         """
         super().__init__(template_engine)
@@ -39,6 +47,8 @@ class LayerGenerator(GeneratorUtilsMixin):
         self.group_components = group_components
         self.init_imports = init_imports
         self.root_name = root_name
+        self.context_name = context_name if context_name else ""
+        self.import_path_generator = import_path_generator or StandardImportPathGenerator()
 
     def generate_component(self, path: Path, component_type: str, component_name: str) -> str:
         """Generate a single component file.
@@ -160,18 +170,17 @@ class LayerGenerator(GeneratorUtilsMixin):
 
         """
         imports = []
-
         for component in components:
             module_name = generated_modules[component]
-            if self.group_components:
-                imports.append(
-                    f"from {self.root_name}.{self.layer_name}."
-                    f"{component_type}.{module_name} import {component}"
-                )
-            else:
-                imports.append(
-                    f"from {self.root_name}.{component_type}.{module_name} import {component}"
-                )
+            import_path = self.import_path_generator.generate_import_path(
+                self.root_name,
+                self.layer_name,
+                self.context_name,
+                component_type,
+                module_name,
+                component,
+            )
+            imports.append(import_path)
         template_path = "init.py.jinja"
         content = self.template_engine.render(
             template_path,

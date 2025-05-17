@@ -3,7 +3,7 @@ from logging import getLogger
 from pathlib import Path
 
 from src.generators.layer_generator import LayerGenerator
-from src.generators.utils import GeneratorUtilsMixin
+from src.generators.utils import GeneratorUtilsMixin, ImportPathGenerator
 from src.schemas import ConfigModel
 from src.templates.engine import TemplateEngine
 
@@ -60,6 +60,8 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
         root_name: str,
         group_components: bool,
         init_imports: bool,
+        context_name: str | None = None,
+        import_path_generator: ImportPathGenerator | None = None,
     ) -> LayerGenerator:
         """Get or create a layer generator for the given layer.
 
@@ -68,6 +70,8 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
             root_name: Root package name
             group_components: Whether to group components
             init_imports: Whether to generate imports
+            context_name: Name context
+            import_path_generator: What kind of imports
 
         Returns:
             Configured LayerGenerator instance
@@ -82,6 +86,8 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
                 layer_name=layer_name,
                 group_components=group_components,
                 init_imports=init_imports,
+                context_name=context_name,
+                import_path_generator=import_path_generator,
             )
         logger.debug(f"layer_generator - {self.layer_generators[cache_key].layer_name}")
         return self.layer_generators[cache_key]

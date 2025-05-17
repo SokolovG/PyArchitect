@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 from src.templates.engine import TemplateEngine
@@ -66,3 +67,61 @@ class GeneratorUtilsMixin:
         """
         with open(path, "w") as file:
             file.write(content)
+
+
+class ImportPathGenerator(ABC):
+    @abstractmethod
+    def generate_import_path(
+        self,
+        root_name: str,
+        layer_name: str,
+        context_name: str,
+        component_type: str,
+        module_name: str,
+        component_name: str,
+    ) -> str:
+        """F."""
+
+
+class StandardImportPathGenerator(ImportPathGenerator):
+    def generate_import_path(
+        self,
+        root_name: str,
+        layer_name: str,
+        context_name: str,
+        component_type: str,
+        module_name: str,
+        component_name: str,
+    ) -> str:
+        """F."""
+        if context_name:
+            return (
+                f"from {root_name}.{layer_name}.{context_name}."
+                f"{component_type}.{module_name} import {component_name}"
+            )
+        return (
+            f"from {root_name}.{layer_name}.{component_type}."
+            f"{module_name} import {component_name}"
+        )
+
+
+class AdvancedImportPathGenerator(ImportPathGenerator):
+    def generate_import_path(
+        self,
+        root_name: str,
+        layer_name: str,
+        context_name: str,
+        component_type: str,
+        module_name: str,
+        component_name: str,
+    ) -> str:
+        """F."""
+        if context_name:
+            import_string = (
+                f"from {root_name}.{context_name}.{layer_name}."
+                f"{component_type}.{module_name} import {component_name}"
+            )
+            return import_string
+
+        import_string = f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
+        return import_string
