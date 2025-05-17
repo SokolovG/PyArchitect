@@ -1,13 +1,13 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.generators.base import GeneratorUtilsMixin
 from src.generators.presets import (
     AdvancedPresetGenerator,
     SimplePresetGenerator,
     StandardPresetGenerator,
 )
 from src.generators.presets.base import AbstractPresetGenerator
+from src.generators.utils import GeneratorUtilsMixin
 from src.schemas import ConfigModel
 from src.templates.engine import TemplateEngine
 
@@ -39,13 +39,10 @@ class ProjectGenerator(GeneratorUtilsMixin):
         self.config = config
 
         preset_type = self.config.settings.preset
-        preset_generator_class = self.PRESET_GENERATORS.get(
-            preset_type, StandardPresetGenerator
-        )
+        preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
         logger.debug(f"Set preset - {preset_generator_class}")
 
         self.preset_generator = preset_generator_class(self.config, engine)  # type: ignore
-        self.preset_generator.template_engine = engine  # type: ignore
 
     def generate(self) -> None:
         """Generate the project structure based on the preset."""

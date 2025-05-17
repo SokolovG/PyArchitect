@@ -1,15 +1,13 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.generators.base import GeneratorUtilsMixin
-from src.generators.layer_generator import LayerGenerator
-from src.generators.presets.base import AbstractPresetGenerator
+from src.generators.presets.base import BasePresetGenerator
 from src.schemas import ConfigModel
 
 logger = getLogger(__name__)
 
 
-class StandardPresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
+class StandardPresetGenerator(BasePresetGenerator):
     """Generator for the standard preset with contexts in layers."""
 
     def generate(self, root_path: Path, config: ConfigModel) -> None:
@@ -24,51 +22,48 @@ class StandardPresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
             config: Project configuration model containing settings and layer definitions
 
         """
-        logger.info("Starting standard preset generation...")
+        logger.debug("Starting standard preset generation...")
+
         layers_data = config.layers.model_dump()
         for layer_name, layer_config in layers_data.items():
             if not layer_config:
                 continue
 
-            layer_path = root_path / layer_name
+            layer_path = self.create_layer_dir(root_path, layer_name)
+            if "contexts" in layer_config:
+                contexts = layer_config.pop("contexts", [])
+                for context in contexts:
+                    context_name = context.pop("name", "default")
+                    context_path = layer_path / context_name
+                    self.create_directory(context_path)
+                    self.create_init_file(context_path)
 
-            self.create_directory(layer_path)
-            self.create_init_file(layer_path)
+                    for component_type, components in context.items():
+                        component_dir = self.create_component_dir(context_path, component_type)
 
-            root_name = config.settings.root_name
-            generator = self._create_layer_generator(
-                layer_name=layer_name,
-                root_name=root_name,
-                group_components=config.settings.group_components,
-                init_imports=config.settings.init_imports,
-            )
-            generator.generate_components(layer_path, layer_config)  # noqa
+                        layer_generator = self._get_layer_generator(
+                            layer_name=f"{layer_name}.{context_name}",
+                            root_name=config.settings.root_name,
+                            group_components=config.settings.group_components,
+                            init_imports=config.settings.init_imports,
+                        )
+                        layer_generator.generate_components(
+                            component_dir, component_type, components
+                        )
 
-        logger.info("Standard preset generation completed successfully")
+            for component_type, components in layer_config.items():
+                if not components:
+                    continue
 
-    def _create_layer_generator(
-        self,
-        layer_name: str,
-        root_name: str,
-        group_components: bool,
-        init_imports: bool,
-    ) -> LayerGenerator:
-        """Create layer generator for specific layer.
+                component_dir = self.create_component_dir(layer_path, component_type)
 
-        Args:
-            layer_name: Layer name (domain, application, etc.)
-            root_name: f
-            group_components: f
-            init_imports: f
+                layer_generator = self._get_layer_generator(
+                    layer_name=layer_name,
+                    root_name=config.settings.root_name,
+                    group_components=config.settings.group_components,
+                    init_imports=config.settings.init_imports,
+                )
 
-        Returns:
-            Configured LayerGenerator instance
+                layer_generator.generate_components(component_dir, component_type, components)
 
-        """
-        return LayerGenerator(
-            template_engine=self.template_engine,
-            root_name=root_name,
-            layer_name=layer_name,
-            group_components=group_components,
-            init_imports=init_imports,
-        )
+        logger.debug("Standard preset generation completed successfully")

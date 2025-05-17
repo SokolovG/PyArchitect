@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from logging import getLogger
 from pathlib import Path
 
-from src.generators.base import GeneratorUtilsMixin
 from src.generators.layer_generator import LayerGenerator
+from src.generators.utils import GeneratorUtilsMixin
 from src.schemas import ConfigModel
 from src.templates.engine import TemplateEngine
 
@@ -83,7 +83,7 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
                 group_components=group_components,
                 init_imports=init_imports,
             )
-        logger.debug(f"layer_generator - {self.layer_generators[cache_key]}")
+        logger.debug(f"layer_generator - {self.layer_generators[cache_key].layer_name}")
         return self.layer_generators[cache_key]
 
     def create_layer_dir(self, root_path: Path, layer_name: str) -> Path:

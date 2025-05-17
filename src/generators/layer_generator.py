@@ -2,8 +2,7 @@ from logging import getLogger
 from pathlib import Path
 
 from src.core import single_form_words
-from src.generators.base import GeneratorUtilsMixin
-from src.generators.utils import camel_to_snake
+from src.generators.utils import GeneratorUtilsMixin, camel_to_snake
 from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
