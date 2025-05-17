@@ -47,45 +47,26 @@ PyArchitect uses YAML configuration files to define the structure of your projec
 
 ```yaml
 settings:
-  preset: "simple"
-  generate_all_exports: True
+  preset: "standard"
 
 layers:
   domain:
-    entities: User, Admin
-    value_objects: Email, Password
+    contexts:
+      - name: user
+        entities: User, Profile
+        value_objects: Email, Password
+        repositories: UserRepository
+      - name: catalog
+        entities: Product, Category
+        repositories: ProductRepository
+
   application:
-    exceptions: UserNotFoundException, UserBlockedException
-  infrastructure:
-    repositories: UserRepository, AdminRepository
-  interface:
-    controllers: UserController, AdminController
-```
+    contexts:
+      - name: user
+        use_cases: RegisterUser, LoginUser
+      - name: catalog
+        use_cases: ListProducts, SearchProducts
 
-### Advanced Configuration Example
-
-```yaml
-settings:
-  preset: "advanced"
-  structure:
-    use_contexts: true
-    contexts_layout: "nested"
-
-contexts:
-  - name: user_context
-    domain:
-      entities: [User]
-      value_objects: [Email]
-    application:
-      use_cases: [CreateUser]
-    infrastructure:
-      repositories: [UserRepository]
-
-  - name: payment_context
-    domain:
-      entities: [Payment]
-    application:
-      use_cases: [ProcessPayment]
 ```
 
 ### Standard Configuration Example
@@ -111,6 +92,34 @@ layers:
         use_cases: [RegisterUser, LoginUser]
       - name: catalog
         use_cases: [ListProducts, SearchProducts]
+```
+
+
+### Advanced Configuration Example
+
+```yaml
+settings:
+  preset: "advanced"
+
+layers:
+  contexts:
+    - name: user_context
+      domain:
+        entities: User
+        value_objects: Email
+      application:
+        use_cases: CreateUser
+      infrastructure:
+        repositories: UserRepository
+
+    - name: payment_context
+      domain:
+        entities: Payment
+      application:
+        use_cases: ProcessPayment
+      infrastructure:
+        repositories: TransactionRepository
+
 ```
 
 ## Presets
