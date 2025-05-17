@@ -36,7 +36,7 @@ class YamlParser:
             self.file_path = file_path
         else:
             package_dir = Path(__file__).parent.parent.parent / "examples"
-            self.file_path = package_dir / "ddd-config-standard.yaml"
+            self.file_path = package_dir / "ddd-config-advanced.yaml"
 
     def load(self) -> ConfigModel:
         """Load and parse the YAML configuration file.

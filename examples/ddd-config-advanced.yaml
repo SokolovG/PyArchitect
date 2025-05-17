@@ -1,21 +1,23 @@
 settings:
   preset: "advanced"
-  structure:
-    use_contexts: true
-    contexts_layout: "nested"
+  contexts_layout: "nested"
+  init_imports: True
 
-contexts:
-  - name: user_context
-    domain:
-      entities: User
-      value_objects: Email
-    application:
-      use_cases: CreateUser
-    infrastructure:
-      repositories: UserRepository
+layers:
+  contexts:
+    - name: user_context
+      domain:
+        entities: User
+        value_objects: Email
+      application:
+        use_cases: CreateUser
+      infrastructure:
+        repositories: UserRepository
 
-  - name: payment_context
-    domain:
-      entities: Payment
-    application:
-      use_cases: ProcessPayment
+    - name: payment_context
+      domain:
+        entities: Payment
+      application:
+        use_cases: ProcessPayment
+      infrastructure:
+        repositories: TransactionRepository

@@ -107,4 +107,5 @@ class ConfigModel(BaseModel):
             self.settings.contexts_layout = ContextsLayout.FLAT
 
         elif self.settings.preset == PresetType.ADVANCED:
-            pass
+            self.settings.use_contexts = True
+            self.settings.contexts_layout = ContextsLayout.NESTED
