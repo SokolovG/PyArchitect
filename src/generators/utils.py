@@ -3,6 +3,26 @@ from pathlib import Path
 
 from src.templates.engine import TemplateEngine
 
+single_form_words = {
+    "entities": "entity",
+    "repositories": "repository",
+    "services": "service",
+    "value_objects": "value_object",
+    "aggregates": "aggregate",
+    "factories": "factory",
+    "domain_events": "domain_event",
+    "commands": "command",
+    "queries": "query",
+    "exceptions": "exception",
+    "controllers": "controller",
+    "dto": "dto",
+    "models": "model",
+    "adapters": "adapter",
+    "handlers": "handler",
+    "validators": "validator",
+    "specifications": "specification",
+}
+
 
 class GeneratorUtilsMixin:
     """Base class for all code generators.
@@ -100,8 +120,7 @@ class StandardImportPathGenerator(ImportPathGenerator):
                 f"{component_type}.{module_name} import {component_name}"
             )
         return (
-            f"from {root_name}.{layer_name}.{component_type}."
-            f"{module_name} import {component_name}"
+            f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
         )
 
 
@@ -123,5 +142,7 @@ class AdvancedImportPathGenerator(ImportPathGenerator):
             )
             return import_string
 
-        import_string = f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
+        import_string = (
+            f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
+        )
         return import_string

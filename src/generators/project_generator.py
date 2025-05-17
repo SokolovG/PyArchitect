@@ -45,8 +45,14 @@ class ProjectGenerator(GeneratorUtilsMixin):
         self.preset_generator = preset_generator_class(self.config, engine)  # type: ignore
 
     def generate(self) -> None:
-        """Generate the project structure based on the preset."""
-        logger.debug("Project generator staring...")
+        """Generate the project structure based on the preset.
+
+        Args:
+            If None, use default.
+
+        """
+        logger.debug("Project generator starting...")
+
         project_root = Path.cwd()
         root_name = self.config.settings.root_name
         root_path = project_root / root_name

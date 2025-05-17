@@ -1,11 +1,11 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.core import single_form_words
 from src.generators.utils import (
     GeneratorUtilsMixin,
     ImportPathGenerator,
     StandardImportPathGenerator,
+    single_form_words,
 )
 from src.templates.engine import TemplateEngine
 

@@ -1,4 +1,6 @@
-from dishka import Provider, Scope, make_async_container, provide
+from pathlib import Path
+
+from dishka import Provider, Scope, make_container, provide
 
 from src.core.parser import YamlParser
 from src.generators import ProjectGenerator
@@ -19,9 +21,14 @@ class MyProvider(Provider):
         return YamlParser()
 
     @provide(scope=Scope.APP)
-    def get_config(self, parser: YamlParser) -> ConfigModel:
+    def get_default_file_path(self) -> Path | None:
+        """Provide a default None value for file path."""
+        return None
+
+    @provide(scope=Scope.APP)
+    def get_config(self, parser: YamlParser, file_path: Path | None = None) -> ConfigModel:
         """Provide a validated ConfigModel loaded from YAML configuration."""
-        return parser.load()
+        return parser.load(file_path)
 
     @provide(scope=Scope.APP)
     def get_template_engine(self) -> TemplateEngine:
@@ -36,4 +43,4 @@ class MyProvider(Provider):
         return ProjectGenerator(config, engine)
 
 
-container = make_async_container(MyProvider())
+container = make_container(MyProvider())
