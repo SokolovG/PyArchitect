@@ -1,26 +1,159 @@
+# PyArchitect Standard Preset - Complete Example
+# This example demonstrates contexts organized within layers (flat context layout)
+# Suitable for medium to large projects with clear bounded contexts
+
 settings:
   preset: "standard"
-  init_imports: True
+  init_imports: true
+  group_components: true
 
 layers:
+  # Domain Layer - Organized by bounded contexts
   domain:
     contexts:
-      - name: user
-        entities: User, Profile
-        value_objects: Email, Password
-        repositories: UserRepository
-      - name: catalog
-        entities: Product, Category
-        repositories: ProductRepository
+      - name: user_management
+        entities: User, Admin, Role, Permission
+        value_objects: Email, Password, UserName, FullName
+        aggregates: UserAggregate
+        services: UserDomainService, AuthenticationService
+        repositories: IUserRepository, IRoleRepository
+        events: UserRegisteredEvent, UserActivatedEvent, RoleAssignedEvent
+        specifications: ActiveUserSpecification, AdminUserSpecification
+        factories: UserFactory
+        exceptions: UserNotFoundError, InvalidCredentialsError
 
+      - name: catalog
+        entities: Product, Category, Brand, ProductVariant
+        value_objects: ProductCode, Price, Weight, Dimensions
+        aggregates: ProductAggregate, CategoryAggregate
+        services: ProductPricingService, InventoryService
+        repositories: IProductRepository, ICategoryRepository, IBrandRepository
+        events: ProductCreatedEvent, PriceChangedEvent, StockUpdatedEvent
+        specifications: InStockSpecification, DiscountedProductSpecification
+        factories: ProductFactory
+        exceptions: ProductNotFoundError, InsufficientStockError
+
+      - name: ordering
+        entities: Order, OrderItem, Cart, Coupon
+        value_objects: OrderNumber, ShippingAddress, OrderStatus
+        aggregates: OrderAggregate, CartAggregate
+        services: OrderDomainService, ShippingCalculatorService
+        repositories: IOrderRepository, ICartRepository, ICouponRepository
+        events: OrderCreatedEvent, OrderShippedEvent, OrderCancelledEvent
+        specifications: ValidOrderSpecification, ShippableOrderSpecification
+        factories: OrderFactory
+        exceptions: InvalidOrderError, OrderNotFoundError
+
+      - name: payment
+        entities: Payment, PaymentMethod, Transaction
+        value_objects: Amount, Currency, PaymentStatus
+        aggregates: PaymentAggregate
+        services: PaymentProcessingService, RefundService
+        repositories: IPaymentRepository, ITransactionRepository
+        events: PaymentProcessedEvent, RefundIssuedEvent
+        specifications: ValidPaymentMethodSpecification
+        factories: PaymentFactory
+        exceptions: PaymentFailedError, InvalidPaymentMethodError
+
+  # Application Layer - Use cases grouped by context
   application:
     contexts:
-      - name: user
-        use_cases: RegisterUser, LoginUser
-      - name: catalog
-        use_cases: ListProducts, SearchProducts
+      - name: user_management
+        use_cases: RegisterUser, ActivateUser, LoginUser, AssignRole, ChangePassword
+        commands: RegisterUserCommand, ActivateUserCommand, AssignRoleCommand
+        command_handlers: RegisterUserHandler, ActivateUserHandler, AssignRoleHandler
+        queries: GetUserQuery, GetUserRolesQuery, GetActiveUsersQuery
+        query_handlers: GetUserHandler, GetUserRolesHandler, GetActiveUsersHandler
+        event_handlers: UserRegistrationNotificationHandler, RoleChangeHandler
+        validators: UserRegistrationValidator, PasswordValidator
+        exceptions: UserRegistrationError, AuthenticationError
 
+      - name: catalog
+        use_cases: CreateProduct, UpdateProduct, ManageInventory, CategorizeProduct, ApplyDiscount
+        commands: CreateProductCommand, UpdateInventoryCommand, CategorizeProductCommand
+        command_handlers: CreateProductHandler, UpdateInventoryHandler, CategorizeProductHandler
+        queries: GetProductQuery, SearchProductsQuery, GetCategoryProductsQuery
+        query_handlers: GetProductHandler, SearchProductsHandler, GetCategoryProductsHandler
+        event_handlers: StockLevelHandler, PriceChangeNotificationHandler
+        validators: ProductValidator, InventoryValidator
+        exceptions: ProductCreationError, InventoryError
+
+      - name: ordering
+        use_cases: CreateOrder, CancelOrder, AddToCart, ApplyCoupon, CalculateShipping
+        commands: CreateOrderCommand, CancelOrderCommand, AddToCartCommand
+        command_handlers: CreateOrderHandler, CancelOrderHandler, AddToCartHandler
+        queries: GetOrderQuery, GetOrderHistoryQuery, GetCartQuery
+        query_handlers: GetOrderHandler, GetOrderHistoryHandler, GetCartHandler
+        event_handlers: OrderNotificationHandler, ShippingHandler
+        validators: OrderValidator, CartValidator
+        exceptions: OrderCreationError, CartError
+
+      - name: payment
+        use_cases: ProcessPayment, IssueRefund, SavePaymentMethod, VerifyPayment
+        commands: ProcessPaymentCommand, IssueRefundCommand, SavePaymentMethodCommand
+        command_handlers: ProcessPaymentHandler, IssueRefundHandler, SavePaymentMethodHandler
+        queries: GetPaymentQuery, GetPaymentHistoryQuery, GetPaymentMethodsQuery
+        query_handlers: GetPaymentHandler, GetPaymentHistoryHandler, GetPaymentMethodsHandler
+        event_handlers: PaymentNotificationHandler, FraudDetectionHandler
+        validators: PaymentValidator, PaymentMethodValidator
+        exceptions: PaymentError, RefundError
+
+  # Infrastructure Layer - Technical implementations
+  infrastructure:
+    repositories: UserRepository, ProductRepository, OrderRepository, PaymentRepository
+    models: UserModel, ProductModel, OrderModel, PaymentModel, RoleModel, CategoryModel
+    adapters: EmailAdapter, SMSAdapter, PaymentGatewayAdapter, InventoryAdapter
+    unit_of_work: SqlUnitOfWork, NoSqlUnitOfWork
+    message_bus: InMemoryMessageBus, RabbitMQMessageBus, RedisMessageBus
+    background_tasks: EmailTask, InventoryUpdateTask, ReportGenerationTask
+    configs: DatabaseConfig, RedisConfig, EmailConfig, PaymentConfig
+    mappings: UserMapping, ProductMapping, OrderMapping
+    migrations: Initial, AddIndexes, AddPaymentTables, AddRoles
+
+  # Interface Layer - API and external interfaces
   interface:
     contexts:
-      - name: user
-        dto: UserDTO, AdminDTO
+      - name: user_management
+        controllers: UserController, AuthController, RoleController
+        dto: UserDTO, CreateUserDTO, UpdateUserDTO, RoleDTO, LoginDTO
+        presenters: UserPresenter, RolePresenter
+        routes: UserRoutes, AuthRoutes
+        schemas: UserCreateSchema, UserReadSchema, UserUpdateSchema, LoginSchema
+
+      - name: catalog
+        controllers: ProductController, CategoryController
+        dto: ProductDTO, CreateProductDTO, UpdateProductDTO, CategoryDTO
+        presenters: ProductPresenter, ProductListPresenter, CategoryPresenter
+        routes: ProductRoutes, CategoryRoutes
+        schemas: ProductCreateSchema, ProductReadSchema, CategorySchema
+
+      - name: ordering
+        controllers: OrderController, CartController
+        dto: OrderDTO, CreateOrderDTO, CartDTO, OrderItemDTO
+        presenters: OrderPresenter, CartPresenter
+        routes: OrderRoutes, CartRoutes
+        schemas: OrderCreateSchema, OrderReadSchema, CartSchema
+
+      - name: payment
+        controllers: PaymentController
+        dto: PaymentDTO, ProcessPaymentDTO, PaymentMethodDTO
+        presenters: PaymentPresenter, PaymentHistoryPresenter
+        routes: PaymentRoutes
+        schemas: PaymentSchema, RefundSchema
+
+    # Shared interface components
+    middleware: AuthenticationMiddleware, LoggingMiddleware, CORSMiddleware, RateLimitMiddleware
+    error_handlers: ValidationErrorHandler, DomainErrorHandler, InfrastructureErrorHandler
+    filters: UserFilter, ProductFilter, OrderFilter
+    interceptors: LoggingInterceptor, CachingInterceptor
+
+  # Common/Shared components
+  common:
+    constants: UserConstants, ProductConstants, OrderConstants, PaymentConstants, AppConstants
+    exceptions: BaseApplicationError, BaseInfrastructureError, BaseValidationError
+    utils: DateUtils, StringUtils, ValidationUtils, CryptographyUtils, FileUtils
+    interfaces: ILogger, ICache, IEmailSender, IPaymentProcessor, INotificationService
+    types: UserId, ProductId, OrderId, PaymentId, Email, Money, Timestamp
+    decorators: LoggingDecorator, CachingDecorator, RetryDecorator, TransactionalDecorator
+    enums: UserStatus, OrderStatus, PaymentStatus, ProductStatus
+    helpers: PaginationHelper, SearchHelper, ValidationHelper

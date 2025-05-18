@@ -60,7 +60,9 @@ class LayerConfig(BaseModel):
         """
         if isinstance(values, dict):
             for key, value in values.items():
-                if isinstance(value, str):
+                if value is None:
+                    values[key] = []
+                elif isinstance(value, str):
                     values[key] = [value]
         return values
 

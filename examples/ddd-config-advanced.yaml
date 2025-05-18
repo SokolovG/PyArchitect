@@ -1,23 +1,203 @@
+# PyArchitect Advanced Preset - Complete Example
+# This example demonstrates nested contexts layout (layers inside contexts)
+# Ideal for complex projects with multiple independent bounded contexts
+
 settings:
   preset: "advanced"
   contexts_layout: "nested"
-  init_imports: True
+  init_imports: true
+  group_components: false  # Individual files for better separation
+  root_name: "app"
 
 layers:
   contexts:
-    - name: user_context
+    # User Management Bounded Context
+    - name: user_management
       domain:
-        entities: User
-        value_objects: Email
-      application:
-        use_cases: CreateUser
-      infrastructure:
-        repositories: UserRepository
+        entities: User, Admin, Role, Permission, UserProfile, UserPreferences
+        value_objects: Email, Password, UserName, FullName, Avatar, Timezone
+        aggregates: UserAggregate, RoleAggregate
+        services: UserDomainService, AuthenticationService, PasswordService
+        repositories: IUserRepository, IRoleRepository, IPermissionRepository
+        events: UserRegisteredEvent, UserActivatedEvent, PasswordChangedEvent, RoleAssignedEvent
+        specifications: ActiveUserSpecification, AdminUserSpecification, ExpiredPasswordSpecification
+        factories: UserFactory, RoleFactory
+        exceptions: UserNotFoundError, InvalidCredentialsError, DuplicateEmailError
 
-    - name: payment_context
-      domain:
-        entities: Payment
       application:
-        use_cases: ProcessPayment
+        use_cases: RegisterUser, ActivateUser, LoginUser, LogoutUser, ChangePassword, AssignRole, UpdateProfile
+        commands: RegisterUserCommand, ActivateUserCommand, ChangePasswordCommand, AssignRoleCommand
+        command_handlers: RegisterUserHandler, ActivateUserHandler, ChangePasswordHandler, AssignRoleHandler
+        queries: GetUserQuery, GetUserRolesQuery, GetActiveUsersQuery, GetUserProfileQuery
+        query_handlers: GetUserHandler, GetUserRolesHandler, GetActiveUsersHandler, GetUserProfileHandler
+        event_handlers: UserRegistrationEmailHandler, PasswordChangeNotificationHandler, AuditLogHandler
+        validators: UserRegistrationValidator, PasswordStrengthValidator, EmailValidator
+        exceptions: UserRegistrationError, AuthenticationError, ValidationError
+        services: UserApplicationService, NotificationService
+
       infrastructure:
-        repositories: TransactionRepository
+        repositories: UserRepository, RoleRepository, PermissionRepository
+        models: UserModel, RoleModel, PermissionModel, UserRoleModel, AuditLogModel
+        adapters: EmailAdapter, LDAPAdapter, SSOAdapter, AuditAdapter
+        configs: UserManagementConfig, EmailConfig, LDAPConfig
+        migrations: CreateUserTables, AddUserIndexes, AddAuditLog
+        caching: UserCache, RoleCache
+
+      interface:
+        controllers: UserController, AuthController, RoleController, ProfileController
+        dto: UserDTO, CreateUserDTO, UpdateUserDTO, LoginDTO, RoleDTO, ProfileDTO
+        presenters: UserPresenter, UserListPresenter, RolePresenter, ProfilePresenter
+        routes: UserRoutes, AuthRoutes, RoleRoutes, ProfileRoutes
+        middleware: UserAuthenticationMiddleware, RoleAuthorizationMiddleware
+        schemas: UserCreateSchema, UserUpdateSchema, LoginSchema, RoleSchema
+        validators: UserInputValidator, RoleInputValidator
+
+    # Product Catalog Bounded Context
+    - name: catalog
+      domain:
+        entities: Product, Category, Brand, ProductVariant, Attribute, AttributeValue
+        value_objects: ProductCode, SKU, Price, Weight, Dimensions, Color, Size
+        aggregates: ProductAggregate, CategoryAggregate, BrandAggregate
+        services: ProductPricingService, InventoryService, SearchService, RecommendationService
+        repositories: IProductRepository, ICategoryRepository, IBrandRepository, IAttributeRepository
+        events: ProductCreatedEvent, PriceChangedEvent, StockUpdatedEvent, ProductDiscontinuedEvent
+        specifications: InStockSpecification, DiscountedProductSpecification, FeaturedProductSpecification
+        factories: ProductFactory, CategoryFactory, VariantFactory
+        exceptions: ProductNotFoundError, InsufficientStockError, InvalidPriceError, DuplicateProductCodeError
+
+      application:
+        use_cases: CreateProduct, UpdateProduct, DeleteProduct, ManageInventory, CategorizeProduct, ApplyDiscount
+        commands: CreateProductCommand, UpdateInventoryCommand, ApplyDiscountCommand, CategorizeProductCommand
+        command_handlers: CreateProductHandler, UpdateInventoryHandler, ApplyDiscountHandler, CategorizeProductHandler
+        queries: GetProductQuery, SearchProductsQuery, GetCategoryProductsQuery, GetFeaturedProductsQuery
+        query_handlers: GetProductHandler, SearchProductsHandler, GetCategoryProductsHandler, GetFeaturedProductsHandler
+        event_handlers: StockLevelHandler, PriceChangeHandler, SearchIndexHandler, RecommendationUpdateHandler
+        validators: ProductValidator, InventoryValidator, PriceValidator, CategoryValidator
+        exceptions: ProductCreationError, InventoryError, CatalogError
+        services: CatalogApplicationService, SearchApplicationService
+
+      infrastructure:
+        repositories: ProductRepository, CategoryRepository, BrandRepository, AttributeRepository
+        models: ProductModel, CategoryModel, BrandModel, AttributeModel, ProductAttributeModel, InventoryModel
+        adapters: SearchEngineAdapter, ImageStorageAdapter, CDNAdapter, InventoryAdapter
+        configs: CatalogConfig, SearchConfig, StorageConfig
+        migrations: CreateCatalogTables, AddCatalogIndexes, AddFullTextSearch
+        search_engines: ElasticsearchEngine, SolrEngine
+        caching: ProductCache, CategoryCache, SearchCache
+
+      interface:
+        controllers: ProductController, CategoryController, BrandController, SearchController
+        dto: ProductDTO, CreateProductDTO, UpdateProductDTO, CategoryDTO, BrandDTO, SearchResultDTO
+        presenters: ProductPresenter, ProductListPresenter, CategoryPresenter, SearchResultPresenter
+        routes: ProductRoutes, CategoryRoutes, BrandRoutes, SearchRoutes
+        middleware: CatalogCacheMiddleware, SearchMiddleware
+        schemas: ProductCreateSchema, ProductUpdateSchema, CategorySchema, SearchSchema
+        filters: ProductFilter, CategoryFilter, PriceFilter
+
+    # Order Management Bounded Context
+    - name: ordering
+      domain:
+        entities: Order, OrderItem, Cart, CartItem, Coupon, ShippingMethod, OrderHistory
+        value_objects: OrderNumber, ShippingAddress, BillingAddress, OrderStatus, TrackingNumber
+        aggregates: OrderAggregate, CartAggregate, CouponAggregate
+        services: OrderDomainService, ShippingCalculatorService, DiscountService, TaxCalculatorService
+        repositories: IOrderRepository, ICartRepository, ICouponRepository, IShippingMethodRepository
+        events: OrderCreatedEvent, OrderUpdatedEvent, OrderShippedEvent, OrderDeliveredEvent, OrderCancelledEvent
+        specifications: ValidOrderSpecification, ShippableOrderSpecification, CancellableOrderSpecification
+        factories: OrderFactory, CartFactory, CouponFactory
+        exceptions: InvalidOrderError, OrderNotFoundError, CartEmptyError, CouponExpiredError
+
+      application:
+        use_cases: CreateOrder, UpdateOrder, CancelOrder, AddToCart, RemoveFromCart, ApplyCoupon, CalculateShipping
+        commands: CreateOrderCommand, CancelOrderCommand, AddToCartCommand, ApplyCouponCommand
+        command_handlers: CreateOrderHandler, CancelOrderHandler, AddToCartHandler, ApplyCouponHandler
+        queries: GetOrderQuery, GetOrderHistoryQuery, GetCartQuery, GetActiveOrdersQuery
+        query_handlers: GetOrderHandler, GetOrderHistoryHandler, GetCartHandler, GetActiveOrdersHandler
+        event_handlers: OrderNotificationHandler, InventoryReservationHandler, ShippingHandler, InvoiceHandler
+        validators: OrderValidator, CartValidator, CouponValidator, ShippingValidator
+        exceptions: OrderCreationError, CartError, OrderValidationError
+        services: OrderApplicationService, CartApplicationService
+
+      infrastructure:
+        repositories: OrderRepository, CartRepository, CouponRepository, ShippingMethodRepository
+        models: OrderModel, OrderItemModel, CartModel, CartItemModel, CouponModel, ShippingModel
+        adapters: ShippingAdapter, TaxAdapter, InventoryAdapter, InvoiceAdapter
+        configs: OrderingConfig, ShippingConfig, TaxConfig
+        migrations: CreateOrderTables, AddOrderIndexes, AddShippingTables
+        external_services: ShippingService, TaxService, InventoryService
+
+      interface:
+        controllers: OrderController, CartController, CouponController, ShippingController
+        dto: OrderDTO, CreateOrderDTO, UpdateOrderDTO, CartDTO, CouponDTO, ShippingMethodDTO
+        presenters: OrderPresenter, OrderListPresenter, CartPresenter, InvoicePresenter
+        routes: OrderRoutes, CartRoutes, CouponRoutes, ShippingRoutes
+        middleware: OrderAuthorizationMiddleware, CartSessionMiddleware
+        schemas: OrderCreateSchema, OrderUpdateSchema, CartSchema, CouponSchema
+        workflows: OrderWorkflow, CheckoutWorkflow
+
+    # Payment Processing Bounded Context
+    - name: payment
+      domain:
+        entities: Payment, PaymentMethod, Transaction, Refund, PaymentProvider, Invoice
+        value_objects: Amount, Currency, PaymentStatus, TransactionId, RefundReason
+        aggregates: PaymentAggregate, RefundAggregate, InvoiceAggregate
+        services: PaymentProcessingService, RefundService, FraudDetectionService, CurrencyConversionService
+        repositories: IPaymentRepository, ITransactionRepository, IRefundRepository, IInvoiceRepository
+        events: PaymentInitiatedEvent, PaymentProcessedEvent, PaymentFailedEvent, RefundIssuedEvent
+        specifications: ValidPaymentMethodSpecification, FraudulentTransactionSpecification
+        factories: PaymentFactory, RefundFactory, InvoiceFactory
+        exceptions: PaymentFailedError, InvalidPaymentMethodError, FraudDetectedError, InsufficientFundsError
+
+      application:
+        use_cases: ProcessPayment, IssueRefund, SavePaymentMethod, VerifyPayment, GenerateInvoice, ProcessRecurringPayment
+        commands: ProcessPaymentCommand, IssueRefundCommand, SavePaymentMethodCommand, VerifyPaymentCommand
+        command_handlers: ProcessPaymentHandler, IssueRefundHandler, SavePaymentMethodHandler, VerifyPaymentHandler
+        queries: GetPaymentQuery, GetPaymentHistoryQuery, GetPaymentMethodsQuery, GetInvoiceQuery
+        query_handlers: GetPaymentHandler, GetPaymentHistoryHandler, GetPaymentMethodsHandler, GetInvoiceHandler
+        event_handlers: PaymentNotificationHandler, FraudDetectionHandler, AccountingHandler, InvoiceGenerationHandler
+        validators: PaymentValidator, PaymentMethodValidator, RefundValidator, CurrencyValidator
+        exceptions: PaymentError, RefundError, PaymentValidationError
+        services: PaymentApplicationService, FraudApplicationService
+
+      infrastructure:
+        repositories: PaymentRepository, TransactionRepository, RefundRepository, InvoiceRepository
+        models: PaymentModel, TransactionModel, RefundModel, InvoiceModel, PaymentMethodModel
+        adapters: StripeAdapter, PayPalAdapter, BankAdapter, FraudServiceAdapter, AccountingAdapter
+        configs: PaymentConfig, FraudConfig, CurrencyConfig
+        migrations: CreatePaymentTables, AddPaymentIndexes, AddFraudDetectionTables
+        gateways: StripeGateway, PayPalGateway, BankGateway
+        processors: CreditCardProcessor, BankTransferProcessor, DigitalWalletProcessor
+
+      interface:
+        controllers: PaymentController, RefundController, InvoiceController, PaymentMethodController
+        dto: PaymentDTO, ProcessPaymentDTO, RefundDTO, InvoiceDTO, PaymentMethodDTO
+        presenters: PaymentPresenter, PaymentHistoryPresenter, InvoicePresenter, RefundPresenter
+        routes: PaymentRoutes, RefundRoutes, InvoiceRoutes, PaymentMethodRoutes
+        middleware: PaymentSecurityMiddleware, FraudDetectionMiddleware
+        schemas: PaymentSchema, RefundSchema, InvoiceSchema, PaymentMethodSchema
+        webhooks: StripeWebhookHandler, PayPalWebhookHandler
+
+  # Shared Kernel - Common components across contexts
+  shared_kernel:
+    domain:
+      value_objects: Money, Currency, Timestamp, Identifier, Email, PhoneNumber
+      events: DomainEvent, EventStore
+      exceptions: DomainException, BusinessRuleViolationException
+      specifications: CompositeSpecification
+      interfaces: IRepository, IEventPublisher, IDomainEventHandler
+
+    application:
+      interfaces: IUnitOfWork, IEventBus, IQuery, ICommand
+      exceptions: ApplicationException, ValidationException
+      behaviors: LoggingBehavior, ValidatorBehavior, TransactionBehavior
+
+    infrastructure:
+      messaging: IMessageBus, IEventStore, ICommandBus, IQueryBus
+      persistence: IDbContext, IConnectionFactory
+      caching: ICache, ICacheManager
+      logging: ILogger, ILoggerFactory
+
+    interface:
+      responses: ApiResponse, ErrorResponse, PaginatedResponse
+      filters: ExceptionFilter, ValidationFilter
+      middleware: BaseMiddleware

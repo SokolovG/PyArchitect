@@ -1,0 +1,24 @@
+# PyArchitect - Minimal Working Example
+# Perfect for testing and getting started quickly
+
+settings:
+  preset: "simple"
+  init_imports: true
+  group_components: true
+
+layers:
+  domain:
+    entities: User, Product
+    value_objects: Email, Money
+    repositories: IUserRepository, IProductRepository
+
+  application:
+    use_cases: CreateUser, CreateProduct
+    exceptions: UserNotFoundError
+
+  infrastructure:
+    repositories: UserRepository, ProductRepository
+
+  interface:
+    controllers: UserController, ProductController
+    dto: UserDTO, ProductDTO

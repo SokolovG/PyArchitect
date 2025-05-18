@@ -101,8 +101,14 @@ class LayerGenerator(GeneratorUtilsMixin):
             Dictionary mapping component names to their module names
 
         """
+        if components is None:
+            return {}
+
         if isinstance(components, str):
             components = [comp.strip() for comp in components.split(",")]
+
+        if not components:
+            return {}
 
         generated_modules = {}
 

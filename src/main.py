@@ -41,18 +41,14 @@ def init(preset: str) -> None:
     source_file = examples_dir / f"ddd-config-{preset}.yaml"
 
     if not source_file.exists():
-        click.echo(f"✗ Unknown preset: {preset}", err=True, color=True)
+        click.echo(click.style(f"✗ Unknown preset: {preset}", fg="red"), err=True)
         return
 
     try:
         shutil.copy(source_file, config_path)
-        click.echo(
-            click.style(f"✓ Generated {preset} config: {config_path}", fg="green")
-        )
+        click.echo(click.style(f"✓ Generated {preset} config: {config_path}", fg="green"))
     except OSError as error:
-        click.echo(
-            click.style(f"✗ Failed to create config file: {error}", fg="red"), err=True
-        )
+        click.echo(click.style(f"✗ Failed to create config file: {error}", fg="red"), err=True)
 
 
 @click.command()
@@ -112,9 +108,7 @@ def run(file: str | None = None) -> None:
         path = Path(file) if file else None
 
         if path and not path.exists():
-            click.echo(
-                click.style(f"Error: Config file not found: {file}", fg="red"), err=True
-            )
+            click.echo(click.style(f"Error: Config file not found: {file}", fg="red"), err=True)
             return
 
         click.echo("Project generation started.", color=True)
@@ -122,12 +116,9 @@ def run(file: str | None = None) -> None:
         generator = container.get(ProjectGenerator)
         generator.generate()
 
-        click.echo(
-            click.style("Project generation completed successfully.", fg="green")
-        )
+        click.echo(click.style("Project generation completed successfully.", fg="green"))
 
     except Exception as error:
-
         click.echo(click.style(f"Error: {error}", fg="red"), err=True)
 
 

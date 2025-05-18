@@ -1,0 +1,32 @@
+# PyArchitect - Example with empty directories
+# Demonstrates how to create directories without files
+
+settings:
+  preset: "simple"
+  init_imports: true
+
+layers:
+  domain:
+    entities: User, Product
+    value_objects: Email, Money
+    # Create empty directories
+    utils:
+    helpers:
+
+  application:
+    use_cases: CreateUser
+    # Empty directories for future expansion
+    workflows:
+    sagas:
+
+  infrastructure:
+    repositories: UserRepository
+    # Placeholder directories
+    external_services:
+    message_queues:
+
+  common:
+    # Only create directories, no files
+    constants:
+    exceptions:
+    types:
