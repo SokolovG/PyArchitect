@@ -119,9 +119,7 @@ class StandardImportPathGenerator(ImportPathGenerator):
                 f"from {root_name}.{layer_name}.{context_name}."
                 f"{component_type}.{module_name} import {component_name}"
             )
-        return (
-            f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
-        )
+        return f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
 
 
 class AdvancedImportPathGenerator(ImportPathGenerator):
@@ -142,7 +140,5 @@ class AdvancedImportPathGenerator(ImportPathGenerator):
             )
             return import_string
 
-        import_string = (
-            f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
-        )
+        import_string = f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"
         return import_string

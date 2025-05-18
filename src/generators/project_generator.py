@@ -39,7 +39,9 @@ class ProjectGenerator(GeneratorUtilsMixin):
         self.config = config
 
         preset_type = self.config.settings.preset
-        preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
+        preset_generator_class = self.PRESET_GENERATORS.get(
+            preset_type, StandardPresetGenerator
+        )
         logger.debug(f"Set preset - {preset_generator_class}")
 
         self.preset_generator = preset_generator_class(self.config, engine)  # type: ignore

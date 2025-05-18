@@ -1,4 +1,5 @@
 import logging
+import shutil
 import sys
 from pathlib import Path
 
@@ -31,6 +32,27 @@ def cli() -> None:
 @click.option("-p", "--preset", default="standard", help="Preset selection.")
 def init(preset: str) -> None:
     """Generate basic example based on preset."""
+    config_path = Path("ddd-config.yaml")
+    if config_path.exists():
+        click.echo(click.style("✗ Config file already exists", fg="red"), err=True)
+        return
+
+    examples_dir = Path(__file__).parent.parent / "examples"
+    source_file = examples_dir / f"ddd-config-{preset}.yaml"
+
+    if not source_file.exists():
+        click.echo(f"✗ Unknown preset: {preset}", err=True, color=True)
+        return
+
+    try:
+        shutil.copy(source_file, config_path)
+        click.echo(
+            click.style(f"✓ Generated {preset} config: {config_path}", fg="green")
+        )
+    except OSError as error:
+        click.echo(
+            click.style(f"✗ Failed to create config file: {error}", fg="red"), err=True
+        )
 
 
 @click.command()
@@ -45,12 +67,24 @@ def validate(file: str | None = None) -> None:
             parser.load(file_path)
         else:
             parser.load()
-        click.echo("✓ Configuration validated successfully")
+        click.echo(
+            click.style("✓ Configuration validated successfully", fg="green"),
+            color=True,
+        )
     except YamlParseError as error:
-        click.echo(f"✗ {error}", err=True)
+        click.echo(click.style(f"✗ {error}", fg="red"), err=True)
     except pydantic.ValidationError as error:
-        click.echo(f"✗ Configuration invalid: {error}", err=True)
-        click.echo("Hint: Check the documentation for correct configuration format")
+        click.echo(
+            click.style(f"✗ Configuration invalid: {error}", fg="red"),
+            err=True,
+            color=True,
+        )
+        click.echo(
+            click.style(
+                "Hint: Check the documentation for correct configuration format",
+                fg="red",
+            )
+        )
 
 
 @click.command()
@@ -60,7 +94,6 @@ def preview(file: str | None = None) -> None:
 
 
 @click.command()
-@click.option()
 def add() -> None:
     """Add component."""
 
@@ -79,19 +112,23 @@ def run(file: str | None = None) -> None:
         path = Path(file) if file else None
 
         if path and not path.exists():
-            click.echo(f"Error: Config file not found: {file}", err=True)
+            click.echo(
+                click.style(f"Error: Config file not found: {file}", fg="red"), err=True
+            )
             return
 
-        click.echo("Project generation started.")
+        click.echo("Project generation started.", color=True)
 
         generator = container.get(ProjectGenerator)
         generator.generate()
 
-        click.echo("Project generation completed successfully.")
+        click.echo(
+            click.style("Project generation completed successfully.", fg="green")
+        )
 
     except Exception as error:
-        logger.error(f"Error during project generation: {error}")
-        click.echo(f"Error: {error}", err=True)
+
+        click.echo(click.style(f"Error: {error}", fg="red"), err=True)
 
 
 cli.add_command(run)
