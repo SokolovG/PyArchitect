@@ -31,7 +31,8 @@ class StandardPresetGenerator(BasePresetGenerator):
 
             layer_path = self.create_layer_dir(root_path, layer_name)
             if "contexts" in layer_config:
-                contexts = layer_config.pop("contexts", [])
+                layer_config_copy = layer_config.copy()
+                contexts = layer_config_copy.pop("contexts", [])
                 for context in contexts:
                     context_name = context.pop("name", "default")
                     context_path = layer_path / context_name

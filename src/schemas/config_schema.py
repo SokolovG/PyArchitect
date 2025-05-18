@@ -60,10 +60,11 @@ class LayerConfig(BaseModel):
         """
         if isinstance(values, dict):
             for key, value in values.items():
-                if value is None:
+                if value is None or value == "":
                     values[key] = []
                 elif isinstance(value, str):
-                    values[key] = [value]
+                    components = [c.strip() for c in value.split(",") if c.strip()]
+                    values[key] = components
         return values
 
     def get_components(self) -> dict[str, list[str]]:

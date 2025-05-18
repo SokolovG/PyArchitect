@@ -15,11 +15,7 @@ class YamlParser:
 
     """
 
-    DEFAULT_CONFIG_FILENAMES = [
-        "ddd-config-simple.yaml",
-        "ddd-config-standard.yaml",
-        "ddd-config-advanced.yaml",
-    ]
+    DEFAULT_CONFIG_FILENAME = "ddd-config.yaml"
 
     def load(self, file_path: Path | None = None) -> ConfigModel:
         """Load and parse the YAML configuration file.
@@ -37,13 +33,12 @@ class YamlParser:
 
         """
         if file_path is None:
-            for file_name in self.DEFAULT_CONFIG_FILENAMES:
-                file_path = Path.cwd() / file_name
+            file_path = Path.cwd() / self.DEFAULT_CONFIG_FILENAME
 
-                if not file_path.exists():
-                    raise ConfigFileNotFoundError(str(file_path))
+            if file_path is None:
+                raise ConfigFileNotFoundError(f"FIle path - {file_path}")
 
-        with open(file_path, encoding="utf-8") as file:  # type: ignore
+        with open(file_path, encoding="utf-8") as file:
             try:
                 raw_config = yaml.safe_load(file)
                 return self.validate(raw_config)
