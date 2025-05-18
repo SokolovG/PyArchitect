@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from logging import getLogger
 from pathlib import Path
 
+from src.core.template_engine import TemplateEngine
 from src.generators.layer_generator import LayerGenerator
 from src.generators.utils import GeneratorUtilsMixin, ImportPathGenerator
 from src.schemas import ConfigModel
-from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
 

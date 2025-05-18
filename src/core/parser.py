@@ -13,12 +13,13 @@ class YamlParser:
     This class is responsible for loading and validating the YAML
     configuration file according to the expected schema.
 
-    Attributes:
-        file_path: Path to the configuration file
-
     """
 
-    DEFAULT_CONFIG_FILENAME = "ddd-config.yaml"
+    DEFAULT_CONFIG_FILENAMES = [
+        "ddd-config-simple.yaml",
+        "ddd-config-standard.yaml",
+        "ddd-config-advanced.yaml",
+    ]
 
     def load(self, file_path: Path | None = None) -> ConfigModel:
         """Load and parse the YAML configuration file.
@@ -36,12 +37,13 @@ class YamlParser:
 
         """
         if file_path is None:
-            file_path = Path.cwd() / self.DEFAULT_CONFIG_FILENAME
+            for file_name in self.DEFAULT_CONFIG_FILENAMES:
+                file_path = Path.cwd() / file_name
 
-        if not file_path.exists():
-            raise ConfigFileNotFoundError(str(file_path))
+                if not file_path.exists():
+                    raise ConfigFileNotFoundError(str(file_path))
 
-        with open(file_path, encoding="utf-8") as file:
+        with open(file_path, encoding="utf-8") as file:  # type: ignore
             try:
                 raw_config = yaml.safe_load(file)
                 return self.validate(raw_config)

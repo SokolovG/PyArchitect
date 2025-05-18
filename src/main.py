@@ -37,7 +37,7 @@ def init(preset: str) -> None:
         click.echo(click.style("✗ Config file already exists", fg="red"), err=True)
         return
 
-    examples_dir = Path(__file__).parent.parent / "examples"
+    examples_dir = Path.cwd() / "src" / "templates" / "config_templates"
     source_file = examples_dir / f"ddd-config-{preset}.yaml"
 
     if not source_file.exists():

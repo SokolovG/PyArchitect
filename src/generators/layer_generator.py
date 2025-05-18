@@ -1,13 +1,13 @@
 from logging import getLogger
 from pathlib import Path
 
+from src.core.template_engine import TemplateEngine
 from src.generators.utils import (
     GeneratorUtilsMixin,
     ImportPathGenerator,
     StandardImportPathGenerator,
     single_form_words,
 )
-from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
 

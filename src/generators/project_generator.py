@@ -1,6 +1,7 @@
 from logging import getLogger
 from pathlib import Path
 
+from src.core.template_engine import TemplateEngine
 from src.generators.presets import (
     AdvancedPresetGenerator,
     SimplePresetGenerator,
@@ -9,7 +10,6 @@ from src.generators.presets import (
 from src.generators.presets.base import AbstractPresetGenerator
 from src.generators.utils import GeneratorUtilsMixin
 from src.schemas import ConfigModel
-from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
 

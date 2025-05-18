@@ -7,7 +7,7 @@ settings:
   contexts_layout: "nested"
   init_imports: true
   group_components: false  # Individual files for better separation
-  root_name: "app"
+  root_name: "src"
 
 layers:
   contexts:

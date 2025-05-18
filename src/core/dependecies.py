@@ -3,9 +3,9 @@ from pathlib import Path
 from dishka import Provider, Scope, make_container, provide
 
 from src.core.parser import YamlParser
+from src.core.template_engine import TemplateEngine
 from src.generators import ProjectGenerator
 from src.schemas import ConfigModel
-from src.templates.engine import TemplateEngine
 
 
 class MyProvider(Provider):
