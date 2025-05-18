@@ -1,43 +1,39 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.generators.base import BaseGenerator
-from src.generators.presets.base import PresetGenerator
-from src.generators.utils import LayerPaths
+from src.generators.presets.base import BasePresetGenerator
 from src.schemas import ConfigModel
-from src.schemas.config_schema import PresetType
 
 logger = getLogger(__name__)
 
 
-class SimplePresetGenerator(PresetGenerator, BaseGenerator):
+class SimplePresetGenerator(BasePresetGenerator):
     """Generator for the simple preset without contexts."""
 
     def generate(self, root_path: Path, config: ConfigModel) -> None:
         """Generate simple project structure without contexts."""
-        logger.info("Starting generate structure")
-        layer_paths = LayerPaths.from_config(root_path, config)
+        logger.debug("Starting simple preset generation...")
 
-        layer_generators = {
-            "domain": self.domain_generator,
-            "application": self.app_generator,
-            "infrastructure": self.infra_generator,
-            "interface": self.interface_generator,
-        }
-
-        for layer_name, layer_config in config.layers.model_dump().items():
+        layers_data = config.layers.model_dump()
+        for layer_name, layer_config in layers_data.items():
             if not layer_config:
                 continue
 
-            layer_path = getattr(layer_paths, layer_name, None)
-            if not layer_path:
-                layer_path = root_path / config.settings.root_name / layer_name
+            layer_path = self.create_layer_dir(root_path, layer_name)
 
-            self.create_directory(layer_path)
-            self.create_init_file(layer_path)
+            for component_type, components in layer_config.items():
+                if not components:
+                    continue
 
-            generator = layer_generators.get(layer_name)
-            if generator:
-                generator.generate_components(layer_path, layer_config, PresetType.SIMPLE)  # type: ignore
-            else:
-                logger.warning(f"No generator found for layer: {layer_name}")
+                component_dir = self.create_component_dir(layer_path, component_type)
+
+                layer_generator = self._get_layer_generator(
+                    layer_name=layer_name,
+                    root_name=config.settings.root_name,
+                    group_components=config.settings.group_components,
+                    init_imports=config.settings.init_imports,
+                )
+
+                layer_generator.generate_components(component_dir, component_type, components)
+
+        logger.debug("Simple preset generation completed successfully")

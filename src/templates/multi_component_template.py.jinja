@@ -1,0 +1,11 @@
+{% for component in components %}
+
+class {{ component }}:
+    """{{ component }} {{ single_form }}.
+
+    This class represents {{ component|article }} {{ component }} in the system.
+    """
+
+    def __init__(self) -> None:
+        """Initialize a new {{ component }} instance."""
+{% endfor %}

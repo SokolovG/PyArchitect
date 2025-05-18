@@ -1,12 +1,70 @@
+from logging import getLogger
 from pathlib import Path
 
-from src.generators.base import BaseGenerator
-from src.generators.presets.base import PresetGenerator
+from src.generators.presets.base import BasePresetGenerator
 from src.schemas import ConfigModel
 
+logger = getLogger(__name__)
 
-class StandardPresetGenerator(PresetGenerator, BaseGenerator):
+
+class StandardPresetGenerator(BasePresetGenerator):
     """Generator for the standard preset with contexts in layers."""
 
     def generate(self, root_path: Path, config: ConfigModel) -> None:
-        """Generate standard project structure with contexts organized by layers."""
+        """Generate standard project structure with contexts organized by layers.
+
+        This method creates a project structure where contexts are organized within
+        architectural layers, with a standard DDD organization. Each layer contains
+        multiple bounded contexts with their specific components.
+
+        Args:
+            root_path: Path to the project root directory
+            config: Project configuration model containing settings and layer definitions
+
+        """
+        logger.debug("Starting standard preset generation...")
+
+        layers_data = config.layers.model_dump()
+        for layer_name, layer_config in layers_data.items():
+            if not layer_config:
+                continue
+
+            layer_path = self.create_layer_dir(root_path, layer_name)
+            if "contexts" in layer_config:
+                contexts = layer_config.pop("contexts", [])
+                for context in contexts:
+                    context_name = context.pop("name", "default")
+                    context_path = layer_path / context_name
+                    self.create_directory(context_path)
+                    self.create_init_file(context_path)
+
+                    for component_type, components in context.items():
+                        component_dir = self.create_component_dir(context_path, component_type)
+
+                        layer_generator = self._get_layer_generator(
+                            layer_name=layer_name,
+                            root_name=config.settings.root_name,
+                            group_components=config.settings.group_components,
+                            init_imports=config.settings.init_imports,
+                            context_name=context_name,
+                        )
+                        layer_generator.generate_components(
+                            component_dir, component_type, components
+                        )
+
+            for component_type, components in layer_config.items():
+                if not components:
+                    continue
+
+                component_dir = self.create_component_dir(layer_path, component_type)
+
+                layer_generator = self._get_layer_generator(
+                    layer_name=layer_name,
+                    root_name=config.settings.root_name,
+                    group_components=config.settings.group_components,
+                    init_imports=config.settings.init_imports,
+                )
+
+                layer_generator.generate_components(component_dir, component_type, components)
+
+        logger.debug("Standard preset generation completed successfully")

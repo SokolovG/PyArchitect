@@ -1,0 +1,62 @@
+# PyArchitect Simple Preset - Complete Example
+# This example demonstrates all possible DDD components in a flat structure
+# without bounded contexts. Ideal for smaller projects or when getting started with DDD.
+
+settings:
+  preset: "simple"
+  init_imports: true
+
+layers:
+  # Domain Layer - Core business logic
+  domain:
+    entities: User, Admin, Product, Category, Order, OrderItem
+    value_objects: Email, Password, Money, Address, PhoneNumber
+    aggregates: UserAggregate, OrderAggregate
+    services: UserDomainService, OrderDomainService, PricingService
+    repositories: IUserRepository, IProductRepository, IOrderRepository
+    events: UserRegisteredEvent, UserActivatedEvent, OrderCreatedEvent, OrderPaidEvent
+    specifications: ActiveUserSpecification, PremiumUserSpecification
+    factories: UserFactory, OrderFactory
+    exceptions: UserNotFoundError, InvalidEmailError, InsufficientStockError
+
+  # Application Layer - Use cases and business workflows
+  application:
+    use_cases: RegisterUser, ActivateUser, LoginUser, CreateOrder, ProcessPayment
+    commands: RegisterUserCommand, CreateOrderCommand, ProcessPaymentCommand
+    command_handlers: RegisterUserHandler, CreateOrderHandler, ProcessPaymentHandler
+    queries: GetUserQuery, GetOrderHistoryQuery, GetProductCatalogQuery
+    query_handlers: GetUserHandler, GetOrderHistoryHandler, GetProductCatalogHandler
+    event_handlers: UserRegistrationHandler, OrderCreationHandler, PaymentHandler
+    validators: UserRegistrationValidator, OrderValidator, PaymentValidator
+    exceptions: ValidationError, BusinessRuleViolationError
+    services: UserApplicationService, OrderApplicationService
+
+  # Infrastructure Layer - Technical implementations
+  infrastructure:
+    repositories: UserRepository, ProductRepository, OrderRepository
+    models: UserModel, ProductModel, OrderModel, OrderItemModel
+    adapters: EmailAdapter, PaymentAdapter, NotificationAdapter
+    unit_of_work: SqlUnitOfWork, RedisUnitOfWork
+    message_bus: InMemoryMessageBus, RedisMessageBus
+    background_tasks: EmailTask, NotificationTask, ReportTask
+    configs: DatabaseConfig, RedisConfig, EmailConfig
+    migrations: CreateUserTable, CreateOrderTable, AddIndexes
+
+  # Interface Layer - External facing components
+  interface:
+    controllers: UserController, ProductController, OrderController, AuthController
+    dto: UserDTO, ProductDTO, OrderDTO, CreateUserDTO, CreateOrderDTO
+    presenters: UserPresenter, OrderPresenter, ProductListPresenter
+    api_routes: UserRoutes, ProductRoutes, OrderRoutes, AuthRoutes
+    middleware: AuthenticationMiddleware, LoggingMiddleware, ErrorHandlingMiddleware
+    api_error_handlers: ValidationErrorHandler, BusinessErrorHandler, GlobalErrorHandler
+    serializers: UserSerializer, OrderSerializer, ProductSerializer
+
+  # Common/Shared components
+  common:
+    constants: UserConstants, OrderConstants, PaymentConstants
+    exceptions: BaseApplicationError, BaseInfrastructureError
+    utils: DateUtils, StringUtils, ValidationUtils
+    interfaces: ILogger, IEmailSender, IPaymentProcessor
+    types: UserId, OrderId, ProductId, Email, Money
+    decorators: LoggingDecorator, CachingDecorator, RetryDecorator

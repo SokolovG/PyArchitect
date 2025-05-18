@@ -1,0 +1,9 @@
+{% for import_line in imports %}
+{{ import_line }}
+{% endfor %}
+
+__all__ = [
+{% for component in components %}
+    "{{ component }}",
+{% endfor %}
+]

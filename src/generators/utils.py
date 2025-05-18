@@ -1,81 +1,149 @@
-from __future__ import annotations
-
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from src.schemas.config_schema import ConfigModel
+from src.templates.engine import TemplateEngine
+
+single_form_words = {
+    "entities": "entity",
+    "repositories": "repository",
+    "services": "service",
+    "value_objects": "value_object",
+    "aggregates": "aggregate",
+    "factories": "factory",
+    "domain_events": "domain_event",
+    "commands": "command",
+    "queries": "query",
+    "exceptions": "exception",
+    "controllers": "controller",
+    "dto": "dto",
+    "models": "model",
+    "adapters": "adapter",
+    "handlers": "handler",
+    "validators": "validator",
+    "specifications": "specification",
+}
 
 
-@dataclass
-class LayerPaths:
-    """Represents paths to all architecture layers.
+class GeneratorUtilsMixin:
+    """Base class for all code generators.
 
-    Uses neutral layer numbering but provides convenient properties
-    for accessing specific layers.
+    This class provides common utility methods used by all specific
+    generator implementations.
     """
 
-    layer_1: Path  # domain
-    layer_2: Path  # application
-    layer_3: Path  # infrastructure
-    layer_4: Path  # interface
-
-    @property
-    def domain(self) -> Path:
-        """Get the path to the domain layer.
-
-        Returns:
-            Path to the domain layer
-
-        """
-        return self.layer_1
-
-    @property
-    def application(self) -> Path:
-        """Get the path to the application layer.
-
-        Returns:
-            Path to the application layer
-
-        """
-        return self.layer_2
-
-    @property
-    def infrastructure(self) -> Path:
-        """Get the path to the infrastructure layer.
-
-        Returns:
-            Path to the infrastructure layer
-
-        """
-        return self.layer_3
-
-    @property
-    def interface(self) -> Path:
-        """Get the path to the interface layer.
-
-        Returns:
-            Path to the interface layer
-
-        """
-        return self.layer_4
-
-    @classmethod
-    def from_config(cls, root_path: Path, config: ConfigModel) -> LayerPaths:
-        """Create a LayerPaths instance from configuration.
+    def __init__(self, template_engine: TemplateEngine) -> None:
+        """Initialize the base generator with a template engine.
 
         Args:
-            root_path: Root path of the project
-            config: Configuration object
-
-        Returns:
-            LayerPaths instance with paths matching the configuration
+            template_engine: Engine instance for rendering templates
 
         """
-        return cls(
-            layer_1=root_path / config.settings.domain_layer,
-            layer_2=root_path / config.settings.application_layer,
-            layer_3=root_path / config.settings.infrastructure_layer,
-            layer_4=root_path / config.settings.interface_layer,
+        self.template_engine = template_engine
+
+    def create_directory(self, path: Path) -> Path:
+        """Create a directory if it doesn't exist.
+
+        Args:
+            path: Path to create
+
+        Returns:
+            Created path object
+
+        """
+        path.mkdir(exist_ok=True, parents=True)
+        return path
+
+    def create_init_file(self, path: Path) -> None:
+        """Create an empty __init__.py file in the specified directory.
+
+        Args:
+            path: Directory where to create the file
+
+        """
+        init_file = path / "__init__.py"
+        if not init_file.exists():
+            init_file.touch()
+
+    def get_init_path(self, path: Path) -> Path:
+        """Return a path to init file.
+
+        Args:
+            path: Directory where to create the file
+
+        Returns:
+            Path to the init file
+
+        """
+        init_file = path / "__init__.py"
+        return init_file
+
+    def write_file(self, path: Path, content: str) -> None:
+        """Write content to a file.
+
+        Args:
+        path: Path where to write the file
+        content: Content to write to the file
+
+        """
+        with open(path, "w") as file:
+            file.write(content)
+
+
+class ImportPathGenerator(ABC):
+    @abstractmethod
+    def generate_import_path(
+        self,
+        root_name: str,
+        layer_name: str,
+        context_name: str,
+        component_type: str,
+        module_name: str,
+        component_name: str,
+    ) -> str:
+        """F."""
+
+
+class StandardImportPathGenerator(ImportPathGenerator):
+    def generate_import_path(
+        self,
+        root_name: str,
+        layer_name: str,
+        context_name: str,
+        component_type: str,
+        module_name: str,
+        component_name: str,
+    ) -> str:
+        """F."""
+        if context_name:
+            return (
+                f"from {root_name}.{layer_name}.{context_name}."
+                f"{component_type}.{module_name} import {component_name}"
+            )
+        return (
+            f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"  # noqa
         )
+
+
+class AdvancedImportPathGenerator(ImportPathGenerator):
+    def generate_import_path(
+        self,
+        root_name: str,
+        layer_name: str,
+        context_name: str,
+        component_type: str,
+        module_name: str,
+        component_name: str,
+    ) -> str:
+        """F."""
+        if context_name:
+            import_string = (
+                f"from {root_name}.{context_name}.{layer_name}."
+                f"{component_type}."
+                f"{module_name} import {component_name}"
+            )
+            return import_string
+
+        import_string = (
+            f"from {root_name}.{layer_name}.{component_type}.{module_name} import {component_name}"  # noqa
+        )
+        return import_string
