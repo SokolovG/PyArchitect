@@ -18,6 +18,5 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          uv sync
       - name: Run pre-commit
         run: pre-commit run --all-files
