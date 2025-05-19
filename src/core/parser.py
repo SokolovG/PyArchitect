@@ -35,8 +35,8 @@ class YamlParser:
         if file_path is None:
             file_path = Path.cwd() / self.DEFAULT_CONFIG_FILENAME
 
-            if file_path is None:
-                raise ConfigFileNotFoundError(f"FIle path - {file_path}")
+        if not file_path.exists():  # ← Проверяем существование файла
+            raise ConfigFileNotFoundError(f"Configuration file not found: {file_path}")
 
         with open(file_path, encoding="utf-8") as file:
             try:

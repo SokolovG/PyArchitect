@@ -30,12 +30,18 @@ def cli() -> None:
 
 @click.command()
 @click.option("-p", "--preset", default="standard", help="Preset selection.")
-def init(preset: str) -> None:
+@click.option("-f", "--force", is_flag=True, help="Overwrite existing config file.")
+def init(preset: str, force: bool) -> None:
     """Generate basic example based on preset."""
     config_path = Path("ddd-config.yaml")
-    if config_path.exists():
-        click.echo(click.style("✗ Config file already exists", fg="red"), err=True)
+    if config_path.exists() and not force:
+        click.echo(
+            click.style("✗ Config file already exists. Use --force to overwrite.", fg="red"),
+            err=True,
+        )
         return
+    if force and config_path.exists():
+        click.echo(click.style("⚠ Overwriting existing config file", fg="yellow"))
 
     examples_dir = Path(__file__).parent / "templates" / "config_templates"
     source_file = examples_dir / f"ddd-config-{preset}.yaml"
