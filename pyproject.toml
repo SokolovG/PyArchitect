@@ -1,9 +1,37 @@
 [project]
-name = "PyArchitect"
+name = "pyarchitect"
 version = "0.1.0"
-description = "Add your description here"
+description = "CLI tool for generating DDD architecture in Python projects"
 readme = "README.md"
 requires-python = ">=3.12"
+
+[project.urls]
+Homepage = "https://github.com/SokolovG/pyarchitect"
+Repository = "https://github.com/SokolovG/pyarchitect"
+Issues = "https://github.com/SokolovG/pyarchitect/issues"
+
+license = {file = "LICENSE"}
+authors = [{name = "Grigoriy Sokolov", email = "Sokolov_Gr@proton.me"}]
+keywords = ["ddd", "architecture", "code-generation", "domain-driven-design"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Code Generators",
+]
+dependencies = [
+    "click>=8.1.8",
+    "PyYAML>=6.0.2",
+    "pydantic>=2.11.3",
+    "dishka>=1.5.3",
+    "Jinja2>=3.1.6",
+]
+
+
+[project.scripts]
+pa = "src.main:cli"
 
 [tool.ruff]
 line-length = 100
