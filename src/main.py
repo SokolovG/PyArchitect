@@ -93,17 +93,22 @@ def validate(file: str | None = None) -> None:
 @click.option("-f", "--file", help="Path to YAML file.")
 def preview(file: str | None = None) -> None:
     """Preview future structure."""
+    try:
+        path = Path(file) if file else None
 
+        if path and not path.exists():
+            click.echo(click.style(f"Error: Config file not found: {file}", fg="red"), err=True)
+            return
 
-@click.command()
-def add() -> None:
-    """Add component."""
+        click.echo("Project generation started.", color=True)
 
+        container.provider.set_file_path(path)
+        container.provider.set_generator_mode(preview_mode=True)
+        generator = container.get(ProjectGenerator)
+        generator.generate()
 
-@click.command()
-@click.option("-f", "--file", help="Path to YAML file.")
-def update(file: str | None = None) -> None:
-    """Update structure."""
+    except Exception as error:
+        click.echo(click.style(f"Error: {error}", fg="red"), err=True)
 
 
 @click.command()
@@ -119,6 +124,7 @@ def run(file: str | None = None) -> None:
 
         click.echo("Project generation started.", color=True)
 
+        container.provider.set_file_path(path)
         generator = container.get(ProjectGenerator)
         generator.generate()
 
@@ -132,8 +138,6 @@ cli.add_command(run)
 cli.add_command(init)
 cli.add_command(validate)
 cli.add_command(preview)
-cli.add_command(add)
-cli.add_command(update)
 
 if __name__ == "__main__":
     cli()

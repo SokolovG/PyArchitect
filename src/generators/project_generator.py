@@ -27,16 +27,20 @@ class ProjectGenerator(GeneratorUtilsMixin):
         "advanced": AdvancedPresetGenerator,
     }
 
-    def __init__(self, config: ConfigModel, engine: TemplateEngine) -> None:
+    def __init__(
+        self, config: ConfigModel, engine: TemplateEngine, preview_mode: bool = False
+    ) -> None:
         """Initialize the project generator.
 
         Args:
             config: Model config
             engine: TemplateEngine
+            preview_mode: Preview mode
 
         """
         super().__init__(engine)
         self.config = config
+        self.preview_mode = preview_mode
 
         preset_type = self.config.settings.preset
         preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
