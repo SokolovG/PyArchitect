@@ -59,6 +59,9 @@ quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
 
+[tool.setuptools]
+package-dir = {"" = "."}
+
 [tool.mypy]
 python_version = "3.12"
 warn_return_any = true

@@ -40,9 +40,14 @@ class MyProvider(Provider):
         """Provide a template engine instance for the app scope."""
         return TemplateEngine()
 
-    def set_generator_mode(self, preview_mode: bool = False) -> bool:
+    @provide(scope=Scope.APP)
+    def get_generator_mode(self) -> bool:
         """Provide generation mode for the app scope."""
-        return preview_mode
+        return getattr(self, "_preview_mode", False)
+
+    def set_preview_mode(self, preview_mode: bool = False) -> None:
+        """Set preview mode value."""
+        self._preview_mode = preview_mode
 
     @provide(scope=Scope.APP)
     def get_project_generator(
