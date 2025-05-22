@@ -1,6 +1,7 @@
 from logging import getLogger
 from pathlib import Path
 
+from src.core.template_engine import TemplateEngine
 from src.generators.presets import (
     AdvancedPresetGenerator,
     SimplePresetGenerator,
@@ -9,7 +10,6 @@ from src.generators.presets import (
 from src.generators.presets.base import AbstractPresetGenerator
 from src.generators.utils import GeneratorUtilsMixin
 from src.schemas import ConfigModel
-from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
 
@@ -27,16 +27,20 @@ class ProjectGenerator(GeneratorUtilsMixin):
         "advanced": AdvancedPresetGenerator,
     }
 
-    def __init__(self, config: ConfigModel, engine: TemplateEngine) -> None:
+    def __init__(
+        self, config: ConfigModel, engine: TemplateEngine, preview_mode: bool = False
+    ) -> None:
         """Initialize the project generator.
 
         Args:
             config: Model config
             engine: TemplateEngine
+            preview_mode: Preview mode
 
         """
         super().__init__(engine)
         self.config = config
+        self.preview_mode = preview_mode
 
         preset_type = self.config.settings.preset
         preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
@@ -59,4 +63,4 @@ class ProjectGenerator(GeneratorUtilsMixin):
         self.create_directory(root_path)
         self.create_init_file(root_path)
 
-        self.preset_generator.generate(root_path, self.config)
+        self.preset_generator.generate(root_path, self.config, self.preview_mode)

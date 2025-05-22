@@ -10,7 +10,7 @@ class TemplateEngine:
 
     def __init__(self) -> None:
         """Initialize the template engine."""
-        templates_dir = Path(__file__).parent
+        templates_dir = Path(__file__).parent.parent / "templates"
 
         self.env = Environment(
             loader=FileSystemLoader(templates_dir),
@@ -32,7 +32,8 @@ class TemplateEngine:
 
         """
         template = self.env.get_template(template_path)
-        return template.render(**context)
+        content: str = template.render(**context)
+        return content
 
     def template_exists(self, template_path: str) -> bool:
         """Check if a template exists.

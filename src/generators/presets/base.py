@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from logging import getLogger
 from pathlib import Path
 
+from src.core.template_engine import TemplateEngine
 from src.generators.layer_generator import LayerGenerator
 from src.generators.utils import GeneratorUtilsMixin, ImportPathGenerator
 from src.schemas import ConfigModel
-from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
 
@@ -26,12 +26,13 @@ class AbstractPresetGenerator(ABC):
         self.config = config
 
     @abstractmethod
-    def generate(self, root_path: Path, config: ConfigModel) -> None:
+    def generate(self, root_path: Path, config: ConfigModel, preview_mode: bool) -> None:
         """Generate project structure according to preset.
 
         Args:
             root_path: Root path where to generate the project
             config: Project configuration
+            preview_mode: Special mode for dry generation
 
         """
 
@@ -39,7 +40,7 @@ class AbstractPresetGenerator(ABC):
 class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
     """Base class for all preset generators.
 
-    Contains common functionality for creating generators and directories.
+    Contains common capability for creating generators and directories.
     """
 
     def __init__(self, config: ConfigModel, template_engine: TemplateEngine) -> None:

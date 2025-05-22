@@ -1,13 +1,13 @@
 from logging import getLogger
 from pathlib import Path
 
+from src.core.template_engine import TemplateEngine
 from src.generators.utils import (
     GeneratorUtilsMixin,
     ImportPathGenerator,
     StandardImportPathGenerator,
     single_form_words,
 )
-from src.templates.engine import TemplateEngine
 
 logger = getLogger(__name__)
 
@@ -107,9 +107,6 @@ class LayerGenerator(GeneratorUtilsMixin):
         if isinstance(components, str):
             components = [comp.strip() for comp in components.split(",")]
 
-        if not components:
-            return {}
-
         generated_modules = {}
 
         if self.group_components:
@@ -121,7 +118,7 @@ class LayerGenerator(GeneratorUtilsMixin):
                 module_name = self.generate_component(component_dir, component_type, component_name)
                 generated_modules[component_name] = module_name
 
-        if self.init_imports:
+        if self.init_imports and components:
             init_path = self.get_init_path(component_dir)
             self._generate_init_imports(
                 init_path=init_path,

@@ -1,3 +1,3 @@
-from src.core.dependecies import container
+from src.core.dependencies import container
 
 __all__ = ["container"]

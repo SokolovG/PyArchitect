@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from src.templates.engine import TemplateEngine
+from src.core.template_engine import TemplateEngine
 
 single_form_words = {
     "entities": "entity",

@@ -30,25 +30,32 @@ def cli() -> None:
 
 @click.command()
 @click.option("-p", "--preset", default="standard", help="Preset selection.")
-def init(preset: str) -> None:
+@click.option("-f", "--force", is_flag=True, help="Overwrite existing config file.")
+def init(preset: str, force: bool) -> None:
     """Generate basic example based on preset."""
     config_path = Path("ddd-config.yaml")
-    if config_path.exists():
-        click.echo(click.style("✗ Config file already exists", fg="red"), err=True)
+    if config_path.exists() and not force:
+        click.secho(
+            "✗ Config file already exists. Use --force to overwrite.",
+            fg="red",
+            err=True,
+        )
         return
+    if force and config_path.exists():
+        click.secho("⚠ Overwriting existing config file", fg="yellow")
 
-    examples_dir = Path(__file__).parent.parent / "examples"
+    examples_dir = Path(__file__).parent / "templates" / "config_templates"
     source_file = examples_dir / f"ddd-config-{preset}.yaml"
 
     if not source_file.exists():
-        click.echo(click.style(f"✗ Unknown preset: {preset}", fg="red"), err=True)
+        click.secho(f"✗ Unknown preset: {preset}", fg="red", err=True)
         return
 
     try:
         shutil.copy(source_file, config_path)
-        click.echo(click.style(f"✓ Generated {preset} config: {config_path}", fg="green"))
+        click.secho(f"✓ Generated {preset} config: {config_path}", fg="green")
     except OSError as error:
-        click.echo(click.style(f"✗ Failed to create config file: {error}", fg="red"), err=True)
+        click.secho(f"✗ Failed to create config file: {error}", fg="red", err=True)
 
 
 @click.command()
@@ -60,26 +67,26 @@ def validate(file: str | None = None) -> None:
     try:
         if file:
             file_path = Path(file)
-            parser.load(file_path)
+            parser.load(file_path)  # type: ignore
         else:
-            parser.load()
-        click.echo(
-            click.style("✓ Configuration validated successfully", fg="green"),
+            parser.load()  # type: ignore
+        click.secho(
+            "✓ Configuration validated successfully",
+            fg="green",
             color=True,
         )
     except YamlParseError as error:
-        click.echo(click.style(f"✗ {error}", fg="red"), err=True)
+        click.secho(f"✗ {error}", fg="red", err=True)
     except pydantic.ValidationError as error:
-        click.echo(
-            click.style(f"✗ Configuration invalid: {error}", fg="red"),
+        click.secho(
+            f"✗ Configuration invalid: {error}",
+            fg="red",
             err=True,
             color=True,
         )
-        click.echo(
-            click.style(
-                "Hint: Check the documentation for correct configuration format",
-                fg="red",
-            )
+        click.secho(
+            "Hint: Check the documentation for correct configuration format",
+            fg="red",
         )
 
 
@@ -87,17 +94,22 @@ def validate(file: str | None = None) -> None:
 @click.option("-f", "--file", help="Path to YAML file.")
 def preview(file: str | None = None) -> None:
     """Preview future structure."""
+    try:
+        path = Path(file) if file else None
 
+        if path and not path.exists():
+            click.secho(f"Error: Config file not found: {file}", fg="red", err=True)
+            return
 
-@click.command()
-def add() -> None:
-    """Add component."""
+        click.echo("Project generation started.", color=True)
 
+        container.provider.set_file_path(path)
+        container.provider.set_preview_mode(preview_mode=True)
+        generator = container.get(ProjectGenerator)
+        generator.generate()  # type: ignore
 
-@click.command()
-@click.option("-f", "--file", help="Path to YAML file.")
-def update(file: str | None = None) -> None:
-    """Update structure."""
+    except Exception as error:
+        click.secho(f"Error: {error}", fg="red", err=True)
 
 
 @click.command()
@@ -108,26 +120,25 @@ def run(file: str | None = None) -> None:
         path = Path(file) if file else None
 
         if path and not path.exists():
-            click.echo(click.style(f"Error: Config file not found: {file}", fg="red"), err=True)
+            click.secho(f"Error: Config file not found: {file}", fg="red", err=True)
             return
 
         click.echo("Project generation started.", color=True)
 
+        container.provider.set_file_path(path)
         generator = container.get(ProjectGenerator)
-        generator.generate()
+        generator.generate()  # type: ignore
 
-        click.echo(click.style("Project generation completed successfully.", fg="green"))
+        click.secho("Project generation completed successfully.", fg="green")
 
     except Exception as error:
-        click.echo(click.style(f"Error: {error}", fg="red"), err=True)
+        click.secho(f"Error: {error}", fg="red", err=True)
 
 
 cli.add_command(run)
 cli.add_command(init)
 cli.add_command(validate)
 cli.add_command(preview)
-cli.add_command(add)
-cli.add_command(update)
 
 if __name__ == "__main__":
     cli()
