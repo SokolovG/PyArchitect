@@ -15,7 +15,7 @@ class AdvancedPresetGenerator(BasePresetGenerator):
     allowing for more flexibility in organizing bounded contexts and layers.
     """
 
-    def generate(self, root_path: Path, config: ConfigModel) -> None:
+    def generate(self, root_path: Path, config: ConfigModel, preview_mode: bool) -> None:
         """Generate advanced project structure with custom organization.
 
         This implementation allows for highly customized project layouts,
@@ -25,6 +25,7 @@ class AdvancedPresetGenerator(BasePresetGenerator):
         Args:
             root_path: Path to the project root directory
             config: Project configuration model containing settings and layout definitions
+            preview_mode: Special mode for dry generation
 
         """
         logger.debug("Starting advanced preset generation...")

@@ -10,8 +10,15 @@ logger = getLogger(__name__)
 class SimplePresetGenerator(BasePresetGenerator):
     """Generator for the simple preset without contexts."""
 
-    def generate(self, root_path: Path, config: ConfigModel) -> None:
-        """Generate simple project structure without contexts."""
+    def generate(self, root_path: Path, config: ConfigModel, preview_mode: bool) -> None:
+        """Generate simple project structure without contexts organized by layers.
+
+        Args:
+            root_path: Path to the project root directory
+            config: Project configuration model containing settings and layer definitions
+            preview_mode: Special mode for dry generation
+
+        """
         logger.debug("Starting simple preset generation...")
 
         layers_data = config.layers.model_dump()
