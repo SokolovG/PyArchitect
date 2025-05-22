@@ -5,11 +5,6 @@ description = "CLI tool for generating DDD architecture in Python projects"
 readme = "README.md"
 requires-python = ">=3.12"
 
-[project.urls]
-Homepage = "https://github.com/SokolovG/pyarchitect"
-Repository = "https://github.com/SokolovG/pyarchitect"
-Issues = "https://github.com/SokolovG/pyarchitect/issues"
-
 license = {file = "LICENSE"}
 authors = [{name = "Grigoriy Sokolov", email = "Sokolov_Gr@proton.me"}]
 keywords = ["ddd", "architecture", "code-generation", "domain-driven-design"]
@@ -21,12 +16,27 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Code Generators",
 ]
+
+
 dependencies = [
     "click>=8.1.8",
     "PyYAML>=6.0.2",
     "pydantic>=2.11.3",
     "dishka>=1.5.3",
     "Jinja2>=3.1.6",
+]
+
+[project.urls]
+Homepage = "https://github.com/SokolovG/pyarchitect"
+Repository = "https://github.com/SokolovG/pyarchitect"
+Issues = "https://github.com/SokolovG/pyarchitect/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.5",
+    "ruff>=0.11.6",
+    "mypy>=1.15.0",
+    "pre-commit>=4.2.0",
 ]
 
 
@@ -61,3 +71,6 @@ disallow_untyped_decorators = false
 disallow_subclassing_any = false
 disallow_any_generics = false
 ignore_missing_imports = true
+
+[tool.uv]
+package = true

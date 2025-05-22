@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, dev ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, dev ]
 
 jobs:
   test:
@@ -17,8 +17,7 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: |
-          pip install -e .
-          pip install -r requirements-dev.txt
+          uv sync --extra dev
       - name: Run tests
         run: |
-          pytest
+          uv run pytest

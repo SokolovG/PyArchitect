@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any
+from typing import TypeVar
 
 from dishka import Provider, Scope, make_container, provide
 
@@ -52,15 +52,19 @@ class MyProvider(Provider):
         return ProjectGenerator(config, engine, get_generator_mode)
 
 
+T = TypeVar("T")
+
+
 class Container:
-    def __init__(self):
+    def __init__(self) -> None:
         """F."""
         self.provider = MyProvider()
         self.di_container = make_container(self.provider)
 
-    def get(self, dependency_type: Any):
+    def get(self, dependency_type: T) -> T:
         """F."""
-        return self.di_container.get(dependency_type)
+        obj: T = self.di_container.get(dependency_type)
+        return obj
 
 
 container = Container()
