@@ -62,12 +62,12 @@ T = TypeVar("T")
 
 class Container:
     def __init__(self) -> None:
-        """F."""
+        """Initialize the dependency injection container with a provider."""
         self.provider = MyProvider()
         self.di_container = make_container(self.provider)
 
     def get(self, dependency_type: T) -> T:
-        """F."""
+        """Get a dependency instance of the specified type from the container."""
         obj: T = self.di_container.get(dependency_type)
         return obj
 
