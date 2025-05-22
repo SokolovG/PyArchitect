@@ -30,9 +30,11 @@ class StandardPresetGenerator(BasePresetGenerator):
                 continue
 
             layer_path = self.create_layer_dir(root_path, layer_name)
-            if "contexts" in layer_config:
-                layer_config_copy = layer_config.copy()
-                contexts = layer_config_copy.pop("contexts", [])
+
+            if isinstance(layer_config, dict) and "contexts" in layer_config:
+                contexts = layer_config["contexts"]
+                remaining_config = {k: v for k, v in layer_config.items() if k != "contexts"}
+
                 for context in contexts:
                     context_name = context.pop("name", "default")
                     context_path = layer_path / context_name
@@ -41,7 +43,6 @@ class StandardPresetGenerator(BasePresetGenerator):
 
                     for component_type, components in context.items():
                         component_dir = self.create_component_dir(context_path, component_type)
-
                         layer_generator = self._get_layer_generator(
                             layer_name=layer_name,
                             root_name=config.settings.root_name,
@@ -53,19 +54,20 @@ class StandardPresetGenerator(BasePresetGenerator):
                             component_dir, component_type, components
                         )
 
-            for component_type, components in layer_config.items():
-                if not components:
-                    continue
+                layer_config = remaining_config
 
-                component_dir = self.create_component_dir(layer_path, component_type)
+            if isinstance(layer_config, dict):
+                for component_type, components in layer_config.items():
+                    if not components:
+                        continue
 
-                layer_generator = self._get_layer_generator(
-                    layer_name=layer_name,
-                    root_name=config.settings.root_name,
-                    group_components=config.settings.group_components,
-                    init_imports=config.settings.init_imports,
-                )
-
-                layer_generator.generate_components(component_dir, component_type, components)
+                    component_dir = self.create_component_dir(layer_path, component_type)
+                    layer_generator = self._get_layer_generator(
+                        layer_name=layer_name,
+                        root_name=config.settings.root_name,
+                        group_components=config.settings.group_components,
+                        init_imports=config.settings.init_imports,
+                    )
+                    layer_generator.generate_components(component_dir, component_type, components)
 
         logger.debug("Standard preset generation completed successfully")

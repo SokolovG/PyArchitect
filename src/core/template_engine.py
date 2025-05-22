@@ -10,7 +10,7 @@ class TemplateEngine:
 
     def __init__(self) -> None:
         """Initialize the template engine."""
-        templates_dir = Path(__file__).parent
+        templates_dir = Path(__file__).parent.parent / "templates"
 
         self.env = Environment(
             loader=FileSystemLoader(templates_dir),

@@ -24,6 +24,7 @@ dependencies = [
     "pydantic>=2.11.3",
     "dishka>=1.5.3",
     "Jinja2>=3.1.6",
+    "mypy>=1.15.0",
 ]
 
 [project.urls]
