@@ -6,6 +6,7 @@ from dishka import Provider, Scope, make_container, provide
 from src.core.parser import YamlParser
 from src.core.template_engine import TemplateEngine
 from src.generators import ProjectGenerator
+from src.preview.collector import PreviewCollector
 from src.schemas import ConfigModel
 
 
@@ -21,7 +22,7 @@ class MyProvider(Provider):
         """Provide a YamlParser instance for the app scope."""
         return YamlParser()
 
-    @provide(scope=Scope.APP, provides=Path)
+    @provide(scope=Scope.APP, provides=Path | None)
     def get_default_file_path(self) -> Path | None:
         """Provide a default None value for a path."""
         return getattr(self, "_file_path", None)
@@ -49,12 +50,30 @@ class MyProvider(Provider):
         """Set preview mode value."""
         self._preview_mode = preview_mode
 
+    def set_render_format(self, render_format: str) -> None:
+        """Set render format value."""
+        self._render_format = render_format
+
+    @provide(scope=Scope.APP, provides=str)
+    def get_render_format(self) -> str:
+        """Provide a render format for the app scope."""
+        return getattr(self, "render_format", "tree")
+
+    @provide(scope=Scope.APP, provides=PreviewCollector)
+    def get_preview_collector(self) -> PreviewCollector:
+        """Provide preview collector for the app scope."""
+        return PreviewCollector(render_format="tree")
+
     @provide(scope=Scope.APP, provides=ProjectGenerator)
     def get_project_generator(
-        self, config: ConfigModel, engine: TemplateEngine, get_generator_mode: bool
+        self,
+        config: ConfigModel,
+        engine: TemplateEngine,
+        get_generator_mode: bool,
+        preview_collector: PreviewCollector,
     ) -> ProjectGenerator:
         """Provide a ProjectGenerator instance with all dependencies injected."""
-        return ProjectGenerator(config, engine, get_generator_mode)
+        return ProjectGenerator(config, engine, preview_collector, get_generator_mode)
 
 
 T = TypeVar("T")

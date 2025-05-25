@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from src.core.template_engine import TemplateEngine
+from src.preview.collector import PreviewCollector
 
 single_form_words = {
     "entities": "entity",
@@ -35,14 +36,20 @@ class GeneratorUtilsMixin:
 
     """
 
-    def __init__(self, template_engine: TemplateEngine) -> None:
+    def __init__(
+        self,
+        template_engine: TemplateEngine,
+        preview_collector: PreviewCollector | None = None,
+    ) -> None:
         """Initialize the base generator with a template engine.
 
         Args:
             template_engine: Engine instance for rendering templates
+            preview_collector: Collector for dry generation
 
         """
         self.template_engine = template_engine
+        self.preview_collector = preview_collector
 
     def create_directory(self, path: Path) -> Path:
         """Create a directory if it doesn't exist.
@@ -57,7 +64,10 @@ class GeneratorUtilsMixin:
             Created path object
 
         """
-        path.mkdir(exist_ok=True, parents=True)
+        if self.preview_collector:
+            self.preview_collector.add_directory(path)
+        else:
+            path.mkdir(exist_ok=True, parents=True)
         return path
 
     def create_init_file(self, path: Path) -> None:
@@ -72,6 +82,8 @@ class GeneratorUtilsMixin:
 
         """
         init_file = path / "__init__.py"
+        if self.preview_collector:
+            self.preview_collector.add_init_file(init_file)
         if not init_file.exists():
             init_file.touch()
 
@@ -102,8 +114,11 @@ class GeneratorUtilsMixin:
             content: Content to write to the file
 
         """
-        with open(path, "w") as file:
-            file.write(content)
+        if self.preview_collector:
+            self.preview_collector.add_file(path)
+        else:
+            with open(path, "w") as file:
+                file.write(content)
 
 
 class ImportPathGenerator(ABC):

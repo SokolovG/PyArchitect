@@ -9,6 +9,7 @@ from src.generators.presets import (
 )
 from src.generators.presets.base import AbstractPresetGenerator
 from src.generators.utils import GeneratorUtilsMixin
+from src.preview.collector import PreviewCollector
 from src.schemas import ConfigModel
 
 logger = getLogger(__name__)
@@ -28,17 +29,22 @@ class ProjectGenerator(GeneratorUtilsMixin):
     }
 
     def __init__(
-        self, config: ConfigModel, engine: TemplateEngine, preview_mode: bool = False
+        self,
+        config: ConfigModel,
+        engine: TemplateEngine,
+        preview_collector: PreviewCollector,
+        preview_mode: bool = False,
     ) -> None:
         """Initialize the project generator.
 
         Args:
             config: Model config
             engine: TemplateEngine
+            preview_collector: Preview collector
             preview_mode: Preview mode
 
         """
-        super().__init__(engine)
+        super().__init__(engine, preview_collector)
         self.config = config
         self.preview_mode = preview_mode
 
@@ -46,7 +52,7 @@ class ProjectGenerator(GeneratorUtilsMixin):
         preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
         logger.debug(f"Set preset - {preset_generator_class}")
 
-        self.preset_generator = preset_generator_class(self.config, engine)  # type: ignore
+        self.preset_generator = preset_generator_class(self.config, engine, self.preview_collector)  # type: ignore
 
     def generate(self) -> None:
         """Generate the project structure based on the preset.
@@ -62,5 +68,4 @@ class ProjectGenerator(GeneratorUtilsMixin):
         root_path = project_root / root_name
         self.create_directory(root_path)
         self.create_init_file(root_path)
-
         self.preset_generator.generate(root_path, self.config)

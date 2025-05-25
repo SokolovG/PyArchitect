@@ -5,6 +5,7 @@ from pathlib import Path
 from src.core.template_engine import TemplateEngine
 from src.generators.layer_generator import LayerGenerator
 from src.generators.utils import GeneratorUtilsMixin, ImportPathGenerator
+from src.preview.collector import PreviewCollector
 from src.schemas import ConfigModel
 
 logger = getLogger(__name__)
@@ -39,18 +40,27 @@ class AbstractPresetGenerator(ABC):
 class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
     """Base class for all preset generators.
 
-    Contains common functionality for creating generators and directories.
+    Contains common capability for creating generators and directories.
     """
 
-    def __init__(self, config: ConfigModel, template_engine: TemplateEngine) -> None:
+    def __init__(
+        self,
+        config: ConfigModel,
+        template_engine: TemplateEngine,
+        preview_collector: PreviewCollector,
+    ) -> None:
         """Initialize the base preset generator.
 
         Args:
             config: Project configuration
             template_engine: Template engine for rendering
+            preview_collector: Preview collector to collect data
 
         """
         super().__init__(config)
+        GeneratorUtilsMixin.__init__(
+            self, template_engine=template_engine, preview_collector=preview_collector
+        )
         self.template_engine = template_engine
         self.layer_generators: dict[str, LayerGenerator] = {}
 
@@ -66,7 +76,7 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
         """Get or create a layer generator for the given layer.
 
         Args:
-            layer_name: Layer name (domain, application, etc.)
+            layer_name: Layer name
             root_name: Root package name
             group_components: Whether to group components
             init_imports: Whether to generate imports

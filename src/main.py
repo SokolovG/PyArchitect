@@ -91,7 +91,6 @@ def validate(file: str | None = None) -> None:
 
 @click.command()
 @click.option("-f", "--file", help="Path to YAML file.")
-@click.option("-r", "--render", help="Render format.", default="tree")
 def preview(file: str | None = None) -> None:
     """Preview future structure."""
     try:
