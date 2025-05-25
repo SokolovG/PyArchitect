@@ -16,17 +16,17 @@ class MyProvider(Provider):
     for dependency injection using the Dishka library.
     """
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.APP, provides=YamlParser)
     def get_parser(self) -> YamlParser:
         """Provide a YamlParser instance for the app scope."""
         return YamlParser()
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.APP, provides=Path)
     def get_default_file_path(self) -> Path | None:
         """Provide a default None value for a path."""
         return getattr(self, "_file_path", None)
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.APP, provides=ConfigModel)
     def get_config(self, parser: YamlParser, file_path: Path | None = None) -> ConfigModel:
         """Provide a validated ConfigModel loaded from YAML configuration."""
         return parser.load(file_path)
@@ -35,12 +35,12 @@ class MyProvider(Provider):
         """Provide a path if isn't None."""
         self._file_path = path
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.APP, provides=TemplateEngine)
     def get_template_engine(self) -> TemplateEngine:
         """Provide a template engine instance for the app scope."""
         return TemplateEngine()
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.APP, provides=bool)
     def get_generator_mode(self) -> bool:
         """Provide generation mode for the app scope."""
         return getattr(self, "_preview_mode", False)
@@ -49,7 +49,7 @@ class MyProvider(Provider):
         """Set preview mode value."""
         self._preview_mode = preview_mode
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.APP, provides=ProjectGenerator)
     def get_project_generator(
         self, config: ConfigModel, engine: TemplateEngine, get_generator_mode: bool
     ) -> ProjectGenerator:
@@ -66,7 +66,7 @@ class Container:
         self.provider = MyProvider()
         self.di_container = make_container(self.provider)
 
-    def get(self, dependency_type: T) -> T:
+    def get(self, dependency_type: type[T]) -> T:
         """Get a dependency instance of the specified type from the container."""
         obj: T = self.di_container.get(dependency_type)
         return obj

@@ -91,6 +91,7 @@ def validate(file: str | None = None) -> None:
 
 @click.command()
 @click.option("-f", "--file", help="Path to YAML file.")
+@click.option("-r", "--render", help="Render format.", default="tree")
 def preview(file: str | None = None) -> None:
     """Preview future structure."""
     try:
@@ -103,8 +104,8 @@ def preview(file: str | None = None) -> None:
         click.echo("Project generation started.", color=True)
 
         container.provider.set_file_path(path)
-        container.provider.set_generator_mode(preview_mode=True)
-        generator = container.get(ProjectGenerator)
+        container.provider.set_preview_mode(preview_mode=True)
+        generator: ProjectGenerator = container.get(ProjectGenerator)
         generator.generate()
 
     except Exception as error:
