@@ -2,9 +2,12 @@ from abc import ABC, abstractmethod
 from logging import getLogger
 from pathlib import Path
 
-from src.core.template_engine import TemplateEngine
+from src.core.utils import GenerationContext
 from src.generators.layer_generator import LayerGenerator
-from src.generators.utils import GeneratorUtilsMixin, ImportPathGenerator
+from src.generators.utils import (
+    FileOperations,
+    ImportPathGenerator,
+)
 from src.preview.collector import PreviewCollector
 from src.schemas import ConfigModel
 
@@ -16,15 +19,15 @@ class AbstractPresetGenerator(ABC):
 
     def __init__(
         self,
-        config: ConfigModel,
+        context: GenerationContext,
     ) -> None:
         """Initialize the preset generator with layer generators and configuration.
 
         Args:
-            config: Project configuration
+            context: Project configuration
 
         """
-        self.config = config
+        self.config = context.config
 
     @abstractmethod
     def generate(self, root_path: Path, config: ConfigModel) -> None:
@@ -37,32 +40,24 @@ class AbstractPresetGenerator(ABC):
         """
 
 
-class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
+class BasePresetGenerator(AbstractPresetGenerator):
     """Base class for all preset generators.
 
     Contains common capability for creating generators and directories.
     """
 
-    def __init__(
-        self,
-        config: ConfigModel,
-        template_engine: TemplateEngine,
-        preview_collector: PreviewCollector,
-    ) -> None:
+    def __init__(self, context: GenerationContext) -> None:
         """Initialize the base preset generator.
 
         Args:
-            config: Project configuration
-            template_engine: Template engine for rendering
-            preview_collector: Preview collector to collect data
+            context: Project configuration
 
         """
-        super().__init__(config)
-        GeneratorUtilsMixin.__init__(
-            self, template_engine=template_engine, preview_collector=preview_collector
-        )
-        self.template_engine = template_engine
+        super().__init__(context)
+        self.context = context
+        self.template_engine = context.engine
         self.layer_generators: dict[str, LayerGenerator] = {}
+        self.file_ops = FileOperations(context.engine, context.preview_collector)
 
     def _get_layer_generator(
         self,
@@ -72,6 +67,7 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
         init_imports: bool,
         context_name: str | None = None,
         import_path_generator: ImportPathGenerator | None = None,
+        preview_collector: PreviewCollector | None = None,
     ) -> LayerGenerator:
         """Get or create a layer generator for the given layer.
 
@@ -82,6 +78,7 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
             init_imports: Whether to generate imports
             context_name: Name context
             import_path_generator: What kind of imports
+            preview_collector: Preview collector for dry generation
 
         Returns:
             Configured LayerGenerator instance
@@ -93,6 +90,7 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
             self.layer_generators[cache_key] = LayerGenerator(
                 template_engine=self.template_engine,
                 root_name=root_name,
+                preview_collector=preview_collector,
                 layer_name=layer_name,
                 group_components=group_components,
                 init_imports=init_imports,
@@ -114,8 +112,8 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
 
         """
         layer_path = root_path / layer_name
-        self.create_directory(layer_path)
-        self.create_init_file(layer_path)
+        self.file_ops.create_directory(layer_path)
+        self.file_ops.create_init_file(layer_path)
         return layer_path
 
     def create_component_dir(self, layer_path: Path, component_type: str) -> Path:
@@ -130,6 +128,6 @@ class BasePresetGenerator(AbstractPresetGenerator, GeneratorUtilsMixin):
 
         """
         component_dir = layer_path / component_type
-        self.create_directory(component_dir)
-        self.create_init_file(component_dir)
+        self.file_ops.create_directory(component_dir)
+        self.file_ops.create_init_file(component_dir)
         return component_dir

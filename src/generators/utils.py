@@ -25,7 +25,7 @@ single_form_words = {
 }
 
 
-class GeneratorUtilsMixin:
+class FileOperations:
     """Base class for all code generators.
 
     This class provides common utility methods used by all specific
@@ -84,8 +84,9 @@ class GeneratorUtilsMixin:
         init_file = path / "__init__.py"
         if self.preview_collector:
             self.preview_collector.add_init_file(init_file)
-        if not init_file.exists():
-            init_file.touch()
+        else:
+            if not init_file.exists():
+                init_file.touch()
 
     def get_init_path(self, path: Path) -> Path:
         """Return a path to init file.

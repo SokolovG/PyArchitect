@@ -32,6 +32,7 @@ class SimplePresetGenerator(BasePresetGenerator):
                     root_name=config.settings.root_name,
                     group_components=config.settings.group_components,
                     init_imports=config.settings.init_imports,
+                    preview_collector=self.context.preview_collector,
                 )
 
                 layer_generator.generate_components(component_dir, component_type, components)

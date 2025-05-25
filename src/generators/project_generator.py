@@ -1,21 +1,19 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.core.template_engine import TemplateEngine
+from src.core.utils import GenerationContext
 from src.generators.presets import (
     AdvancedPresetGenerator,
     SimplePresetGenerator,
     StandardPresetGenerator,
 )
 from src.generators.presets.base import AbstractPresetGenerator
-from src.generators.utils import GeneratorUtilsMixin
-from src.preview.collector import PreviewCollector
-from src.schemas import ConfigModel
+from src.generators.utils import FileOperations
 
 logger = getLogger(__name__)
 
 
-class ProjectGenerator(GeneratorUtilsMixin):
+class ProjectGenerator:
     """Main project generator.
 
     This class coordinates the generation of all project components
@@ -28,31 +26,22 @@ class ProjectGenerator(GeneratorUtilsMixin):
         "advanced": AdvancedPresetGenerator,
     }
 
-    def __init__(
-        self,
-        config: ConfigModel,
-        engine: TemplateEngine,
-        preview_collector: PreviewCollector,
-        preview_mode: bool = False,
-    ) -> None:
+    def __init__(self, context: GenerationContext) -> None:
         """Initialize the project generator.
 
         Args:
-            config: Model config
-            engine: TemplateEngine
-            preview_collector: Preview collector
-            preview_mode: Preview mode
+            context: Context config
+
 
         """
-        super().__init__(engine, preview_collector)
-        self.config = config
-        self.preview_mode = preview_mode
+        self.context = context
+        self.file_ops = FileOperations(context.engine, context.preview_collector)
 
-        preset_type = self.config.settings.preset
+        preset_type = self.context.config.settings.preset
         preset_generator_class = self.PRESET_GENERATORS.get(preset_type, StandardPresetGenerator)
         logger.debug(f"Set preset - {preset_generator_class}")
 
-        self.preset_generator = preset_generator_class(self.config, engine, self.preview_collector)  # type: ignore
+        self.preset_generator = preset_generator_class(self.context)
 
     def generate(self) -> None:
         """Generate the project structure based on the preset.
@@ -64,8 +53,8 @@ class ProjectGenerator(GeneratorUtilsMixin):
         logger.debug("Project generator starting...")
 
         project_root = Path.cwd()
-        root_name = self.config.settings.root_name
+        root_name = self.context.config.settings.root_name
         root_path = project_root / root_name
-        self.create_directory(root_path)
-        self.create_init_file(root_path)
-        self.preset_generator.generate(root_path, self.config)
+        self.file_ops.create_directory(root_path)
+        self.file_ops.create_init_file(root_path)
+        self.preset_generator.generate(root_path, self.context.config)

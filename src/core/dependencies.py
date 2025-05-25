@@ -5,6 +5,7 @@ from dishka import Provider, Scope, make_container, provide
 
 from src.core.parser import YamlParser
 from src.core.template_engine import TemplateEngine
+from src.core.utils import GenerationContext
 from src.generators import ProjectGenerator
 from src.preview.collector import PreviewCollector
 from src.schemas import ConfigModel
@@ -73,7 +74,9 @@ class MyProvider(Provider):
         preview_collector: PreviewCollector,
     ) -> ProjectGenerator:
         """Provide a ProjectGenerator instance with all dependencies injected."""
-        return ProjectGenerator(config, engine, preview_collector, get_generator_mode)
+        return ProjectGenerator(
+            GenerationContext(config, engine, preview_collector, get_generator_mode)
+        )
 
 
 T = TypeVar("T")

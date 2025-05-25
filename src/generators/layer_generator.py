@@ -3,16 +3,17 @@ from pathlib import Path
 
 from src.core.template_engine import TemplateEngine
 from src.generators.utils import (
-    GeneratorUtilsMixin,
+    FileOperations,
     ImportPathGenerator,
     StandardImportPathGenerator,
     single_form_words,
 )
+from src.preview.collector import PreviewCollector
 
 logger = getLogger(__name__)
 
 
-class LayerGenerator(GeneratorUtilsMixin):
+class LayerGenerator:
     """Generator for components within a specific architectural layer.
 
     This class is responsible for generating Python files for specific components
@@ -28,6 +29,7 @@ class LayerGenerator(GeneratorUtilsMixin):
         init_imports: bool = False,
         context_name: str | None = None,
         import_path_generator: ImportPathGenerator | None = None,
+        preview_collector: PreviewCollector | None = None,
     ) -> None:
         """Initialize layer generator.
 
@@ -39,9 +41,12 @@ class LayerGenerator(GeneratorUtilsMixin):
             init_imports: Whether to generate imports in __init__.py
             context_name: Name of context
             import_path_generator: What kind imports
+            preview_collector: Preview collector for dry generation
 
         """
-        super().__init__(template_engine)
+        self.file_ops = FileOperations(template_engine, preview_collector)
+        self.template_engine = template_engine
+        self.preview_collector = preview_collector
         self.layer_name = layer_name
         self.template_dir = template_engine.get_template_dir(self.layer_name)
         self.group_components = group_components
@@ -74,17 +79,19 @@ class LayerGenerator(GeneratorUtilsMixin):
             module_name = f"{snake_name}_{singular_type.lower()}"
 
         file_path = path / file_name
+        if self.preview_collector:
+            self.preview_collector.add_file(file_path)
+        else:
+            template_path = "base_template.py.jinja"
+            content = self.template_engine.render(
+                template_path,
+                {
+                    "name": component_name,
+                    "type": singular_type,
+                },
+            )
 
-        template_path = "base_template.py.jinja"
-        content = self.template_engine.render(
-            template_path,
-            {
-                "name": component_name,
-                "type": singular_type,
-            },
-        )
-
-        self.write_file(file_path, content)
+            self.file_ops.write_file(file_path, content)
         return module_name
 
     def generate_components(  # noqa: D417
@@ -126,7 +133,7 @@ class LayerGenerator(GeneratorUtilsMixin):
                 generated_modules[component_name] = module_name
 
         if self.init_imports and components:
-            init_path = self.get_init_path(component_dir)
+            init_path = self.file_ops.get_init_path(component_dir)
             self._generate_init_imports(
                 init_path=init_path,
                 component_type=component_type,
@@ -160,6 +167,9 @@ class LayerGenerator(GeneratorUtilsMixin):
         """
         file_name = f"{component_type}.py"
         file_path = path / file_name
+        if self.preview_collector:
+            self.preview_collector.add_file(file_path)
+            return None
 
         template_path = "multi_component_template.py.jinja"
 
@@ -172,7 +182,8 @@ class LayerGenerator(GeneratorUtilsMixin):
             },
         )
 
-        self.write_file(file_path, content)
+        self.file_ops.write_file(file_path, content)
+        return None
 
     def _generate_init_imports(
         self,
@@ -216,4 +227,4 @@ class LayerGenerator(GeneratorUtilsMixin):
             },
         )
 
-        self.write_file(init_path, content)
+        self.file_ops.write_file(init_path, content)
