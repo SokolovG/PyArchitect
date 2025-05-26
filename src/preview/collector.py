@@ -2,6 +2,8 @@ from logging import getLogger
 from pathlib import Path
 
 from src.preview.objects import ComponentType, PreviewNode
+from src.preview.renderers.ascii_render import AsciiPreviewRender
+from src.preview.renderers.base_render import BaseAbstractPreviewRender
 from src.preview.renderers.tree_render import TreePreviewRender
 
 logger = getLogger(__name__)
@@ -10,16 +12,22 @@ logger = getLogger(__name__)
 class PreviewCollector:
     """Collects information about project structure for preview mode."""
 
-    def __init__(self, render_format: str = "tree") -> None:
+    RENDER_TYPES: dict[str, type[BaseAbstractPreviewRender]] = {
+        "tree": TreePreviewRender,
+        "ascii": AsciiPreviewRender,
+    }
+
+    def __init__(self, display_type: str) -> None:
         """Initialize collector.
 
         Args:
-            render_format: Format for rendering
+            display_type: Format for rendering
 
         """
-        self.render_format = render_format
+        self.display_type = display_type
         self.root_node: PreviewNode | None = None
         self.nodes: dict[str, PreviewNode] = {}
+        self.renderer = self.RENDER_TYPES.get(display_type, TreePreviewRender)(self.nodes)
 
     def add_directory(self, path: Path) -> None:
         """Add directory to preview structure.
@@ -68,10 +76,9 @@ class PreviewCollector:
         """
         self.add_file(path, ComponentType.INIT)
 
-    def render(self) -> None:
-        """Render collected structure using selected renderer."""
+    def display(self) -> None:
+        """Display collected structure using selected renderer."""
         if not self.root_node:
             print("No structure to preview")
             return
-        renderer = TreePreviewRender(self.nodes)
-        renderer.render()
+        self.renderer.render()
