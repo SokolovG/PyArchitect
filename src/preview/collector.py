@@ -1,6 +1,7 @@
 from logging import getLogger
 from pathlib import Path
 
+from src.core.exceptions import StructureForPreviewNotFoundError
 from src.preview.objects import ComponentType, PreviewNode
 from src.preview.renderers.ascii_render import AsciiPreviewRender
 from src.preview.renderers.base_render import BaseAbstractPreviewRender
@@ -79,6 +80,6 @@ class PreviewCollector:
     def display(self) -> None:
         """Display collected structure using selected renderer."""
         if not self.root_node:
-            print("No structure to preview")
-            return
+            raise StructureForPreviewNotFoundError()
+
         self.renderer.render()
