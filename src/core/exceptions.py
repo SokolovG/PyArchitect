@@ -14,7 +14,7 @@ class BaseExceptionPayload:
 
     """
 
-    def __init__(self, value: T, msg: str | None = None) -> None:
+    def __init__(self, value: T | None = None, msg: str | None = None) -> None:
         """Initialize the exception payload.
 
         Args:
@@ -34,24 +34,24 @@ class PyArchitectError(BaseExceptionPayload, Exception):
 
 
 class ConfigFileNotFoundError(PyArchitectError):
-    """Raised when the config file is not found.
+    """Raised when the config file isn't found.
 
     This exception is raised when the specified configuration file
-    does not exist or cannot be accessed.
+    doesn't exist or can't be accessed.
     """
 
     def __str__(self) -> str:
         """Return string representation of the error.
 
         Returns:
-            Error message with file path
+            Error message with a path
 
         """
         return f"Configuration file not found: {self.value}"
 
 
 class YamlParseError(BaseExceptionPayload, Exception):
-    """Raised when the config file is not successfully parsed.
+    """Raised when the config file isn't successfully parsed.
 
     This exception is raised when there are syntax errors or other issues
     with the YAML configuration file.
@@ -65,3 +65,16 @@ class YamlParseError(BaseExceptionPayload, Exception):
 
         """
         return f"Configuration file could not be parsed: {self.value}"
+
+
+class StructureForPreviewNotFoundError(BaseExceptionPayload, Exception):
+    """Raised when the structure for preview not found."""
+
+    def __str__(self) -> str:
+        """Return string representation of the error.
+
+        Returns:
+            Error message with original YAML error
+
+        """
+        return f"No root node with name {self.value} found."

@@ -10,6 +10,7 @@ from src.core import container
 from src.core.exceptions import YamlParseError
 from src.core.parser import YamlParser
 from src.generators import ProjectGenerator
+from src.preview.collector import PreviewCollector
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -105,8 +106,11 @@ def preview(file: str | None = None) -> None:
 
         container.provider.set_file_path(path)
         container.provider.set_preview_mode(preview_mode=True)
-        generator = container.get(ProjectGenerator)
-        generator.generate()  # type: ignore
+        generator: ProjectGenerator = container.get(ProjectGenerator)
+        generator.generate()
+
+        collector: PreviewCollector = container.get(PreviewCollector)
+        collector.display()
 
     except Exception as error:
         click.secho(f"Error: {error}", fg="red", err=True)

@@ -46,6 +46,7 @@ class AdvancedPresetGenerator(BasePresetGenerator):
                     init_imports=config.settings.init_imports,
                     context_name=context_name,
                     import_path_generator=AdvancedImportPathGenerator(),
+                    preview_collector=self.context.preview_collector,
                 )
 
                 layer_path = self.create_layer_dir(context_path, layer_name)

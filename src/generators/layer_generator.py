@@ -3,20 +3,21 @@ from pathlib import Path
 
 from src.core.template_engine import TemplateEngine
 from src.generators.utils import (
-    GeneratorUtilsMixin,
+    FileOperations,
     ImportPathGenerator,
     StandardImportPathGenerator,
     single_form_words,
 )
+from src.preview.collector import PreviewCollector
 
 logger = getLogger(__name__)
 
 
-class LayerGenerator(GeneratorUtilsMixin):
+class LayerGenerator:
     """Generator for components within a specific architectural layer.
 
     This class is responsible for generating Python files for specific components
-    (entities, repositories, etc.) within existing directories.
+    within existing directories.
     """
 
     def __init__(
@@ -28,6 +29,7 @@ class LayerGenerator(GeneratorUtilsMixin):
         init_imports: bool = False,
         context_name: str | None = None,
         import_path_generator: ImportPathGenerator | None = None,
+        preview_collector: PreviewCollector | None = None,
     ) -> None:
         """Initialize layer generator.
 
@@ -39,9 +41,12 @@ class LayerGenerator(GeneratorUtilsMixin):
             init_imports: Whether to generate imports in __init__.py
             context_name: Name of context
             import_path_generator: What kind imports
+            preview_collector: Preview collector for dry generation
 
         """
-        super().__init__(template_engine)
+        self.file_ops = FileOperations(template_engine, preview_collector)
+        self.template_engine = template_engine
+        self.preview_collector = preview_collector
         self.layer_name = layer_name
         self.template_dir = template_engine.get_template_dir(self.layer_name)
         self.group_components = group_components
@@ -55,11 +60,11 @@ class LayerGenerator(GeneratorUtilsMixin):
 
         Args:
             path: Path where to create the file
-            component_type: Type of component (entity, repository, etc.)
+            component_type: Type of component
             component_name: Name of the component
 
         Returns:
-            Name of the generated module (without .py)
+            Name of the generated module
 
         """
         singular_type = single_form_words.get(component_type, component_type.rstrip("s"))
@@ -74,31 +79,40 @@ class LayerGenerator(GeneratorUtilsMixin):
             module_name = f"{snake_name}_{singular_type.lower()}"
 
         file_path = path / file_name
+        if self.preview_collector:
+            self.preview_collector.add_file(file_path)
+        else:
+            template_path = "base_template.py.jinja"
+            content = self.template_engine.render(
+                template_path,
+                {
+                    "name": component_name,
+                    "type": singular_type,
+                },
+            )
 
-        template_path = "base_template.py.jinja"
-        content = self.template_engine.render(
-            template_path,
-            {
-                "name": component_name,
-                "type": singular_type,
-            },
-        )
-
-        self.write_file(file_path, content)
+            self.file_ops.write_file(file_path, content)
         return module_name
 
-    def generate_components(
+    def generate_components(  # noqa: D417
         self, component_dir: Path, component_type: str, components: list[str] | str
     ) -> dict[str, str]:
         """Generate all components of a specific type.
 
+        This method handles the generation of component files based on the provided configuration.
+        It supports both grouped and individual component generation modes,
+        and can handle
+        both string and list inputs for components.
+
         Args:
             component_dir: Directory where to create components
-            component_type: Type of components (entities, repositories, etc.)
-            components: List of component names
+            component_type: Type of components
+            components:
+            List of component names or comma-separated string of component names.
+                      Empty lists will still create the directory structure.
 
         Returns:
-            Dictionary mapping component names to their module names
+            Dictionary mapping component names to their module names.
 
         """
         if components is None:
@@ -119,7 +133,7 @@ class LayerGenerator(GeneratorUtilsMixin):
                 generated_modules[component_name] = module_name
 
         if self.init_imports and components:
-            init_path = self.get_init_path(component_dir)
+            init_path = self.file_ops.get_init_path(component_dir)
             self._generate_init_imports(
                 init_path=init_path,
                 component_type=component_type,
@@ -129,19 +143,33 @@ class LayerGenerator(GeneratorUtilsMixin):
 
         return generated_modules
 
-    def _generate_grouped_components(
+    def _generate_grouped_components(  # noqa: D417
         self, path: Path, component_type: str, components: list[str]
     ) -> None:
         """Generate all components in a single file.
 
+        This private method is used when group_components are True.
+        It creates a single
+        Python file containing all components of the specified type.
+        Each component
+        is generated as a class with basic structure and docstring.
+
         Args:
-            path: The path where to generate
-            component_type: Component type (entities, value_objects, etc.)
-            components: List of component names
+            path: The path where to generate the file
+            component_type:
+            Component type
+            components: List of component names to generate
+
+        Note:
+            This method is called internally by generate_components when
+            self.group_components is True.
 
         """
         file_name = f"{component_type}.py"
         file_path = path / file_name
+        if self.preview_collector:
+            self.preview_collector.add_file(file_path)
+            return None
 
         template_path = "multi_component_template.py.jinja"
 
@@ -154,7 +182,8 @@ class LayerGenerator(GeneratorUtilsMixin):
             },
         )
 
-        self.write_file(file_path, content)
+        self.file_ops.write_file(file_path, content)
+        return None
 
     def _generate_init_imports(
         self,
@@ -165,9 +194,14 @@ class LayerGenerator(GeneratorUtilsMixin):
     ) -> None:
         """Generate __init__.py with import for components.
 
+        This private method generates an __init__.py file that exports all components
+        of the specified type.
+        It creates import statements and __all__ list for
+        proper module exports.
+
         Args:
             init_path: Path to the __init__.py file
-            component_type: Type of components (entities, repositories, etc.)
+            component_type: Type of components
             components: List of component names to export
             generated_modules: Dictionary mapping component names to their module names
 
@@ -193,4 +227,4 @@ class LayerGenerator(GeneratorUtilsMixin):
             },
         )
 
-        self.write_file(init_path, content)
+        self.file_ops.write_file(init_path, content)
