@@ -2,10 +2,9 @@ from logging import getLogger
 from pathlib import Path
 
 from src.core.exceptions import StructureForPreviewNotFoundError
+from src.preview.base_render import BaseAbstractPreviewRender
 from src.preview.objects import ComponentType, PreviewNode
-from src.preview.renderers.ascii_render import AsciiPreviewRender
-from src.preview.renderers.base_render import BaseAbstractPreviewRender
-from src.preview.renderers.tree_render import TreePreviewRender
+from src.preview.tree_render import TreePreviewRender
 
 logger = getLogger(__name__)
 
@@ -15,20 +14,19 @@ class PreviewCollector:
 
     RENDER_TYPES: dict[str, type[BaseAbstractPreviewRender]] = {
         "tree": TreePreviewRender,
-        "ascii": AsciiPreviewRender,
     }
 
-    def __init__(self, display_type: str) -> None:
+    def __init__(self, render_format: str) -> None:
         """Initialize collector.
 
         Args:
-            display_type: Format for rendering
+            render_format: Format for rendering
 
         """
-        self.display_type = display_type
+        self.display_type = render_format
         self.root_node: PreviewNode | None = None
         self.nodes: dict[str, PreviewNode] = {}
-        self.renderer = self.RENDER_TYPES.get(display_type, TreePreviewRender)(self.nodes)
+        self.renderer = self.RENDER_TYPES.get(render_format, TreePreviewRender)(self.nodes)
 
     def add_directory(self, path: Path) -> None:
         """Add directory to preview structure.
@@ -81,5 +79,6 @@ class PreviewCollector:
         """Display collected structure using selected renderer."""
         if not self.root_node:
             raise StructureForPreviewNotFoundError()
+        self.renderer.root_node = self.root_node
 
         self.renderer.render()

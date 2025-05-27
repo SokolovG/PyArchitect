@@ -109,7 +109,7 @@ def preview(file: str | None = None) -> None:
         generator.generate()
 
         collector: PreviewCollector = container.get(PreviewCollector)
-        collector.render()
+        collector.display()
 
     except Exception as error:
         click.echo(click.style(f"Error: {error}", fg="red"), err=True)

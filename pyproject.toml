@@ -26,6 +26,7 @@ dependencies = [
     "Jinja2>=3.1.6",
     "mypy>=1.15.0",
     "icecream>=2.1.4",
+    "rich>=14.0.0",
 ]
 
 [project.urls]
