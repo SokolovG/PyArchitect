@@ -16,17 +16,17 @@ class PreviewCollector:
         "tree": TreePreviewRender,
     }
 
-    def __init__(self, render_format: str) -> None:
+    def __init__(self, render_format: str | None = None) -> None:
         """Initialize collector.
 
         Args:
             render_format: Format for rendering
 
         """
-        self.display_type = render_format
+        self.display_type = render_format if render_format else "tree"
         self.root_node: PreviewNode | None = None
         self.nodes: dict[str, PreviewNode] = {}
-        self.renderer = self.RENDER_TYPES.get(render_format, TreePreviewRender)(self.nodes)
+        self.renderer = self.RENDER_TYPES[self.display_type](self.nodes)
 
     def add_directory(self, path: Path) -> None:
         """Add directory to preview structure.

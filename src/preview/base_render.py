@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from src.core.template_engine import TemplateEngine
 from src.preview.objects import PreviewNode
 
 
@@ -8,6 +9,7 @@ class BaseAbstractPreviewRender(ABC):
         """Init data."""
         self.data = preview_data
         self.root_node = root_node
+        self.template_engine = TemplateEngine()
 
     @abstractmethod
     def render(self) -> None:

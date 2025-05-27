@@ -12,8 +12,9 @@ class TreePreviewRender(BaseAbstractPreviewRender):
         console = Console(record=True)
         console.print(tree)
         text = console.export_text()
+        content = self.template_engine.render("structure.md.jinja", {"content": text})
         with open("structure.md", "w") as f:
-            f.write(text)
+            f.write(content)
 
     def _build_tree(self, node: PreviewNode) -> Tree:
         tree = Tree(node.name)
