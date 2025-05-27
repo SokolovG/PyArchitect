@@ -39,8 +39,8 @@ class StandardPresetGenerator(BasePresetGenerator):
                 for context in contexts:
                     context_name = context.pop("name", "default")
                     context_path = layer_path / context_name
-                    self.create_directory(context_path)
-                    self.create_init_file(context_path)
+                    self.file_ops.create_directory(context_path)
+                    self.file_ops.create_init_file(context_path)
 
                     for component_type, components in context.items():
                         component_dir = self.create_component_dir(context_path, component_type)
@@ -50,6 +50,7 @@ class StandardPresetGenerator(BasePresetGenerator):
                             group_components=config.settings.group_components,
                             init_imports=config.settings.init_imports,
                             context_name=context_name,
+                            preview_collector=self.context.preview_collector,
                         )
                         layer_generator.generate_components(
                             component_dir, component_type, components
@@ -68,6 +69,7 @@ class StandardPresetGenerator(BasePresetGenerator):
                         root_name=config.settings.root_name,
                         group_components=config.settings.group_components,
                         init_imports=config.settings.init_imports,
+                        preview_collector=self.context.preview_collector,
                     )
                     layer_generator.generate_components(component_dir, component_type, components)
 
