@@ -17,7 +17,7 @@ class LayerGenerator:
     """Generator for components within a specific architectural layer.
 
     This class is responsible for generating Python files for specific components
-    within existing directories.
+    within existing directories, supporting both individual and grouped component generation.
     """
 
     def __init__(
@@ -40,7 +40,7 @@ class LayerGenerator:
             group_components: Whether to group components in single files
             init_imports: Whether to generate imports in __init__.py
             context_name: Name of context
-            import_path_generator: What kind imports
+            import_path_generator: Import path generator instance
             preview_collector: Preview collector for dry generation
 
         """
@@ -94,25 +94,18 @@ class LayerGenerator:
             self.file_ops.write_file(file_path, content)
         return module_name
 
-    def generate_components(  # noqa: D417
+    def generate_components(
         self, component_dir: Path, component_type: str, components: list[str] | str
     ) -> dict[str, str]:
         """Generate all components of a specific type.
 
-        This method handles the generation of component files based on the provided configuration.
-        It supports both grouped and individual component generation modes,
-        and can handle
-        both string and list inputs for components.
-
         Args:
             component_dir: Directory where to create components
             component_type: Type of components
-            components:
-            List of component names or comma-separated string of component names.
-                      Empty lists will still create the directory structure.
+            components: List of component names or comma-separated string
 
         Returns:
-            Dictionary mapping component names to their module names.
+            Dictionary mapping component names to their module names
 
         """
         if components is None:
@@ -143,26 +136,15 @@ class LayerGenerator:
 
         return generated_modules
 
-    def _generate_grouped_components(  # noqa: D417
+    def _generate_grouped_components(
         self, path: Path, component_type: str, components: list[str]
     ) -> None:
         """Generate all components in a single file.
 
-        This private method is used when group_components are True.
-        It creates a single
-        Python file containing all components of the specified type.
-        Each component
-        is generated as a class with basic structure and docstring.
-
         Args:
             path: The path where to generate the file
-            component_type:
-            Component type
+            component_type: Component type
             components: List of component names to generate
-
-        Note:
-            This method is called internally by generate_components when
-            self.group_components is True.
 
         """
         file_name = f"{component_type}.py"
@@ -194,16 +176,11 @@ class LayerGenerator:
     ) -> None:
         """Generate __init__.py with import for components.
 
-        This private method generates an __init__.py file that exports all components
-        of the specified type.
-        It creates import statements and __all__ list for
-        proper module exports.
-
         Args:
             init_path: Path to the __init__.py file
             component_type: Type of components
-            components: List of component names to export
-            generated_modules: Dictionary mapping component names to their module names
+            components: List of component names
+            generated_modules: Dictionary of generated module names
 
         """
         imports = []

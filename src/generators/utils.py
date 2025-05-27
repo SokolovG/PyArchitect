@@ -33,6 +33,7 @@ class FileOperations:
 
     Attributes:
         template_engine: Template engine instance for rendering code templates
+        preview_collector: Optional collector for dry generation
 
     """
 
@@ -54,9 +55,6 @@ class FileOperations:
     def create_directory(self, path: Path) -> Path:
         """Create a directory if it doesn't exist.
 
-        Creates the specified directory and all necessary parent directories.
-        If the directory already exists, no error is raised.
-
         Args:
             path: Path to create
 
@@ -73,10 +71,6 @@ class FileOperations:
     def create_init_file(self, path: Path) -> None:
         """Create an empty __init__.py file in the specified directory.
 
-        Creates a Python package marker file to make the directory
-        importable as a Python module.
-        Does nothing if a file already exists.
-
         Args:
             path: Directory where to create the file
 
@@ -91,9 +85,6 @@ class FileOperations:
     def get_init_path(self, path: Path) -> Path:
         """Return a path to init file.
 
-        Constructs the path to the __init__.py file within the given directory
-        without creating the file.
-
         Args:
             path: Directory where the init file should be located
 
@@ -106,9 +97,6 @@ class FileOperations:
 
     def write_file(self, path: Path, content: str) -> None:
         """Write content to a file.
-
-        Creates or overwrites a file with the given content.
-        Parent directories are assumed to exist.
 
         Args:
             path: Path where to write the file
@@ -172,10 +160,6 @@ class StandardImportPathGenerator(ImportPathGenerator):
         component_name: str,
     ) -> str:
         """Generate a standard import path.
-
-        Creates import statements following the pattern:
-        - With context: from root.layer.context.component_type.module import component
-        - Without context: from root.layer.component_type.module import component
 
         Args:
             root_name: Root package name

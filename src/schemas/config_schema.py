@@ -5,7 +5,10 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class PresetType(str, Enum):
-    """Types of configuration presets."""
+    """Types of configuration presets.
+
+    Defines the available architectural presets for project generation.
+    """
 
     SIMPLE = "simple"  # No contexts, simple layers
     STANDARD = "standard"  # Contexts in flat layout
@@ -13,14 +16,21 @@ class PresetType(str, Enum):
 
 
 class ContextsLayout(str, Enum):
-    """Options for organizing contexts."""
+    """Options for organizing contexts.
+
+    Defines how bounded contexts are organized in the project structure.
+    """
 
     FLAT = "flat"  # Contexts inside layers
     NESTED = "nested"  # Layers inside contexts
 
 
 class Settings(BaseModel):
-    """Basic Project Settings."""
+    """Basic Project Settings.
+
+    Defines the core configuration settings for project generation,
+    including preset type, context organization, and layer names.
+    """
 
     preset: PresetType = PresetType.STANDARD
 
@@ -82,8 +92,8 @@ class ConfigModel(BaseModel):
 
     Supports all three organization options:
     1. Simple - no contexts (uses the layers field)
-    2. Flat - contexts inside layers (uses the layers field)
-    3. Nested - layers inside contexts (uses the contexts field)
+    2. Flat - contexts inside layers (uses the layer field)
+    3. Nested - layers inside contexts (use the context field)
     """
 
     settings: Settings = Field(default_factory=Settings)
@@ -91,9 +101,6 @@ class ConfigModel(BaseModel):
 
     def model_post_init(self, __context: Any) -> None:  # noqa
         """Apply preset defaults after model initialization.
-
-        This method sets appropriate configuration defaults based on the
-        selected preset type, ensuring consistency in the configuration.
 
         Args:
             __context: Context data from Pydantic (not used)

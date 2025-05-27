@@ -6,7 +6,7 @@ from pathlib import Path
 import click
 import pydantic
 
-from src.core import container
+from src.core.dependencies import container
 from src.core.exceptions import YamlParseError
 from src.core.parser import YamlParser
 from src.generators import ProjectGenerator
@@ -26,14 +26,23 @@ logger = logging.getLogger(__name__)
 
 @click.group()
 def cli() -> None:
-    """Entry point for the app."""
+    """Entry point for the PyArchitect command-line tool app.
+
+    This is the main command group that provides access to all available commands.
+    """
 
 
 @click.command()
 @click.option("-p", "--preset", default="standard", help="Preset selection.")
 @click.option("-f", "--force", is_flag=True, help="Overwrite existing config file.")
 def init(preset: str, force: bool) -> None:
-    """Generate basic example based on preset."""
+    """Generate basic example configuration based on selected preset.
+
+    Args:
+        preset: Name of the preset to use
+        force: Whether to overwrite an existing config file
+
+    """
     config_path = Path("ddd-config.yaml")
     if config_path.exists() and not force:
         click.secho(
@@ -62,7 +71,12 @@ def init(preset: str, force: bool) -> None:
 @click.command()
 @click.option("-f", "--file", help="Path to YAML file.")
 def validate(file: str | None = None) -> None:
-    """Validate YAML config."""
+    """Validate the YAML configuration file.
+
+    Args:
+        file: Optional path to the configuration file
+
+    """
     click.echo("Starting validation...")
     parser = container.get(YamlParser)
     try:
@@ -94,7 +108,12 @@ def validate(file: str | None = None) -> None:
 @click.command()
 @click.option("-f", "--file", help="Path to YAML file.")
 def preview(file: str | None = None) -> None:
-    """Preview future structure."""
+    """Preview the project structure without generating files.
+
+    Args:
+        file: Optional path to the configuration file
+
+    """
     try:
         path = Path(file) if file else None
 
@@ -119,7 +138,12 @@ def preview(file: str | None = None) -> None:
 @click.command()
 @click.option("-f", "--file", help="Path to YAML file.")
 def run(file: str | None = None) -> None:
-    """Generate structure for the app."""
+    """Generate the project structure based on configuration.
+
+    Args:
+        file: Optional path to the configuration file
+
+    """
     try:
         path = Path(file) if file else None
 
