@@ -1,76 +1,142 @@
-# PyArchitect
+# PyArchitect 🏗️
 
-PyArchitect is a CLI tool that helps developers quickly create a project structure that follows Domain-Driven Design (DDD) principles. The tool generates architecture based on a YAML configuration that defines bounded contexts, entities, repositories, services, use cases, and other DDD elements.
+[![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## Overview
+PyArchitect is a command-line tool
+that helps developers quickly create a project structure following Domain-Driven Design
+(DDD) principles.
+The tool generates architecture based on a YAML configuration that defines bounded contexts,
+entities, repositories, services, use cases, and other DDD elements.
 
-PyArchitect simplifies the process of setting up a DDD architecture in Python projects. It allows you to create a structured project with domain, application, infrastructure, and interface layers, all configurable through a YAML file.
+## 🚀 Quick Start
 
-### Features
-
-- **Configurable Architecture**: Define your project structure using a YAML configuration file.
-- **Layer Generation**: Generate components for domain, application, infrastructure, and interface layers.
-- **Bounded Contexts**: Support for bounded contexts to organize your project effectively.
-- **Customizable Naming**: Configure naming conventions for components and directories.
-- **Multiple Presets**: Choose from Simple, Standard, or Advanced presets based on your project needs.
-- **Component Addition**: Add new components to an existing project structure.
-
-## Installation
-
-To install PyArchitect, you can use pip:
+### Installation
 
 ```bash
+# Install via pip
 pip install pyarchitect
+
+# Generate YAML file
+pa init
+
+# Edit the generated ddd-config.yaml file
+# ...
+
+# Generate structure
+pa run
 ```
 
-### Installation from source
+### Basic Usage
 
+1. Initialize a new project with a preset configuration:
 ```bash
-git clone https://github.com/yourusername/pyarchitect.git
-cd pyarchitect
+pa init --preset <PresetType(Optional argument, default to Standard)>
 ```
 
-## Usage
-
-### Initialize a new project
-
+2. Validate your configuration  (Optional command):
 ```bash
-pyarchitect init --config ddd-config.yaml
+pa validate
 ```
 
+3. Preview the project structure (Optional command):
+```bash
+pa preview --file <file_name> (Optional argument)
+```
+
+4. Generate the project:
+```bash
+pa run --file <file_name> (Optional argument)
+```
+
+## 📋 Available Commands
+
+### Core Commands
+
+| Command    | Description                                            | Example                                 |
+|------------|--------------------------------------------------------|-----------------------------------------|
+| `init`     | Initialize a new project with a preset configuration   | `pa init --preset standard`             |
+| `validate` | Validate your YAML configuration                       | `pa validate --file custom-config.yaml` |
+| `preview`  | Preview the project structure without generating files | `pa preview --file custom-config.yaml`  |
+| `run`      | Generate the project structure                         | `pa run --file custom-config.yaml`      |
+
+### Command Options
+
+#### `init` Command
+```bash
+# Create project with standard preset
+pa init --preset standard
+
+# Force overwrite existing config
+pa init --preset standard --force
+```
+
+#### `validate` Command
+```bash
+# Validate default config (ddd-config.yaml)
+pa validate
+
+# Validate specific config file
+pa validate --file custom-config.yaml
+```
+
+#### `preview` Command
+```bash
+# Preview default config
+pa preview
+
+# Preview specific config
+pa preview --file custom-config.yaml
+```
+
+#### `run` Command
+```bash
+# Generate from default config
+pa run
+
+# Generate from specific config
+pa run --file custom-config.yaml
+```
+
+## Architecture Presets
+
+PyArchitect comes with three built-in presets:
+
+### Simple Preset
+Basic DDD structure without bounded contexts:
+```bash
+pa init --preset simple
+```
+
+### Standard Preset
+Default preset with bounded contexts:
+```bash
+pa init --preset standard
+```
+
+### Advanced Preset
+Complex structure with nested contexts:
+```bash
+pa init --preset advanced
+```
 
 ## Configuration
 
-PyArchitect uses YAML configuration files to define the structure of your project. Here are some examples for different presets:
+The tool uses YAML configuration files to define your project structure.
+Example configurations are provided in the `src/templates/config_templates` directory.
 
 ### Simple Configuration Example
-
 ```yaml
 settings:
-  preset: "standard"
+  preset: "simple"
 
 layers:
   domain:
-    contexts:
-      - name: user
-        entities: User, Profile
-        value_objects: Email, Password
-        repositories: UserRepository
-      - name: catalog
-        entities: Product, Category
-        repositories: ProductRepository
-
-  application:
-    contexts:
-      - name: user
-        use_cases: RegisterUser, LoginUser
-      - name: catalog
-        use_cases: ListProducts, SearchProducts
-
+    entities: User, Product
+    value_objects: Email, Price
 ```
 
 ### Standard Configuration Example
-
 ```yaml
 settings:
   preset: "standard"
@@ -81,21 +147,11 @@ layers:
       - name: user
         entities: [User, Profile]
         value_objects: [Email, Password]
-        repositories: [UserRepository]
       - name: catalog
         entities: [Product, Category]
-        repositories: [ProductRepository]
-
-  application:
-    contexts:
-      - name: user
-        use_cases: [RegisterUser, LoginUser]
-      - name: catalog
-        use_cases: [ListProducts, SearchProducts]
 ```
 
-
-### Advanced Configuration Example
+### Advanced Configuration Example (for microservice architecture)
 
 ```yaml
 settings:
@@ -122,137 +178,21 @@ layers:
 
 ```
 
-## Presets
 
-PyArchitect offers three different presets to accommodate various project sizes and complexity levels:
+## 🤝 Contributing
 
-### Simple Preset
-
-The Simple preset creates a flat structure without bounded contexts. It's ideal for smaller projects or when you're just getting started with DDD. All components are organized directly under their respective layers.
-
-Structure example:
-```
-app/
-├── domain/
-│   ├── entities/
-│   │   └── user.py
-│   └── value_objects/
-│       └── email.py
-├── application/
-│   └── exceptions/
-│       └── user_not_found_exception.py
-├── infrastructure/
-│   └── repositories/
-│       └── user_repository.py
-└── interface/
-    └── controllers/
-        └── user_controller.py
-```
-
-### Standard Preset
-
-The Standard preset organizes components with bounded contexts in a flat layout. Contexts are organized within layers, making it suitable for medium-sized projects with clear domain boundaries.
-
-Structure example:
-```
-app/
-├── domain/
-│   ├── user/
-│   │   ├── entities/
-│   │   │   └── user.py
-│   │   └── value_objects/
-│   │       └── email.py
-│   └── catalog/
-│       └── entities/
-│           └── product.py
-├── application/
-│   └── user/
-│       └── use_cases/
-│           └── register_user.py
-└── ...
-```
-
-### Advanced Preset
-
-The Advanced preset provides flexible organization options, including nested contexts with layers inside each context. This is ideal for complex projects with many bounded contexts that need clear separation.
-
-Structure example:
-```
-app/
-├── user_context/
-│   ├── domain/
-│   │   ├── entities/
-│   │   │   └── user.py
-│   │   └── value_objects/
-│   │       └── email.py
-│   ├── application/
-│   │   └── use_cases/
-│   │       └── create_user.py
-│   └── infrastructure/
-│       └── repositories/
-│           └── user_repository.py
-└── payment_context/
-    ├── domain/
-    │   └── entities/
-    │       └── payment.py
-    └── ...
-```
-
-
-## Generated Structure
-
-Here's a comprehensive example of what PyArchitect can generate for a standard DDD architecture:
-
-```
-app/
-├── domain/
-│   ├── entities/
-│   ├── value_objects/
-│   ├── aggregates/
-│   ├── repositories/  # interfaces
-│   ├── services/
-│   ├── exceptions/
-│   ├── events/
-│   ├── factories/
-│   └── specifications/
-├── application/
-│   ├── use_cases/
-│   ├── commands/
-│   ├── command_handlers/
-│   ├── queries/
-│   ├── query_handlers/
-│   ├── event_handlers/
-│   ├── validators/
-│   └── exceptions/
-├── infrastructure/
-│   ├── repositories/  # implementations
-│   ├── models/
-│   ├── adapters/
-│   ├── unit_of_work/
-│   ├── message_bus/
-│   └── background_tasks/
-└── interface/
-    ├── controllers/
-    ├── dto/
-    ├── presenters/
-    ├── api_routes/
-    ├── middleware/
-    └── api_error_handlers/
-```
-
-## Contributing
-
-Contributions are welcome! Here's how you can contribute:
+Contributions are welcome. Please feel free to submit a Pull Request.
 
 1. Fork the repository
-2. Create a new branch (`git checkout -b feature/your-feature`)
-3. Make your changes
-4. Run the tests (`pytest`)
-5. Commit your changes (`git commit -m 'Add some feature'`)
-6. Push to the branch (`git push origin feature/your-feature`)
-7. Create a new Pull Request
+2. Create your feature branch (`git switch -c feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
+## 📄 License
 
-## License
+This project is licensed under the MIT License—see the [LICENSE](LICENSE) file for details.
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 👤 Author
+
+Grigoriy Sokolov (Sokolov_Gr@proton.me)
