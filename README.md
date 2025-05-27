@@ -88,6 +88,31 @@ pa preview
 # Preview specific config
 pa preview --file custom-config.yaml
 ```
+**Output:**
+- Displays the project structure tree in the console
+- Generates a `structure.md` file with the same tree view for future reference
+
+**Example output:**
+
+```aiignore
+app/
+├── domain/
+│   ├── user/
+│   │   ├── entities/
+│   │   │   └── user.py
+│   │   └── value_objects/
+│   │       └── email.py
+│   └── catalog/
+│       └── entities/
+│           └── product.py
+├── application/
+│   └── user/
+│       └── use_cases/
+│           └── register_user.py
+└── infrastructure/
+    └── repositories/
+        └── user_repository.py
+```
 
 #### `run` Command
 ```bash
