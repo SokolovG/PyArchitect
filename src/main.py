@@ -68,9 +68,9 @@ def validate(file: str | None = None) -> None:
     try:
         if file:
             file_path = Path(file)
-            parser.load(file_path)  # type: ignore
+            parser.load(file_path)
         else:
-            parser.load()  # type: ignore
+            parser.load()
         click.secho(
             "✓ Configuration validated successfully",
             fg="green",
@@ -131,7 +131,7 @@ def run(file: str | None = None) -> None:
 
         container.provider.set_file_path(path)
         generator = container.get(ProjectGenerator)
-        generator.generate()  # type: ignore
+        generator.generate()
 
         click.secho("Project generation completed successfully.", fg="green")
 
