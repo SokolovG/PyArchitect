@@ -30,12 +30,13 @@ class AbstractPresetGenerator(ABC):
         self.config = context.config
 
     @abstractmethod
-    def generate(self, root_path: Path, config: ConfigModel) -> None:
+    def generate(self, root_path: Path, config: ConfigModel, preview_mode: bool) -> None:
         """Generate project structure according to preset.
 
         Args:
             root_path: Root path where to generate the project
             config: Project configuration
+            preview_mode: Special mode for dry generation
 
         """
 

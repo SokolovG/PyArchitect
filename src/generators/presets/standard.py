@@ -10,7 +10,7 @@ logger = getLogger(__name__)
 class StandardPresetGenerator(BasePresetGenerator):
     """Generator for the standard preset with contexts in layers."""
 
-    def generate(self, root_path: Path, config: ConfigModel) -> None:
+    def generate(self, root_path: Path, config: ConfigModel, preview_mode: bool) -> None:
         """Generate standard project structure with contexts organized by layers.
 
         This method creates a project structure where contexts are organized within
@@ -20,6 +20,7 @@ class StandardPresetGenerator(BasePresetGenerator):
         Args:
             root_path: Path to the project root directory
             config: Project configuration model containing settings and layer definitions
+            preview_mode: Special mode for dry generation
 
         """
         logger.debug("Starting standard preset generation...")

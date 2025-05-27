@@ -24,8 +24,6 @@ dependencies = [
     "pydantic>=2.11.3",
     "dishka>=1.5.3",
     "Jinja2>=3.1.6",
-    "mypy>=1.15.0",
-    "icecream>=2.1.4",
     "rich>=14.0.0",
 ]
 
@@ -77,6 +75,7 @@ disallow_untyped_decorators = false
 disallow_subclassing_any = false
 disallow_any_generics = false
 ignore_missing_imports = true
+follow_untyped_imports = true
 
 [tool.uv]
 package = true

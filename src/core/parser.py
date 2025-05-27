@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 import pydantic
 import yaml
@@ -40,7 +41,7 @@ class YamlParser:
 
         with open(file_path, encoding="utf-8") as file:
             try:
-                raw_config = yaml.safe_load(file)
+                raw_config: dict[str, Any] = yaml.safe_load(file)  # type: ignore
                 return self.validate(raw_config)
             except yaml.YAMLError as error:
                 raise YamlParseError(error) from error
