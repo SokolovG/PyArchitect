@@ -22,5 +22,5 @@ class GenerationContext:
 
     config: ConfigModel
     engine: TemplateEngine
-    preview_collector: PreviewCollector
     preview_mode: bool
+    preview_collector: PreviewCollector | None = None
