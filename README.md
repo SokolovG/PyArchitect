@@ -16,8 +16,10 @@ entities, repositories, services, use cases, and other DDD elements.
 ```bash
 # Install via pip
 pip install pyarchitect
+# Install via uv
+uv add pyarchitect
 
-# Generate YAML file
+# Generate YAML file with example data
 pa init
 
 # Edit the generated ddd-config.yaml file
@@ -210,9 +212,10 @@ Contributions are welcome. Please feel free to submit a Pull Request.
 
 1. Fork the repository
 2. Create your feature branch (`git switch -c feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Run tests (`pytest`)
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ## 📄 License
 
