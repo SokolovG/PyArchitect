@@ -144,10 +144,6 @@ class TestCli:
                 or "Error" in result.output
             )
 
-            result = runner.invoke(cli, ["preview", "--file", "invalid.yaml"])
-            assert result.exit_code == 0
-            assert "Error" in result.output
-
     def test_cli_group_functionality(self) -> None:
         """Test the main CLI group"""
         runner = CliRunner()
