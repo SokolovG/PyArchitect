@@ -13,7 +13,7 @@ from src.generators import ProjectGenerator
 from src.preview.collector import PreviewCollector
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="[%(levelname)s] %(name)s: %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
