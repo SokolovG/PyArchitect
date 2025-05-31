@@ -7,7 +7,7 @@ import click
 import pydantic
 
 from src.core.dependencies import container
-from src.core.exceptions import YamlParseError
+from src.core.exceptions import ConfigFileNotFoundError, YamlParseError
 from src.core.parser import YamlParser
 from src.generators import ProjectGenerator
 from src.preview.collector import PreviewCollector
@@ -91,7 +91,19 @@ def validate(file: str | None = None) -> None:
             color=True,
         )
     except YamlParseError as error:
-        click.secho(f"✗ {error}", fg="red", err=True)
+        click.secho(
+            f"✗ {error}",
+            fg="red",
+            err=True,
+            color=True,
+        )
+    except ConfigFileNotFoundError as error:
+        click.secho(
+            f"✗ {error}",
+            fg="red",
+            err=True,
+            color=True,
+        )
     except pydantic.ValidationError as error:
         click.secho(
             f"✗ Configuration invalid: {error}",
@@ -102,6 +114,8 @@ def validate(file: str | None = None) -> None:
         click.secho(
             "Hint: Check the documentation for correct configuration format",
             fg="red",
+            err=True,
+            color=True,
         )
 
 
@@ -138,17 +152,27 @@ def preview(file: str | None = None) -> None:
 @click.command()
 @click.option("-f", "--file", help="Path to YAML file.")
 def run(file: str | None = None) -> None:
-    """Generate the project structure based on configuration.
-
-    Args:
-        file: Optional path to the configuration file
-
-    """
+    """Generate the project structure based on configuration."""
     try:
         path = Path(file) if file else None
+        parser = container.get(YamlParser)
 
         if path and not path.exists():
             click.secho(f"Error: Config file not found: {file}", fg="red", err=True)
+            return
+
+        try:
+            if file:
+                file_path = Path(file)
+                parser.load(file_path)
+            else:
+                parser.load()
+        except (
+            YamlParseError,
+            ConfigFileNotFoundError,
+            pydantic.ValidationError,
+        ) as error:
+            click.secho(f"✗ {error}", fg="red", err=True)
             return
 
         click.echo("Project generation started.", color=True)
