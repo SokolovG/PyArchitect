@@ -13,7 +13,6 @@ class YamlParser:
 
     This class is responsible for loading and validating the YAML
     configuration file according to the expected schema.
-
     """
 
     DEFAULT_CONFIG_FILENAME = "ddd-config.yaml"
@@ -21,11 +20,11 @@ class YamlParser:
     def load(self, file_path: Path | None = None) -> ConfigModel:
         """Load and parse the YAML configuration file.
 
-        ArgsL
-            file_path: Path to YAML config.
+        Args:
+            file_path: Path to YAML config
 
         Returns:
-            ConfigModel: Validated configuration model
+            Validated configuration model
 
         Raises:
             ConfigFileNotFoundError: If a config file doesn't exist
@@ -36,12 +35,14 @@ class YamlParser:
         if file_path is None:
             file_path = Path.cwd() / self.DEFAULT_CONFIG_FILENAME
 
-        if not file_path.exists():  # ← Проверяем существование файла
+        if not file_path.exists():
             raise ConfigFileNotFoundError(f"Configuration file not found: {file_path}")
 
         with open(file_path, encoding="utf-8") as file:
             try:
-                raw_config: dict[str, Any] = yaml.safe_load(file)  # type: ignore
+                raw_config: dict[str, Any] = yaml.safe_load(file)  # type: ignore[no-untyped-call]
+                if not isinstance(raw_config, dict):
+                    raw_config = {}
                 return self.validate(raw_config)
             except yaml.YAMLError as error:
                 raise YamlParseError(error) from error
@@ -50,10 +51,13 @@ class YamlParser:
         """Validate the configuration against the expected schema.
 
         Args:
-            config: raw config
+            config: Raw configuration dictionary
 
         Returns:
-            Validated config model
+            Validated configuration model
+
+        Raises:
+            ValidationError: If configuration doesn't match the expected schema
 
         """
         if config is None:

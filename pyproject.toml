@@ -25,6 +25,7 @@ dependencies = [
     "dishka>=1.5.3",
     "Jinja2>=3.1.6",
     "rich>=14.0.0",
+    "pytest>=8.3.5",
 ]
 
 [project.urls]
@@ -38,6 +39,7 @@ dev = [
     "ruff>=0.11.6",
     "mypy>=1.15.0",
     "pre-commit>=4.2.0",
+    "pytest-cov>=6.1.1",
 ]
 
 
@@ -48,10 +50,11 @@ pa = "src.main:cli"
 line-length = 100
 target-version = "py312"
 indent-width = 4
+extend-exclude = ["tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "B", "I", "N", "UP", "YTT", "ANN", "S", "A", "D"]
-ignore = ["ANN102", "D100", "D101", "D104", "D105"]
+ignore = ["ANN102", "D100", "D101", "D104", "D105", "D103", "D102"]
 
 
 [tool.ruff.format]
