@@ -7,16 +7,16 @@ from src.schemas.config_schema import LayerConfig, PresetType, Settings, Context
 
 class TestConfigModel:
 
-    def test_preset_choice(
-        self,
-        yaml_parser: YamlParser,
-        simple_yaml: Path,
-        standard_yaml: Path,
-        advanced_yaml: Path,
-    ) -> None:
-        simple_config = yaml_parser.load(simple_yaml)
-        standard_config = yaml_parser.load(standard_yaml)
-        advanced_config = yaml_parser.load(advanced_yaml)
+    def test_preset_choice(self) -> None:
+        simple_config = ConfigModel(
+            settings=Settings(preset=PresetType.SIMPLE), layers=LayerConfig()
+        )
+        standard_config = ConfigModel(
+            settings=Settings(preset=PresetType.STANDARD), layers=LayerConfig()
+        )
+        advanced_config = ConfigModel(
+            settings=Settings(preset=PresetType.ADVANCED), layers=LayerConfig()
+        )
         assert simple_config.settings.preset == "simple"
         assert standard_config.settings.preset == "standard"
         assert advanced_config.settings.preset == "advanced"

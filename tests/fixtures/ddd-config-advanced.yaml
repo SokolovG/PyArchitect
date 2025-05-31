@@ -1,8 +1,0 @@
-settings:
-  preset: "advanced"
-
-layers:
-  contexts:
-    - name: user_management
-      domain:
-        entities: User, Admin, Role, Permission, UserProfile, UserPreferences

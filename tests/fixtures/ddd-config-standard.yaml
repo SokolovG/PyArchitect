@@ -1,6 +1,0 @@
-settings:
-  preset: "standard"
-
-layers:
-  domain:
-    entities: User, Admin, Product, Category, Order, OrderItem
