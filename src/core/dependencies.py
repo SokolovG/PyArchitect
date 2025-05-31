@@ -140,7 +140,7 @@ class MyProvider(Provider):
 
         """
         return ProjectGenerator(
-            GenerationContext(config, engine, preview_collector, get_generator_mode)
+            GenerationContext(config, engine, get_generator_mode, preview_collector)
         )
 
 

@@ -40,7 +40,9 @@ class YamlParser:
 
         with open(file_path, encoding="utf-8") as file:
             try:
-                raw_config: dict[str, Any] = yaml.safe_load(file)
+                raw_config: dict[str, Any] = yaml.safe_load(file)  # type: ignore[no-untyped-call]
+                if not isinstance(raw_config, dict):
+                    raw_config = {}
                 return self.validate(raw_config)
             except yaml.YAMLError as error:
                 raise YamlParseError(error) from error
