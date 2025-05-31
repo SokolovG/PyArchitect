@@ -44,6 +44,7 @@ class StandardPresetGenerator(BasePresetGenerator):
 
                     for component_type, components in context.items():
                         component_dir = self.create_component_dir(context_path, component_type)
+
                         layer_generator = self._get_layer_generator(
                             layer_name=layer_name,
                             root_name=config.settings.root_name,

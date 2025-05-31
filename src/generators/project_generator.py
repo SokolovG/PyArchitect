@@ -59,5 +59,4 @@ class ProjectGenerator:
         root_path = project_root / root_name
         self.file_ops.create_directory(root_path)
         self.file_ops.create_init_file(root_path)
-
         self.preset_generator.generate(root_path, self.context.config, self.context.preview_mode)

@@ -39,7 +39,7 @@ class Settings(BaseModel):
     group_components: bool = True
     init_imports: bool = False
 
-    root_name: str = "app"
+    root_name: str = "src"
 
     domain_layer: str = "domain"
     application_layer: str = "application"

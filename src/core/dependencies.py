@@ -139,9 +139,12 @@ class MyProvider(Provider):
             Configured ProjectGenerator instance
 
         """
-        return ProjectGenerator(
-            GenerationContext(config, engine, get_generator_mode, preview_collector)
-        )
+        if get_generator_mode:
+            return ProjectGenerator(
+                GenerationContext(config, engine, get_generator_mode, preview_collector)
+            )
+
+        return ProjectGenerator(GenerationContext(config, engine, get_generator_mode))
 
 
 T = TypeVar("T")
