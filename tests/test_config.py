@@ -26,7 +26,7 @@ class TestConfigModel:
 
         assert minimal_config.settings.preset == PresetType.STANDARD
         assert minimal_config.settings.use_contexts is True
-        assert minimal_config.settings.root_name == "app"
+        assert minimal_config.settings.root_name == "src"
 
     def test_model_post_init(self) -> None:
         simple_config = ConfigModel(
