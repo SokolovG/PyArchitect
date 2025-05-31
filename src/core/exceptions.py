@@ -68,13 +68,17 @@ class YamlParseError(BaseExceptionPayload, Exception):
 
 
 class StructureForPreviewNotFoundError(BaseExceptionPayload, Exception):
-    """Raised when the structure for preview not found."""
+    """Raised when the structure for preview not found.
+
+    This exception is raised when attempting to display a preview structure
+    without a valid root node.
+    """
 
     def __str__(self) -> str:
         """Return string representation of the error.
 
         Returns:
-            Error message with original YAML error
+            Error message with root node name
 
         """
         return f"No root node with name {self.value} found."

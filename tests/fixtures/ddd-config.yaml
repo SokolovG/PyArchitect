@@ -1,0 +1,7 @@
+settings:
+  preset: "simple"
+  init_imports: true
+
+layers:
+  domain:
+    entities: User, Admin, Product, Category, Order, OrderItem

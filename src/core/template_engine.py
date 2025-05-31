@@ -6,10 +6,17 @@ from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoe
 
 
 class TemplateEngine:
-    """Class for managing Jinja2 template rendering."""
+    """Manages Jinja2 template rendering and custom filters.
+
+    This class handles template loading, rendering, and provides custom filters
+    for template processing.
+    """
 
     def __init__(self) -> None:
-        """Initialize the template engine."""
+        """Initialize the template engine with default configuration.
+
+        Sets up the Jinja2 environment with template directory and custom filters.
+        """
         templates_dir = Path(__file__).parent.parent / "templates"
 
         self.env = Environment(
@@ -21,7 +28,7 @@ class TemplateEngine:
         self._register_filters()
 
     def render(self, template_path: str, context: dict[str, Any]) -> str:
-        """Render template with provided context.
+        """Render a template with the provided context.
 
         Args:
             template_path: Path to template relative to templates directory
@@ -36,7 +43,7 @@ class TemplateEngine:
         return content
 
     def template_exists(self, template_path: str) -> bool:
-        """Check if a template exists.
+        """Check if a template exists in the template directory.
 
         Args:
             template_path: Path to the template
@@ -52,10 +59,10 @@ class TemplateEngine:
             return False
 
     def get_template_dir(self, layer_name: str = "") -> str:
-        """Get a path to template directory for specific layer.
+        """Get the path to template directory for a specific layer.
 
         Args:
-            layer_name: Optional layer name (domain, application, etc.)
+            layer_name: Optional layer name (domain, app, etc.)
 
         Returns:
             Path to template directory as string
@@ -68,12 +75,23 @@ class TemplateEngine:
 
     @staticmethod
     def _get_article(word: str) -> str:
-        """Return 'a' or 'an' based on the word."""
+        """Determine the appropriate article ('an' or 'an') for a word.
+
+        Args:
+            word: Word to determine article for
+
+        Returns:
+            'an' if word starts with a vowel, 'a' otherwise
+
+        """
         vowels = "aeiouAEIOU"
         return "an" if word and word[0] in vowels else "a"
 
     def _register_filters(self) -> None:
-        """Register custom Jinja2 filters."""
+        """Register custom Jinja2 filters for template processing.
+
+        Registers filters for article determination and case conversion.
+        """
         self.env.filters["article"] = self._get_article
         self.env.filters["camel_to_snake"] = self.camel_to_snake
 
