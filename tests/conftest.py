@@ -11,6 +11,7 @@ from src.generators.utils import (
     FileOperations,
 )
 from src.preview.collector import PreviewCollector
+from src.schemas import ConfigModel
 
 IMPORT_DATA = (
     "src",
@@ -20,7 +21,10 @@ IMPORT_DATA = (
     "customer",
     "Customer",
 )
-DEFAULT_CONFIG_FILENAME = "ddd-config.yaml"
+DEFAULT_SIMPLE_CONFIG_FILENAME = "ddd-config.yaml"
+DEFAULT_STANDARD_CONFIG_FILENAME = "ddd-config-standard.yaml"
+DEFAULT_ADVANCED_CONFIG_FILENAME = "ddd-config-advanced.yaml"
+DEFAULT_EMPTY_DIRS_CONFIG_FILENAME = "ddd-config-empty-dirs.yaml"
 DEFAULT_CONFIG_NOT_VALID_FILENAME = "ddd-config-not-valid.yaml"
 
 
@@ -32,7 +36,7 @@ def yaml_parser() -> YamlParser:
 @pytest.fixture
 def valid_yaml_path() -> Path:
     test_dir = Path(__file__).parent
-    file_path = test_dir / "fixtures" / DEFAULT_CONFIG_FILENAME
+    file_path = test_dir / "fixtures" / DEFAULT_SIMPLE_CONFIG_FILENAME
     return Path(file_path)
 
 
@@ -87,3 +91,24 @@ def file_ops() -> FileOperations:
     preview_collector = PreviewCollector()
     file_ops = FileOperations(mock_template_engine, preview_collector)
     return file_ops
+
+
+@pytest.fixture
+def simple_yaml() -> Path:
+    test_dir = Path(__file__).parent
+    file_path = test_dir / "fixtures" / DEFAULT_SIMPLE_CONFIG_FILENAME
+    return Path(file_path)
+
+
+@pytest.fixture
+def standard_yaml() -> Path:
+    test_dir = Path(__file__).parent
+    file_path = test_dir / "fixtures" / DEFAULT_STANDARD_CONFIG_FILENAME
+    return Path(file_path)
+
+
+@pytest.fixture
+def advanced_yaml() -> Path:
+    test_dir = Path(__file__).parent
+    file_path = test_dir / "fixtures" / DEFAULT_ADVANCED_CONFIG_FILENAME
+    return Path(file_path)
