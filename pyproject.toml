@@ -1,5 +1,5 @@
 [project]
-name = "pyarchitect"
+name = "py-architect"
 version = "0.1.0"
 description = "CLI tool for generating DDD architecture in Python projects"
 readme = "README.md"
@@ -9,7 +9,6 @@ license = {file = "LICENSE"}
 authors = [{name = "Grigoriy Sokolov", email = "Sokolov_Gr@proton.me"}]
 keywords = ["ddd", "architecture", "code-generation", "domain-driven-design"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -41,7 +40,6 @@ dev = [
     "pre-commit>=4.2.0",
     "pytest-cov>=6.1.1",
 ]
-
 
 [project.scripts]
 pa = "src.main:cli"
