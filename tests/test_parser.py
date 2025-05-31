@@ -13,11 +13,16 @@ class TestYamlParser:
         config = yaml_parser.load(valid_yaml_path)
         assert isinstance(config, ConfigModel)
 
-    def test_load_not_valid_yaml_file(
-        self, yaml_parser: YamlParser, not_valid_yaml_path: Path
-    ) -> None:
+    def test_load_not_valid_yaml_file(self, yaml_parser: YamlParser, tmp_path: Path) -> None:
+        invalid_yaml = """settings:
+    preset: "standard"
+      init_imports: true"""
+
+        invalid_file = tmp_path / "invalid.yaml"
+        invalid_file.write_text(invalid_yaml)
+
         with pytest.raises(YamlParseError):
-            yaml_parser.load(not_valid_yaml_path)
+            yaml_parser.load(invalid_file)
 
     def test_load_not_exist_yaml_file(
         self, yaml_parser: YamlParser, not_exist_yaml_path: Path

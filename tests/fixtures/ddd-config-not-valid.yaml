@@ -1,9 +1,0 @@
-settings:
-preset: "standard"
-  init_imports: true
-  group_components: true
-
-
-layers:
-  domain:
-    entities: User, Admin, Product, Category, Order, OrderItem
