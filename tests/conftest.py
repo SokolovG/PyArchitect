@@ -5,6 +5,7 @@ import pytest
 
 from src.core.parser import YamlParser
 from src.core.template_engine import TemplateEngine
+from src.generators.layer_generator import LayerGenerator
 from src.generators.utils import (
     StandardImportPathGenerator,
     AdvancedImportPathGenerator,
@@ -87,3 +88,25 @@ def file_ops() -> FileOperations:
     preview_collector = PreviewCollector()
     file_ops = FileOperations(mock_template_engine, preview_collector)
     return file_ops
+
+
+@pytest.fixture
+def layer_generator(template_engine: TemplateEngine) -> LayerGenerator:
+    return LayerGenerator(
+        template_engine=template_engine,
+        root_name="test_app",
+        layer_name="domain",
+        group_components=False,
+        init_imports=False,
+    )
+
+
+@pytest.fixture
+def grouped_layer_generator(template_engine: TemplateEngine) -> LayerGenerator:
+    return LayerGenerator(
+        template_engine=template_engine,
+        root_name="test_app",
+        layer_name="domain",
+        group_components=True,
+        init_imports=True,
+    )
