@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 @click.group()
 def cli() -> None:
-    """Entry point for the PyArchitect command-line tool app.
+    """Entry point for the PyArch command-line tool app.
 
     This is the main command group that provides access to all available commands.
     """

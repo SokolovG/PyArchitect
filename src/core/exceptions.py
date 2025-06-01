@@ -26,14 +26,14 @@ class BaseExceptionPayload:
         self.value = value
 
 
-class PyArchitectError(BaseExceptionPayload, Exception):
-    """Base exception class for PyArchitect.
+class PyArchError(BaseExceptionPayload, Exception):
+    """Base exception class for PyArch.
 
     All specific exceptions in the project should inherit from this class.
     """
 
 
-class ConfigFileNotFoundError(PyArchitectError):
+class ConfigFileNotFoundError(PyArchError):
     """Raised when the config file isn't found.
 
     This exception is raised when the specified configuration file

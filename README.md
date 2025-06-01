@@ -1,9 +1,9 @@
-# PyArchitect 🏗️
+# PyArch 🏗️
 
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-PyArchitect is a command-line tool
+PyArch is a command-line tool
 that helps developers quickly create a project structure following Domain-Driven Design
 (DDD) principles.
 The tool generates architecture based on a YAML configuration that defines bounded contexts,
@@ -15,9 +15,9 @@ entities, repositories, services, use cases, and other DDD elements.
 
 ```bash
 # Install via pip
-pip install pyarchitect
+pip install pyarch
 # Install via uv
-uv add pyarchitect
+uv add pyarch
 
 # Generate YAML file with example data
 pa init
@@ -127,7 +127,7 @@ pa run --file custom-config.yaml
 
 ## Architecture Presets
 
-PyArchitect comes with three built-in presets:
+PyArch comes with three built-in presets:
 
 ### Simple Preset
 Basic DDD structure without bounded contexts:

@@ -120,7 +120,7 @@ class TestCli:
 
         result = runner.invoke(cli, ["--help"])
         assert result.exit_code == 0
-        assert "PyArchitect command-line tool" in result.output
+        assert "PyArch command-line tool" in result.output
 
         result = runner.invoke(cli, ["init", "--help"])
         assert result.exit_code == 0
