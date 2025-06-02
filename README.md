@@ -1,9 +1,9 @@
-# PyArch 🏗️
+# PyConstructorError 🏗️
 
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-PyArch is a command-line tool
+PyConstructorError is a command-line tool
 that helps developers quickly create a project structure following Domain-Driven Design
 (DDD) principles.
 The tool generates architecture based on a YAML configuration that defines bounded contexts,
@@ -15,80 +15,80 @@ entities, repositories, services, use cases, and other DDD elements.
 
 ```bash
 # Install via pip
-pip install pyarch
+pip install pyconstructor
 # Install via uv
-uv add pyarch
+uv add pyconstructor
 
 # Generate YAML file with example data
-pa init
+pyc init
 
 # Edit the generated ddd-config.yaml file
 # ...
 
 # Generate structure
-pa run
+pyc run
 ```
 
 ### Basic Usage
 
 1. Initialize a new project with a preset configuration:
 ```bash
-pa init --preset <PresetType(Optional argument, default to Standard)>
+pyc init --preset <PresetType(Optional argument, default to Standard)>
 ```
 
 2. Validate your configuration  (Optional command):
 ```bash
-pa validate
+pyc validate
 ```
 
 3. Preview the project structure (Optional command):
 ```bash
-pa preview --file <file_name> (Optional argument)
+pyc preview --file <file_name> (Optional argument)
 ```
 
 4. Generate the project:
 ```bash
-pa run --file <file_name> (Optional argument)
+pyc run --file <file_name> (Optional argument)
 ```
 
 ## 📋 Available Commands
 
 ### Core Commands
 
-| Command    | Description                                            | Example                                 |
-|------------|--------------------------------------------------------|-----------------------------------------|
-| `init`     | Initialize a new project with a preset configuration   | `pa init --preset standard`             |
-| `validate` | Validate your YAML configuration                       | `pa validate --file custom-config.yaml` |
-| `preview`  | Preview the project structure without generating files | `pa preview --file custom-config.yaml`  |
-| `run`      | Generate the project structure                         | `pa run --file custom-config.yaml`      |
+| Command    | Description                                            | Example                                  |
+|------------|--------------------------------------------------------|------------------------------------------|
+| `init`     | Initialize a new project with a preset configuration   | `pyc init --preset standard`             |
+| `validate` | Validate your YAML configuration                       | `pyc validate --file custom-config.yaml` |
+| `preview`  | Preview the project structure without generating files | `pyc preview --file custom-config.yaml`  |
+| `run`      | Generate the project structure                         | `pyc run --file custom-config.yaml`      |
 
 ### Command Options
 
 #### `init` Command
 ```bash
 # Create project with standard preset
-pa init --preset standard
+pyc init --preset standard
 
 # Force overwrite existing config
-pa init --preset standard --force
+pyc init --preset standard --force
 ```
 
 #### `validate` Command
 ```bash
 # Validate default config (ddd-config.yaml)
-pa validate
+pyc validate
 
 # Validate specific config file
-pa validate --file custom-config.yaml
+pyc validate --file custom-config.yaml
 ```
 
 #### `preview` Command
 ```bash
 # Preview default config
-pa preview
+pyc preview
 
 # Preview specific config
-pa preview --file custom-config.yaml
+pyc preview --file custom-config.yaml
 ```
 **Output:**
 - Displays the project structure tree in the console
@@ -119,32 +119,32 @@ app/
 #### `run` Command
 ```bash
 # Generate from default config
-pa run
+pyc run
 
 # Generate from specific config
-pa run --file custom-config.yaml
+pyc run --file custom-config.yaml
 ```
 
 ## Architecture Presets
 
-PyArch comes with three built-in presets:
+pyc comes with three built-in presets:
 
 ### Simple Preset
 Basic DDD structure without bounded contexts:
 ```bash
-pa init --preset simple
+pyc init --preset simple
 ```
 
 ### Standard Preset
 Default preset with bounded contexts:
 ```bash
-pa init --preset standard
+pybuilder init --preset standard
 ```
 
 ### Advanced Preset
 Complex structure with nested contexts:
 ```bash
-pa init --preset advanced
+pyc init --preset advanced
 ```
 
 ## Configuration

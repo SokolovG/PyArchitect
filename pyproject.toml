@@ -1,5 +1,5 @@
 [project]
-name = "pyarch"
+name = "pyconstructor"
 version = "0.1.0"
 description = "CLI tool for generating DDD architecture in Python projects"
 readme = "README.md"
@@ -28,9 +28,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/SokolovG/pyarch"
-Repository = "https://github.com/SokolovG/pyarch"
-Issues = "https://github.com/SokolovG/pyarch/issues"
+Homepage = "https://github.com/SokolovG/PyConstruct"
+Repository = "https://github.com/SokolovG/PyConstruct"
+Issues = "https://github.com/SokolovG/PyConstruct/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -42,7 +42,7 @@ dev = [
 ]
 
 [project.scripts]
-pa = "src.main:cli"
+pyc = "src.main:cli"
 
 [tool.ruff]
 line-length = 100
