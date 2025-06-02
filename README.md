@@ -127,7 +127,7 @@ pyc run --file custom-config.yaml
 
 ## Architecture Presets
 
-pyc comes with three built-in presets:
+PyConstructor comes with three built-in presets:
 
 ### Simple Preset
 Basic DDD structure without bounded contexts:
