@@ -13,6 +13,6 @@ __pycache__/
 *.pyc
 .DS_Store
 **/.DS_Store
-pyconstructor.egg-info
+pyconstructor.egg-info/
 .coverage
 dist
