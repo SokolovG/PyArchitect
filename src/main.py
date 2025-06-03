@@ -120,6 +120,8 @@ def validate(file: str | None = None) -> None:
             err=True,
             color=True,
         )
+    except Exception as error:
+        click.secho(f"✗ Error: {error}", fg="red", err=True)
 
 
 @click.command()
