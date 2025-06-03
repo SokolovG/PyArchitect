@@ -67,6 +67,9 @@ def init(preset: str, force: bool) -> None:
     except OSError as error:
         click.secho(f"✗ Failed to create config file: {error}", fg="red", err=True)
 
+    except Exception as error:
+        click.secho(f"✗ Failed to create config file: {error}", fg="red", err=True)
+
 
 @click.command()
 @click.option("-f", "--file", help="Path to YAML file.")
@@ -117,6 +120,8 @@ def validate(file: str | None = None) -> None:
             err=True,
             color=True,
         )
+    except Exception as error:
+        click.secho(f"✗ Error: {error}", fg="red", err=True)
 
 
 @click.command()
