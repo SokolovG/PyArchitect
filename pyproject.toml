@@ -62,7 +62,8 @@ line-ending = "auto"
 
 [tool.setuptools]
 package-dir = {"" = "."}
-package-data = {"" = ["src/templates/config_templates/*.yaml"]}
+package-data = {"*" = ["src/templates/config_templates/*.yaml"]}
+include-package-data = true
 
 [tool.mypy]
 python_version = "3.12"
