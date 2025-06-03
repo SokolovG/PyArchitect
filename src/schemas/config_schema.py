@@ -41,11 +41,6 @@ class Settings(BaseModel):
 
     root_name: str = "src"
 
-    domain_layer: str = "domain"
-    application_layer: str = "application"
-    infrastructure_layer: str = "infrastructure"
-    interface_layer: str = "interface"
-
 
 class LayerConfig(BaseModel):
     """Flexible configuration for any layer.
