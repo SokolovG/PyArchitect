@@ -4,8 +4,8 @@ from typing import Any
 import pydantic
 import yaml
 
-from src.core.exceptions import ConfigFileNotFoundError, YamlParseError
-from src.schemas import ConfigModel
+from ..schemas import ConfigModel
+from .exceptions import ConfigFileNotFoundError, YamlParseError
 
 
 class YamlParser:

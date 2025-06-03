@@ -120,7 +120,7 @@ class TestCli:
 
         result = runner.invoke(cli, ["--help"])
         assert result.exit_code == 0
-        assert "PyConstructor command-line tool" in result.output
+        assert "PyConstruct command-line tool" in result.output
 
         result = runner.invoke(cli, ["init", "--help"])
         assert result.exit_code == 0

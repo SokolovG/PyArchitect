@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from src.core.template_engine import TemplateEngine
-from src.preview.objects import PreviewNode
+from ..core.template_engine import TemplateEngine
+from .objects import PreviewNode
 
 
 class BaseAbstractPreviewRender(ABC):
