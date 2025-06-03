@@ -2,6 +2,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![PyPI version](https://badge.fury.io/py/pyconstructor.svg)](https://badge.fury.io/py/pyconstructor)
 
 PyConstructor is a command-line tool
 that helps developers quickly create a project structure following Domain-Driven Design
