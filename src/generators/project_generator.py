@@ -1,14 +1,14 @@
 from logging import getLogger
 from pathlib import Path
 
-from src.core.utils import GenerationContext
-from src.generators.presets import (
+from ..core.utils import GenerationContext
+from .presets import (
     AdvancedPresetGenerator,
     SimplePresetGenerator,
     StandardPresetGenerator,
 )
-from src.generators.presets.base import AbstractPresetGenerator
-from src.generators.utils import FileOperations
+from .presets.base import AbstractPresetGenerator
+from .utils import FileOperations
 
 logger = getLogger(__name__)
 

@@ -6,11 +6,11 @@ from pathlib import Path
 import click
 import pydantic
 
-from src.core.dependencies import container
-from src.core.exceptions import ConfigFileNotFoundError, YamlParseError
-from src.core.parser import YamlParser
-from src.generators import ProjectGenerator
-from src.preview.collector import PreviewCollector
+from .core.dependencies import container
+from .core.exceptions import ConfigFileNotFoundError, YamlParseError
+from .core.parser import YamlParser
+from .generators import ProjectGenerator
+from .preview.collector import PreviewCollector
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 @click.group()
 def cli() -> None:
-    """Entry point for the PyConstructor command-line tool app.
+    """Entry point for the PyConstruct command-line tool app.
 
     This is the main command group that provides access to all available commands.
     """

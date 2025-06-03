@@ -26,14 +26,14 @@ class BaseExceptionPayload:
         self.value = value
 
 
-class PyConstructorError(BaseExceptionPayload, Exception):
-    """Base exception class for PyConstructor.
+class PyConstructError(BaseExceptionPayload, Exception):
+    """Base exception class for PyConstruct.
 
     All specific exceptions in the project should inherit from this class.
     """
 
 
-class ConfigFileNotFoundError(PyConstructorError):
+class ConfigFileNotFoundError(PyConstructError):
     """Raised when the config file isn't found.
 
     This exception is raised when the specified configuration file

@@ -5,6 +5,6 @@ configuration data used in project generation.
 """
 
 # src/schemas/__init__.py
-from src.schemas.config_schema import ConfigModel
+from .config_schema import ConfigModel
 
 __all__ = ["ConfigModel"]
