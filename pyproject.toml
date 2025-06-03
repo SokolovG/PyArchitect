@@ -1,6 +1,6 @@
 [project]
 name = "pyconstructor"
-version = "0.1.0"
+version = "0.1.2"
 description = "CLI tool for generating DDD architecture in Python projects"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -62,6 +62,7 @@ line-ending = "auto"
 
 [tool.setuptools]
 package-dir = {"" = "."}
+package-data = {"" = ["src/templates/config_templates/*.yaml"]}
 
 [tool.mypy]
 python_version = "3.12"
