@@ -107,7 +107,7 @@ class MyProvider(Provider):
             Current render format
 
         """
-        return getattr(self, "render_format", "tree")
+        return getattr(self, "_render_format", "tree")
 
     @provide(scope=Scope.APP, provides=PreviewCollector)
     def get_preview_collector(self) -> PreviewCollector:

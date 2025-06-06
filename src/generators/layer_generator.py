@@ -112,7 +112,7 @@ class LayerGenerator:
             return {}
 
         if isinstance(components, str):
-            if not components.strip():  # Если строка пустая или только пробелы
+            if not components.strip():
                 return {}
             components = [comp.strip() for comp in components.split(",")]
 

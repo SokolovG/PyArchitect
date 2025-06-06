@@ -138,7 +138,7 @@ pyc init --preset simple
 ### Standard Preset
 Default preset with bounded contexts:
 ```bash
-pybuilder init --preset standard
+pyc init --preset standard
 ```
 
 ### Advanced Preset
@@ -328,38 +328,85 @@ src/
 ### Customizing Templates
 You can customize the generated files by modifying the templates in the `src/templates` directory. Each component type has its own template file that you can modify to suit your needs.
 
-### General Questions
+### FAQ
 
-**Q: Which preset should I choose?**
-A: Start with the "simple" preset for small projects, "standard" for medium-sized applications, and "advanced" for complex microservices.
+## Getting Started
 
-**Q: Can I modify the generated structure after creation?**
-A: Yes, you can modify the configuration and regenerate the structure, but be careful with existing files.
+**Q: Which preset should I choose for my project?**
+A:
+- **Simple**: Perfect for learning DDD or small projects without complex contexts
+- **Standard**: Best for most real-world projects with clear bounded contexts
+- **Advanced**: Use for microservices architecture or when you need maximum flexibility
 
-**Q: How do I handle shared components between contexts?**
-A: Create a separate "shared" context for common components, or use the infrastructure layer for shared implementations.
+**Q: What happens if files already exist in my project?**
+A: PyConstructor **adds new files and directories** to your existing structure without touching existing files. This means:
+- New components will be created alongside existing ones
+- Existing `__init__.py` files won't be modified
+- You can safely run it on existing projects
 
-### Configuration Questions
+**Q: Can I see what will be generated before actually creating files?**
+A: Yes! Use the preview command:
+```bash
+pyc preview
+# or
+pyc preview --file your-config.yaml
 
-**Q: What's the difference between flat and nested contexts?**
-A: Flat contexts are organized by layers first, then contexts. Nested contexts are organized by contexts first, then layers.
+```
+This shows the complete directory structure in console and generates a `structure.md` file.
 
-**Q: How do I add new component types?**
-A: You can extend the configuration schema and add new templates in the `src/templates` directory.
+## Configuration
 
-**Q: Can I customize the generated file templates?**
-A: Yes, all templates are located in the `src/templates` directory and can be modified to match your needs.
+**Q: How do I add more components after initial generation?**
+A: Simply:
+1. Edit your YAML configuration file to add new components
+2. Run `pyc run` again - it will add only the new components
+3. Existing files remain untouched
 
-### Technical Questions
+**Q: Can I customize the generated code templates?**
+A: Yes, but it's not officially supported yet. Templates are located in `src/templates/`. Modifying them directly will affect all generations. Official template customization API is planned.
 
-**Q: How do I handle dependencies between contexts?**
-A: Use interfaces in the domain layer and implementations in the infrastructure layer to maintain loose coupling.
+**Q: What's the difference between 'flat' and 'nested' context layouts?**
+A:
+- **Flat**: `src/domain/user_context/entities/` (contexts inside layers)
+- **Nested**: `src/user_context/domain/entities/` (layers inside contexts)
 
-**Q: What's the recommended way to handle database access?**
-A: Use repositories in the domain layer for interfaces and implement them in the infrastructure layer.
+## Troubleshooting
 
-**Q: How do I implement event handling between contexts?**
-A: Define events in the domain layer and implement handlers in the application layer.
+**Q: I get "Configuration file not found" error**
+A: Make sure you have a `ddd-config.yaml` file in your current directory, or specify the path:
+```bash
+pyc run --file path/to/your/config.yaml
+```
+
+**Q: YAML validation fails with cryptic errors**
+A: Common issues:
+- Incorrect indentation (use spaces, not tabs)
+- Missing quotes around special characters
+- Empty values should be written as `[]` or omitted entirely
+
+**Q: Generated code doesn't follow my coding standards**
+A: Currently, PyConstructor generates basic templates. You can:
+- Modify templates in `src/templates/` (advanced users)
+- Use code formatters (black, ruff) after generation
+
+## Integration
+
+**Q: Can I use this with existing projects?**
+A: Yes! PyConstructor safely adds new structure to existing projects:
+- Creates new directories and files without touching existing ones
+- Preserves your current codebase
+- Perfect for gradually introducing DDD structure
+- Just make sure your config doesn't conflict with existing file names
+
+## Roadmap & Limitations
+
+**Q: What features are planned for future releases?**
+A:
+- Custom template support
+- Framework-specific generators (FastAPI, Django)
+- Interactive configuration builder
+- Migration tools for existing codebases
+- Advanced DDD patterns support
 
 ## 🤝 Contributing
 
